@@ -1,12 +1,24 @@
-# Sampling Frame (draft — needs a Decision, see DECISIONS.md)
+# Sampling Frame
 
-## Population (proposed)
+Decided 2026-09-17: fixed-corpus sampling, GitHub Releases as the authoritative
+release unit. Repo count / activity threshold remain open — see DECISIONS.md.
+
+## Population
 Public GitHub repositories that:
 - Have ≥ 1 merged PR with an agent/co-authorship trailer in the last 12 months
   (ensures the measured arm has carriers to observe at all), AND
-- Have ≥ 1 tagged release OR published package/build artifact in the same window
-  (ensures a release-level unit of recovery exists), AND
+- Have ≥ 1 tagged **GitHub Release** in the same window — this is the authoritative
+  release unit (decided over package-registry publish events, since the goal is a
+  reproducible, git-native unit of recovery; repos that ship only via npm/PyPI with
+  no GitHub Release are excluded, logged with reason code `no-github-release`), AND
 - Are not forks (avoids double-counting history shared with an upstream).
+
+## Sampling method (decided)
+Draw from a **fixed corpus snapshot** (GH Archive / GHTorrent-style dataset) taken at
+a stated date, not live API querying. This is what makes the sample reproducible: a
+reader re-running the pipeline against the same snapshot gets the same repo list,
+independent of what has happened on GitHub since. The snapshot date and query become
+part of the deposited artifact per the brief's "Data and artifact standard" row.
 
 ## Strategy (proposed)
 Stratified by primary language and by release-assembly style (squash-only vs.
@@ -27,13 +39,9 @@ atypical release engineering.
 
 ## What's still open
 - Exact repo count and the popularity/activity thresholds that define "active."
-- Whether to sample from a fixed list (e.g., GH Archive / GHTorrent-style corpus) or
-  live API querying — affects reproducibility (a live query re-run later returns a
-  different sample).
-- Release definition for repos that ship via package registries (npm/PyPI) rather
-  than GitHub Releases — needs a decision on which is authoritative when both exist.
+  (10-20 repos per the brief's Phase 2 sketch is a target range, not yet a fixed N.)
+- Which fixed-corpus snapshot/date to use as the source dataset.
 
-This file stays in `docs/` as the *proposed* frame per the brief's Decision #3
-("Propose the sampling frame... this one changes what the paper can claim about
-practice, so it is not a purely technical choice"). Convert to
-`data/sampling/frame.md` (frozen) only after the decision is made.
+Once repo count and snapshot date are picked, this file freezes into
+`data/sampling/frame.md` and the exclusion log starts populating
+`data/sampling/exclusions.csv`.
