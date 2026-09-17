@@ -13,10 +13,10 @@ See `docs/` for the Phase 0 artifacts this plan has already produced.
 - [~] Sampling frame — `docs/04-sampling-frame.md` (method + release definition decided; repo count/snapshot date open, see `docs/DECISIONS.md`)
 
 ## Phase 1 — Literature & Positioning
-- Code watermarking robustness (Suresh et al. base paper, STONE, SrcMarker, CLASP, PromptMark)
-- Trailer-based agent detection (180M-repo census) — position against, don't replicate
-- Supply-chain provenance (in-toto/SLSA) as vocabulary, not a predictive theory
-- AI Act Article 50 — cite as conditional motivation, not settled fact
+- [x] Code watermarking robustness (Suresh et al. base paper, STONE, SrcMarker, CLASP, PromptMark) — `docs/05-literature-sheet.md`
+- [x] Trailer-based agent detection (180M-repo census) — positioned against, not replicated
+- [x] Supply-chain provenance (in-toto/SLSA, Kettle, reproducible builds) — vocabulary only, not a predictive theory; forward-citation recheck still needed before freeze
+- [ ] AI Act Article 50 — cite as conditional motivation, not settled fact (not yet drafted)
 
 ## Phase 2 — Instrument Design
 - Measured-arm carriers: agent trailers, commit signatures (GPG/sigstore), build attestations + SBOM (in-toto/SLSA)

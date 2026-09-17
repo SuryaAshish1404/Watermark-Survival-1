@@ -5,6 +5,36 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-17 (cont'd 2) — Phase 1 literature sheet
+
+Wrote `docs/05-literature-sheet.md` (Research Task #10): four category tables —
+code watermarking (8 refs), trailer-based mining (3 refs), supply-chain provenance
+(5 refs), reproducible builds (5 refs) — each with claim / strength-we-use /
+weakness-we-address columns, plus the SIGSOFT Empirical Standards methodology
+reference.
+
+New sources found via search beyond the brief's own reference list, each checked
+for collision against docs/00 and confirmed non-colliding:
+- Kettle (arXiv:2605.08363) — TEE-attested builds; shows the field is hardening
+  emission, not measuring survival, reinforcing that our question is unaddressed.
+- S3C2 Industry Supply Chain Summit reports (4 arXiv entries, 2023-2025) —
+  practitioner corroboration that attestation trust/adoption is a live, named
+  industry problem; cited as corroboration, not peer-reviewed evidence.
+- SLSA's own removal of hermetic/reproducible-build requirements from v1.0 —
+  independent confirmation that rebuild-breaks-attestation-linkage has a
+  documented structural cause.
+- Reproducible Builds foundational framing (arXiv:2104.06020).
+
+Left explicitly open in the sheet: forward-citation check on the census paper and
+the Sept 2026 longitudinal study (arXiv:2609.05677), to be re-run immediately
+before the related-work section is frozen since both are recent enough that
+citations are still accumulating. Also flags that scheme selection (which 2-4 of
+the 8 watermarking schemes covered) is still Decision #6, unresolved.
+
+One commit: literature sheet + README/ACTION_PLAN/PROGRESS updates.
+
+---
+
 ## 2026-09-17 (cont'd) — Phase 3 build started
 
 **Unblocked #7 and #8** with explicit defaults (not final decisions, flagged for

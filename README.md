@@ -27,4 +27,5 @@ before Phase 2+ can be built.
 3. `docs/02-substantially-human-rule.md` — spurious-gain threshold + sensitivity range
 4. `docs/03-before-state.md` — how "emitted then destroyed" is established
 5. `docs/04-sampling-frame.md` — proposed population/strategy/exclusions (open decision)
-6. `docs/DECISIONS.md` — what's still blocking Phase 2
+6. `docs/05-literature-sheet.md` — Phase 1 literature pass, strength/weakness per reference
+7. `docs/DECISIONS.md` — what's still blocking Phase 2
