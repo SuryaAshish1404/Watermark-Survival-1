@@ -43,7 +43,22 @@ paper (per the brief's "Why should we believe it?" section).
 5. Spurious-gain rate = (# modules with a manufactured attribution) / (# modules
    tested), reported per threshold.
 
-## Open decision
-Exact task templates for step 3 are not yet fixed — this determines how "small" the
-edit is and therefore how defensible "still substantially human" remains post-edit.
-Needs to be pinned before Phase 5 runs (see docs/DECISIONS.md).
+## Task templates for step 3 (proposed default, 2026-09-17)
+Three bounded, realistic small-task-team-delegation templates, applied to a sampled
+substantially-human module:
+1. **Bug fix from a linked issue** — give the assistant an existing, unresolved issue
+   referencing the module and ask for a minimal fix. Bounded by the issue's scope.
+2. **Add/extend a unit test** — ask for one test covering an existing, uncovered
+   branch in the module. Bounded to test files/functions only, no production-code edit.
+3. **Docstring/comment pass** — ask for accurate docstrings on undocumented public
+   functions in the module. Bounded to comments/docstrings, zero logic change.
+
+Each template caps the diff at **≤ 20 changed lines** — chosen so the post-edit
+module still plausibly clears the 90% (or even 95%) substantially-human line-blame
+threshold from the rule above; a module that fails to still qualify post-edit under
+its own rule is excluded from the spurious-gain denominator and logged, not scored.
+Run all three templates per sampled module where applicable (a module with no open
+issues skips template 1) so the spurious-gain rate isn't an artifact of task choice.
+
+Flagged as a **default, not a final decision** — revisit if the 20-line cap turns
+out to exclude too many candidate modules during the Phase 5 pilot.

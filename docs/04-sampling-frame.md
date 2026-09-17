@@ -37,11 +37,21 @@ atypical release engineering.
 - Archived/inactive repos (no commits in 6 months) excluded — the brief frames this
   as "active" repositories.
 
-## What's still open
-- Exact repo count and the popularity/activity thresholds that define "active."
-  (10-20 repos per the brief's Phase 2 sketch is a target range, not yet a fixed N.)
-- Which fixed-corpus snapshot/date to use as the source dataset.
+## Repo count and snapshot date (proposed default, 2026-09-17)
+- **N = 15** repositories, drawn from within-stratum (not raw popularity), midpoint
+  of the brief's 10-20 target range — enough to see cross-repo variance without
+  making per-repo manual verification (needed for before-state reconstruction)
+  infeasible for a small team.
+- **Snapshot: most recently completed full month at time of sampling** (2026-08-01
+  through 2026-08-31 activity window at the point sampling actually runs), rather
+  than a date picked now — freezing a specific date today would go stale before the
+  mining script is built. The script records whatever snapshot date it actually used
+  in `data/sampling/frame.md` at freeze time; this is a *rule* for picking the date,
+  not the date itself.
+- Flagged as a **default, not a final decision** — cheap to revisit (N and window are
+  parameters to the mining script) if the pilot in Phase 2 shows too few active
+  repos satisfy the population criteria at this window length.
 
-Once repo count and snapshot date are picked, this file freezes into
-`data/sampling/frame.md` and the exclusion log starts populating
-`data/sampling/exclusions.csv`.
+Once the mining script runs, this file's population/method sections freeze into
+`data/sampling/frame.md` with the actual snapshot date and repo list, and the
+exclusion log starts populating `data/sampling/exclusions.csv`.
