@@ -5,6 +5,47 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-17 (cont'd) — Phase 3 build started
+
+**Unblocked #7 and #8** with explicit defaults (not final decisions, flagged for
+sign-off): spurious-gain task templates (3 bounded templates, ≤20-line diff cap,
+`docs/02`) and repo count/snapshot window (N=15, rolling most-recent-full-month,
+`docs/04`). Neither blocks Phase 3, since recovery checks only depend on the
+already-done outcome definitions and before-state procedure.
+
+**Built `scripts/recovery/`:**
+- `outcomes.py` — pure classification logic (Outcome enum, `classify()`,
+  `classify_spurious_only()`) implementing docs/01's five outcomes.
+- `trailer.py` — walks `git log` for trailers matching the census paper's
+  vocabulary (Co-Authored-By / Assisted-By / Generated-By).
+- `signature.py` — wraps `git verify-commit`, distinguishes surfaced-failure from
+  silent absence.
+- `attestation.py` — interface only, `NotImplementedError` stub. Needs a real
+  attestation store (GitHub Attestations API / Sigstore-Rekor / registry-embedded)
+  to build against; blocked on the sampling frame producing an actual sampled repo.
+
+**Built `tests/`** per docs/03's validation requirement (hand-built fixtures,
+confirm every carrier×outcome combination classifies correctly):
+- `gitfixture.py` — minimal temp-repo builder.
+- `test_outcomes.py` (9 tests) and `test_trailer.py` (4 tests) — all passing.
+- `test_signature.py` — logic is correct against real git semantics, but the
+  GPG-key fixture setup is currently **skipped in this Windows/Git-Bash session**:
+  key generation fails because gpg mis-resolves a mixed MSYS/native temp path and
+  can't reach its agent (`No such file or directory` / `No agent running`). Not a
+  bug in `signature.py` — needs re-verification on Linux or in CI before the
+  signature check is trusted against real sampled repos.
+
+Two commits: recovery modules + tests + decision defaults.
+
+**Still blocking full Phase 3:** attestation store integration; anticipatory-arm
+scheme runners; actual sample assembly (needs the mining script, not yet built).
+
+**Not started:** Phase 1 literature sheet (Research Task #10 in the brief — full
+literature pass with strength/weakness columns), Phase 2 operation-catalogue mining
+script, anticipatory-arm scheme selection.
+
+---
+
 ## 2026-09-17
 
 **Phase 0 — Gatekeeping: complete except sampling frame freeze**

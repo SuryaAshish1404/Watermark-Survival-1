@@ -25,9 +25,10 @@ See `docs/` for the Phase 0 artifacts this plan has already produced.
 - Finalize sampling frame (repo count, snapshot date) — blocks sample assembly
 
 ## Phase 3 — Build the Measurement Framework
-- Per-carrier recovery checks: trailer extraction, signature verification, attestation/SBOM resolution
-- Anticipatory-arm scheme runners with pinned versions/settings
-- Assemble the sampled repo/release list against the frozen frame, with an exclusion log
+- [x] Per-carrier recovery checks: trailer extraction, signature verification — `scripts/recovery/`, tested (`tests/`)
+- [~] Attestation/SBOM resolution — interface defined, resolver stubbed pending a real attestation store
+- [ ] Anticipatory-arm scheme runners with pinned versions/settings
+- [ ] Assemble the sampled repo/release list against the frozen frame, with an exclusion log
 
 ## Phase 4 — Measure
 - Single-operation retention table, measured arm, over real history
