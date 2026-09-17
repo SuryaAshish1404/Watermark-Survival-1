@@ -22,8 +22,8 @@ See `docs/` for the Phase 0 artifacts this plan has already produced.
 - [x] Measured-arm carriers defined: agent trailers, commit signatures, build attestations + SBOM — `docs/01`
 - [x] Anticipatory-arm scheme selection: STONE, SrcMarker, CodeIP, CodeMark — `docs/06-scheme-selection.md`
 - [ ] Pin exact commit/version + generation settings for the 4 schemes (Decision #11)
-- [ ] Mine the operation catalogue from real repo/workflow configs, with a prevalence ranking
-- [ ] Finalize sampling frame (repo count, snapshot date) — blocks sample assembly
+- [x] Mining script built: `scripts/mining/` derives operation classes from repo/workflow configs with cited evidence and a prevalence ranking, tested against fixture configs (`tests/test_mining.py`)
+- [ ] Run the miner against the actual sampled repos once the frame is frozen — finalize sampling frame (repo count, snapshot date) first, blocks sample assembly
 
 ## Phase 3 — Build the Measurement Framework
 - [x] Per-carrier recovery checks: trailer extraction, signature verification — `scripts/recovery/`, tested (`tests/`)

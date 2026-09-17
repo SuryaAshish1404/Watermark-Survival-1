@@ -5,6 +5,46 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-17 (cont'd 4) — Operation-catalogue mining script
+
+Built `scripts/mining/` — the tool that derives the operation catalogue from real
+repo/workflow configs rather than a hand-picked list, per the brief's explicit
+requirement and the Technical Tasks acceptance criterion ("regenerates from the
+repository list without manual editing, and every operation class in it traces to
+a configuration file that is cited").
+
+- `detectors.py` — 12 operation-class signals across the history (squash, rebase,
+  cherry-pick, fork-sync), source (format, lint-autofix, transpile, bundle,
+  minify), and packaging (rebuild, repackage, republish) layers from Figure 1.
+  Each signal is either existence-sufficient (a `.prettierrc` file needs no content
+  check) or requires a content-pattern match inside a generic multi-purpose file
+  (package.json, workflow YAML, Makefile) — kept as two separate glob categories
+  after the first test run showed conflating them under-detected dedicated config
+  files.
+- `scan.py` — walks a repo, returns evidence tuples that always cite the matching
+  file path, so no catalogue entry is ever evidence-free.
+- `workflow_order.py` — parses `.github/workflows/*.yml` job step sequences and
+  classifies steps by keyword, producing the *observed* operation order per
+  workflow/job — this is what Phase 5's "compose operations in orders real
+  projects apply them" will draw from, rather than an invented order.
+- `catalogue.py` + `cli.py` — aggregates per-repo scans into a prevalence-ranked,
+  JSON-serializable catalogue (`python -m scripts.mining.cli <repo>... --out ...`).
+
+Tests (`tests/test_mining.py`, 5 tests, all passing) use fixture repos with
+realistic config files (prettier, webpack production mode, a release workflow with
+lint→build→bundle→publish steps) and assert: correct detection, every hit citing a
+real file, correct prevalence math across a 2-repo fixture, correct step-order
+extraction, and JSON round-trip. Smoke-tested against this repo itself (correctly
+all-zero, since it has no CI/build config yet).
+
+One commit: mining module + tests + ACTION_PLAN/PROGRESS updates.
+
+**Not yet run against real data** — needs the sampling frame frozen (repo
+count/snapshot date, Decision #8) and an actual repo list to scan; that's the next
+step toward unblocking Phase 3's sample-assembly task.
+
+---
+
 ## 2026-09-17 (cont'd 3) — Anticipatory-arm scheme selection (Decision #6)
 
 Wrote `docs/06-scheme-selection.md`. Searched for public repos on every code-
