@@ -4,8 +4,9 @@ Empirical study of provenance carrier survival across software release assembly.
 Target: FSE 2027. See `FSE2027_05_Do_The_Marks_Survive_Brief (1).pdf` for the brief.
 
 ## Status
-Phase 0 (gatekeeping) drafted. See `docs/DECISIONS.md` for what's still open before
-Phase 2+ can be built.
+Phase 0 (gatekeeping) drafted. See `ACTION_PLAN.md` for the phase plan,
+`PROGRESS.md` for the execution log, and `docs/DECISIONS.md` for what's still open
+before Phase 2+ can be built.
 
 ## Layout
 - `docs/` — instrument design docs (outcome definitions, sampling frame, rules),
