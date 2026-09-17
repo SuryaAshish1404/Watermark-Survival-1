@@ -15,10 +15,12 @@ the technical tasks noted.
 | 7 | Task templates for the spurious-gain "small edit" (docs/02, step 3) | Phase 5 spurious-gain run | **Default proposed 2026-09-17: 3 bounded templates, ≤20 line diff cap** |
 | 8 | Repo count and fixed-corpus snapshot date | data/sampling/frame.md freeze | **Default proposed 2026-09-17: N=15, rolling most-recent-full-month window** |
 | 9 | Release definition: GitHub Release vs. package registry | sampling frame freeze | **Decided 2026-09-17: GitHub Release is authoritative; registry-only repos excluded** |
+| 10 | Which 2-4 code/dataset watermark schemes for the anticipatory arm | anticipatory-arm scheme runner build | **Default proposed 2026-09-17: STONE, SrcMarker, CodeIP, CodeMark — see docs/06-scheme-selection.md** |
+| 11 | Pin exact commit/version + generation settings for the 4 selected schemes | anticipatory-arm pilot run | Open, not yet started |
 
-Items 7 and 8 are defaults set to unblock the build, not user-confirmed final
-decisions — call out both explicitly for sign-off before the paper cites them as
-methodology, and revisit if a pilot run shows either is impractical.
+Items 7, 8, and 10 are defaults set to unblock the build, not user-confirmed final
+decisions — call out all three explicitly for sign-off before the paper cites them
+as methodology, and revisit if a pilot run shows any is impractical.
 
 No remaining hard blockers on Phase 3 build work (recovery checks), which depends
 only on the outcome definitions (#done) and before-state procedure (#done), not on

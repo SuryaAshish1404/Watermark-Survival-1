@@ -19,10 +19,11 @@ See `docs/` for the Phase 0 artifacts this plan has already produced.
 - [ ] AI Act Article 50 — cite as conditional motivation, not settled fact (not yet drafted)
 
 ## Phase 2 — Instrument Design
-- Measured-arm carriers: agent trailers, commit signatures (GPG/sigstore), build attestations + SBOM (in-toto/SLSA)
-- Anticipatory-arm carriers: 2-4 pinned code watermark schemes; model/dataset watermarks if feasible
-- Mine the operation catalogue from real repo/workflow configs, with a prevalence ranking — not hand-picked
-- Finalize sampling frame (repo count, snapshot date) — blocks sample assembly
+- [x] Measured-arm carriers defined: agent trailers, commit signatures, build attestations + SBOM — `docs/01`
+- [x] Anticipatory-arm scheme selection: STONE, SrcMarker, CodeIP, CodeMark — `docs/06-scheme-selection.md`
+- [ ] Pin exact commit/version + generation settings for the 4 schemes (Decision #11)
+- [ ] Mine the operation catalogue from real repo/workflow configs, with a prevalence ranking
+- [ ] Finalize sampling frame (repo count, snapshot date) — blocks sample assembly
 
 ## Phase 3 — Build the Measurement Framework
 - [x] Per-carrier recovery checks: trailer extraction, signature verification — `scripts/recovery/`, tested (`tests/`)

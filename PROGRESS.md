@@ -5,6 +5,34 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-17 (cont'd 3) — Anticipatory-arm scheme selection (Decision #6)
+
+Wrote `docs/06-scheme-selection.md`. Searched for public repos on every code-
+watermark candidate from the literature sheet rather than assuming availability
+from the paper text alone:
+
+- **Confirmed public, official repos**: STONE (`inistory/STONE-watermarking`),
+  SrcMarker (`YBRua/SrcMarker`), CodeIP (`CGCL-codes/naturalcc`), CodeMark
+  (`v587su/CodeMark`).
+- **No public repo found** despite direct search: CLASP (arXiv:2510.11251, revised
+  as recently as April 2026), PromptMark, ACW. All three rejected on availability
+  grounds, not merit — documented per scheme in the sheet.
+
+**Selected 4**: STONE (rule-based/post-hoc), SrcMarker (neural/post-hoc), CodeIP
+(statistical/generation-time) — three genuinely different embedding mechanisms, so
+the study can separate "survival depends on the operation" from "survival depends
+on the mechanism" — plus CodeMark, which is a *dataset* watermark, not a code
+watermark, chosen specifically to cover the anticipatory arm's second carrier type
+per the brief's Figure 1 rather than narrowing to code-watermarks-only.
+
+Flagged as a default like #7/#8, not a final decision. New open item added (#11):
+pin exact commit/version + generation settings for all four before the pilot run —
+not yet started.
+
+One commit: scheme-selection doc + DECISIONS/ACTION_PLAN updates.
+
+---
+
 ## 2026-09-17 (cont'd 2) — Phase 1 literature sheet
 
 Wrote `docs/05-literature-sheet.md` (Research Task #10): four category tables —
