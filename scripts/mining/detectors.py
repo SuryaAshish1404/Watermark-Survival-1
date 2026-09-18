@@ -145,11 +145,11 @@ REPACKAGE = OperationSignal(
 REPUBLISH = OperationSignal(
     id="republish",
     layer="packaging",
-    description="Release/publish workflow configured (npm publish, PyPI upload, GitHub Release, GoReleaser)",
+    description="Release/publish workflow configured (npm publish, PyPI upload, GitHub Release, GoReleaser, PPA/dput, AppImage upload)",
     exist_globs=(".goreleaser.yml", ".releaserc*"),
     content_globs=(".github/workflows/*.yml", ".github/workflows/*.yaml"),
-    content_pattern=r"npm publish|pypi|twine upload|softprops/action-gh-release|goreleaser|semantic-release",
-    step_keywords=("publish", "release", "npm publish", "goreleaser"),
+    content_pattern=r"npm publish|pypi|twine upload|softprops/action-gh-release|goreleaser|semantic-release|\bdput\b|ppa|appimage",
+    step_keywords=("publish", "release", "npm publish", "goreleaser", "dput", "ppa"),
 )
 
 ALL_SIGNALS: tuple[OperationSignal, ...] = (

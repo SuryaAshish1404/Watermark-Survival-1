@@ -19,6 +19,8 @@ def check_presence(repo: Path, commit_sha: str) -> PresenceResult:
         ["git", "-C", str(repo), "verify-commit", "--raw", commit_sha],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     if result.returncode != 0:
         # Distinguish "no signature at all" from "signature present but bad" if the

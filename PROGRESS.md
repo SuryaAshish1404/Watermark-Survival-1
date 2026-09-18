@@ -5,6 +5,49 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-18 — First real repo, real bugs found
+
+Live network access confirmed working in this session, so instead of only
+hand-picking candidate repo names from search results, cloned one for real and ran
+the actual pipeline against it.
+
+**lutris/lutris** (`--filter=blob:none` clone, checked out working tree):
+- `scripts/recovery/trailer.py` found **193 real commits** with
+  `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>` trailers.
+- Confirmed 88 version tags (release practice) — satisfies docs/04's population
+  criteria (agent trailer + tagged releases, not a fork). First entry in
+  `data/sampling/candidates.md`, a hand-verified starter set distinct from the real
+  frozen frame.
+- `scripts/mining/cli.py` ran against the real checkout and correctly detected
+  format/lint_autofix/rebuild/repackage signals with real cited evidence files.
+
+**Two real bugs found and fixed by testing against live data, not fixtures:**
+1. `trailer.py` and `signature.py` called `subprocess.run(..., text=True)` without
+   an explicit encoding. On this Windows session that defaults to cp1252, which
+   crashed decoding Lutris's UTF-8 commit messages
+   (`UnicodeDecodeError: 'charmap' codec can't decode byte 0x9d`). Fixed by passing
+   `encoding="utf-8", errors="replace"` explicitly in both modules.
+2. `republish` detector missed Lutris's actual publish mechanism entirely (`dput`,
+   the Debian PPA upload tool) — it only recognized npm/PyPI/GitHub-Release/
+   GoReleaser patterns. Extended `detectors.py`'s REPUBLISH content pattern and
+   step keywords to include `dput`, `ppa`, `appimage` after finding the gap
+   live, not by guessing what to add in advance.
+
+**Found a concrete source for Decision #8's fixed corpus**: the AIDev dataset
+(Hugging Face `hao-li/AIDev`, arXiv:2602.09185) — 2,807 repos with agent-PR data
+already extracted, same data family as the census paper. Not pulled into this
+session (no HF dataset access here), but documented in docs/04 as the right source
+to build the real frame from, rather than continuing to hand-pick repos one at a
+time via search.
+
+All 18 tests still pass after the fixes (17 pass, 1 skipped — the known Windows/GPG
+issue). Scratch clone deleted after use.
+
+Two commits: bug fixes to recovery modules + detector extension; candidates.md +
+docs/04 update.
+
+---
+
 ## 2026-09-17 (cont'd 4) — Operation-catalogue mining script
 
 Built `scripts/mining/` — the tool that derives the operation catalogue from real

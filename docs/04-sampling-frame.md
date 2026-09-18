@@ -55,3 +55,16 @@ atypical release engineering.
 Once the mining script runs, this file's population/method sections freeze into
 `data/sampling/frame.md` with the actual snapshot date and repo list, and the
 exclusion log starts populating `data/sampling/exclusions.csv`.
+
+## Concrete source found for the fixed corpus (2026-09-18)
+The **AIDev dataset** (Hugging Face: `hao-li/AIDev`; paper arXiv:2602.09185, "AIDev:
+Studying AI Coding Agents on GitHub") is a strong candidate for the actual
+fixed-corpus snapshot: 2,807 repositories (>100 stars) with agent-authored PR data
+already extracted, covering five agents (Codex, Devin, Copilot, Cursor, Claude
+Code). This is the same underlying data family as the census paper positioned
+against in docs/05. Using it would mean: join its repo list against GitHub Release
+presence (not in AIDev itself, needs a separate check per repo) to apply this
+file's population criteria. Not yet pulled into this session (no Hugging Face
+dataset access here) — `data/sampling/candidates.md` has one hand-verified repo
+(lutris/lutris) confirmed against the criteria manually as a starter/pipeline-proof
+set, pending the real AIDev-based frame.

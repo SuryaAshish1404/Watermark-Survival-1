@@ -23,6 +23,8 @@ def _git_log(repo: Path, ref: str, extra_args: list[str]) -> str:
         ["git", "-C", str(repo), "log", ref, "--format=%H%n%B%n---COMMIT-END---", *extra_args],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=True,
     )
     return result.stdout
