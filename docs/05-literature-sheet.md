@@ -56,8 +56,9 @@ reference only.
 
 ## What this closes vs. leaves open (Research Task #10 checklist)
 - [x] Code watermarking — 8 schemes/reviews covered, sufficient to pick 2-4 pinned
-  schemes for the anticipatory arm (Decision #6 in docs/DECISIONS.md still open:
-  which 2-4, and rejection reasons for the rest).
+  schemes for the anticipatory arm (Decision #10 in docs/DECISIONS.md, resolved
+  2026-09-17 — see docs/06-scheme-selection.md for which 2-4 and why the rest were
+  rejected).
 - [x] Trailer-based mining — positioned against the census paper and its
   contemporaries; confirms no collision (docs/00).
 - [x] Supply-chain provenance — in-toto/SLSA as vocabulary per the brief's caution;

@@ -1,9 +1,11 @@
-# Anticipatory-Arm Scheme Selection (Decision #6)
+# Anticipatory-Arm Scheme Selection (Decision #10)
 
-Resolves `docs/DECISIONS.md` #6: argue scheme selection covering availability,
-reproducibility, distinct embedding strategy, and rejection reasons. Checked
-2026-09-17. Flagged as a **proposed default**, same status as #7/#8 — cheap to
-revisit if a pilot run shows one of the four is impractical to pin/reproduce.
+Resolves `docs/DECISIONS.md` #10 (this document was originally mislabeled "#6,"
+conflating the brief's own Research Task #6 — "argue the scheme selection" — with
+this file's tracker row; corrected 2026-09-18). Argues scheme selection covering
+availability, reproducibility, distinct embedding strategy, and rejection reasons.
+Checked 2026-09-17. Flagged as a **proposed default**, same status as #7/#8/#10 —
+cheap to revisit if a pilot run shows one of the four is impractical to pin/reproduce.
 
 ## Selected: 4 schemes, 3 distinct embedding strategies
 
