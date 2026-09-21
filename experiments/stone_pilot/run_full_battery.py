@@ -27,18 +27,18 @@ import tempfile
 import zipfile
 from pathlib import Path
 
+from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
+
 sys.path.insert(0, str(Path(__file__).parent))
 from run_pilot import (  # noqa: E402
-    MODEL_NAME,
-    STONE_KWARGS,
     _largest_parseable_prefix,
-    build_stone,
     mut_format,
     mut_lint_autofix,
     mut_minify,
     mut_ast_roundtrip,
     _RenameLocals,
 )
+from schemes import MODEL_NAME, SCHEME_KWARGS, build_scheme  # noqa: E402
 
 PROMPT = (
     '"""Utilities for locating a game\'s installed executable and save-data '
@@ -391,9 +391,6 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
     baseline = stone.detect_watermark(generated_code)
     print(f"Baseline: {baseline}", file=sys.stderr)
 
-    target_file = repo / "lutris" / "mark_pilot_watermarked.py"
-    target_file.write_text(generated_code, encoding="utf-8")
-
     results = {
         "run_index": run_index,
         "generated_code": generated_code,
@@ -401,6 +398,21 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
         "baseline": baseline,
         "operations": [],
     }
+
+    if not baseline["is_watermarked"]:
+        # Per docs/01-outcome-definitions.md: a claim not confirmed present before
+        # the operation is "never emitted," not "lost." Scoring every mutation as
+        # a break here would misattribute a failed embedding to mutation damage.
+        results["excluded"] = "baseline_never_emitted"
+        print(
+            f"  SKIPPED mutations: baseline not watermarked (score={baseline['score']}) "
+            "-> excluded from aggregate, not scored as loss",
+            file=sys.stderr,
+        )
+        return results
+
+    target_file = repo / "lutris" / "mark_pilot_watermarked.py"
+    target_file.write_text(generated_code, encoding="utf-8")
     ops = results["operations"]
 
     print("\n--- Source layer ---", file=sys.stderr)
@@ -483,39 +495,70 @@ def aggregate(all_runs: list[dict]) -> dict:
             }
         )
     summary.sort(key=lambda s: (s["layer"], s["retention_rate"] if s["retention_rate"] is not None else -1))
-    return {"n_runs": len(all_runs), "per_operation": summary}
+    excluded = sum(1 for r in all_runs if r.get("excluded"))
+    return {
+        "n_runs": len(all_runs),
+        "n_excluded_baseline_never_emitted": excluded,
+        "n_scored_runs": len(all_runs) - excluded,
+        "per_operation": summary,
+    }
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path, required=True, help="Path to a lutris checkout (for real ruff config)")
-    parser.add_argument("--runs", type=int, default=1, help="Number of repeated generations to run")
+    parser.add_argument("--runs", type=int, default=1, help="Number of repeated generations to run, per scheme")
+    parser.add_argument(
+        "--schemes", type=str, default="stone", help="Comma-separated scheme names: stone,kgw,sweet"
+    )
     parser.add_argument("--out", type=Path, default=Path(__file__).parent / "full_battery_results.json")
     args = parser.parse_args()
 
-    stone = build_stone()
-    all_runs = [run_once(stone, args.repo, i) for i in range(1, args.runs + 1)]
-    summary = aggregate(all_runs)
+    scheme_names = [s.strip() for s in args.schemes.split(",") if s.strip()]
 
-    output = {
-        "model": MODEL_NAME,
-        "stone_config": STONE_KWARGS,
-        "prompt": PROMPT,
-        "runs": all_runs,
-        "summary": summary,
-    }
-    args.out.write_text(json.dumps(output, indent=2, default=str), encoding="utf-8")
-    print(f"\nWrote {args.out}", file=sys.stderr)
+    print(f"Loading {MODEL_NAME} (shared across schemes) ...", file=sys.stderr)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+    model.eval()
 
-    print(f"\n=== Summary across {summary['n_runs']} run(s) ===", file=sys.stderr)
-    for s in summary["per_operation"]:
+    def _save(by_scheme):
+        output = {"model": MODEL_NAME, "prompt": PROMPT, "schemes": by_scheme}
+        args.out.write_text(json.dumps(output, indent=2, default=str), encoding="utf-8")
+
+    by_scheme = {}
+    for scheme_name in scheme_names:
+        print(f"\n########## SCHEME: {scheme_name} ##########", file=sys.stderr)
+        scheme = build_scheme(scheme_name, model, tokenizer)
+        all_runs = []
+        # Written after every run, not just after a scheme (or the whole battery)
+        # completes: a crash partway through a scheme (this happened in practice —
+        # SWEET segfaulted on run 8/10) used to lose every already-finished run's
+        # structured data, leaving only the unstructured stderr log behind.
+        for i in range(1, args.runs + 1):
+            all_runs.append(run_once(scheme, args.repo, i))
+            by_scheme[scheme_name] = {
+                "scheme_config": SCHEME_KWARGS[scheme_name],
+                "runs": all_runs,
+                "summary": aggregate(all_runs),
+            }
+            _save(by_scheme)
+
+        summary = by_scheme[scheme_name]["summary"]
         print(
-            f"  [{s['layer']:9s}] {s['mutation']:24s} "
-            f"{s['retained']}/{s['n_runs']} retained  "
-            f"score[min={s['score_min']}, mean={s['score_mean']}, max={s['score_max']}]  "
-            f"outcomes={s['distinct_outcomes']}",
+            f"\n=== {scheme_name}: summary across {summary['n_runs']} run(s) "
+            f"({summary['n_excluded_baseline_never_emitted']} excluded: baseline never emitted) ===",
             file=sys.stderr,
         )
+        for s in summary["per_operation"]:
+            print(
+                f"  [{s['layer']:9s}] {s['mutation']:24s} "
+                f"{s['retained']}/{s['n_runs']} retained  "
+                f"score[min={s['score_min']}, mean={s['score_mean']}, max={s['score_max']}]  "
+                f"outcomes={s['distinct_outcomes']}",
+                file=sys.stderr,
+            )
+
+    print(f"\nWrote {args.out}", file=sys.stderr)
 
 
 if __name__ == "__main__":
