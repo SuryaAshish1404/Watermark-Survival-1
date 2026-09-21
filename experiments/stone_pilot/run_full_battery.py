@@ -103,6 +103,8 @@ def mut_stacked_adversarial(src: str, repo: Path) -> str:
     return out
 
 
+from human_mutations import HUMAN_MUTATIONS  # noqa: E402
+
 CONTENT_MUTATIONS = [
     ("format", mut_format),
     ("lint_autofix", mut_lint_autofix),
@@ -112,6 +114,7 @@ CONTENT_MUTATIONS = [
     ("aggressive_minify", mut_aggressive_minify),
     ("ast_roundtrip", mut_ast_roundtrip),
     ("stacked_adversarial", mut_stacked_adversarial),
+    *HUMAN_MUTATIONS,
 ]
 
 
