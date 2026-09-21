@@ -509,9 +509,15 @@ def main():
     parser.add_argument("--repo", type=Path, required=True, help="Path to a lutris checkout (for real ruff config)")
     parser.add_argument("--runs", type=int, default=1, help="Number of repeated generations to run, per scheme")
     parser.add_argument(
-        "--schemes", type=str, default="stone", help="Comma-separated scheme names: stone,kgw,sweet"
+        "--schemes", type=str, default="stone", help="Comma-separated scheme names: stone,kgw,sweet,ewd"
     )
     parser.add_argument("--out", type=Path, default=Path(__file__).parent / "full_battery_results.json")
+    parser.add_argument(
+        "--fresh", action="store_true",
+        help="Overwrite --out instead of merging into it. Default merges, so each "
+             "scheme can be run as its own process invocation (see run_all_schemes.sh) "
+             "without one long-lived process accumulating memory across schemes.",
+    )
     args = parser.parse_args()
 
     scheme_names = [s.strip() for s in args.schemes.split(",") if s.strip()]
@@ -521,11 +527,17 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
     model.eval()
 
+    by_scheme = {}
+    if not args.fresh and args.out.exists():
+        try:
+            by_scheme = json.loads(args.out.read_text(encoding="utf-8")).get("schemes", {})
+        except (json.JSONDecodeError, OSError):
+            by_scheme = {}
+
     def _save(by_scheme):
         output = {"model": MODEL_NAME, "prompt": PROMPT, "schemes": by_scheme}
         args.out.write_text(json.dumps(output, indent=2, default=str), encoding="utf-8")
 
-    by_scheme = {}
     for scheme_name in scheme_names:
         print(f"\n########## SCHEME: {scheme_name} ##########", file=sys.stderr)
         scheme = build_scheme(scheme_name, model, tokenizer)

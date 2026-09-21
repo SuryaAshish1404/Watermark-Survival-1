@@ -1,6 +1,6 @@
 {
   "model": "bigcode/tiny_starcoder_py",
-  "source": "reconstructed from btxeszss8.output log (SWEET crashed at run 8/10 due to host memory exhaustion, not a code bug)",
+  "prompt": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n",
   "schemes": {
     "stone": {
       "runs": [
@@ -2280,201 +2280,266 @@
       }
     },
     "sweet": {
+      "scheme_config": {
+        "gamma": 0.5,
+        "delta": 4.0,
+        "hash_key": 15485863,
+        "prefix_length": 1,
+        "z_threshold": 4.0,
+        "entropy_threshold": 0.9
+      },
       "runs": [
         {
           "run_index": 1,
-          "generated_chars": 791,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(get_game_path(game_id), 'game') if game_id > 0 else None\n    path = None\n    for path, dirs, files in os.walk(game_id):\n        for file in files:\n            path = os.path.join(path, file)\n            if path.endswith('.pyc'):\n                return path\n        for dir in dirs:\n            path = os.path.join(path, dir)\n            if path.endswith('.pyc'):\n                return path\n    return None\n\n",
+          "generated_chars": 678,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 2.3050494597834974
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 2,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 3,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    game_dir = get_game_dir_path(game_id)\n    path = os.path.join(get_game_dir_path(game_id), os.pardir, 'game-scripts', '/games/%s/bin/g8' % game_id)\n    os.environ['PATH'] = '%s:%s' % (get_game_dir_path(game_id), path)\n    return path\n\n\ndef setup_game_dir(game_id):\n    \"\"\"Setups a folder for the given game id.\"\"\"\n    game_dir = os.path.join(get_game_dir_path(game_id), 'game-scripts')\n    os.makedirs(game_dir)\n\n",
+          "generated_chars": 662,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 3.9605901719066976
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 4,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+          "generated_chars": 752,
           "baseline": {
             "is_watermarked": true,
-            "score": 7.228202652129153
+            "score": 5.329594745632331
           },
           "operations": [
             {
               "mutation": "format",
               "layer": "source",
-              "outcome": "retained",
-              "score": 6.482669203345178
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\n\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n    #    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"\n",
+              "is_watermarked": true,
+              "score": 4.874174366759539,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "lint_autofix",
               "layer": "source",
-              "outcome": "retained",
-              "score": 7.487048859271456
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"\n",
+              "is_watermarked": true,
+              "score": 5.329594745632331,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "rename",
               "layer": "source",
-              "outcome": "silently_lost",
-              "score": -1.4433756729740645
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\ndef _v1(_v2):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n    return os.path.join(get_game_game_dir(), '{}.exe'.format(_v2))\n\ndef _v3():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+              "is_watermarked": true,
+              "score": 4.772970773009195,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "dead_code_insert",
               "layer": "source",
-              "outcome": "silently_lost",
-              "score": -2.065591117977289
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\ndef get_game_executable_path(game_id):\n    if False:\n        pass\n    _unused_marker = 0\n    'Return the absolute path to the executable for the given game id, or None if not installed.'\n    return os.path.join(get_game_game_dir(), '{}.exe'.format(game_id))\n\ndef get_game_game_dir():\n    if False:\n        pass\n    _unused_marker = 0\n    'Return the game game data directory as determined by the game_name/id. This directory\\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\\n    data files. It also contains all the game data associated with the game. This directory\\n    is created by ``save_game_dir``.\\n\\n    '",
+              "is_watermarked": false,
+              "score": 3.072682754588379,
+              "parse_ok": true,
+              "outcome": "silently_lost"
             },
             {
               "mutation": "minify",
               "layer": "source",
-              "outcome": "silently_lost",
-              "score": -1.414213562373095
+              "code": "\"Utilities for locating a game's installed executable and save-data directory on disk.\"\nimport os\ndef get_game_executable_path(game_id):'Return the absolute path to the executable for the given game id, or None if not installed.';return os.path.join(get_game_game_dir(),'{}.exe'.format(game_id))\ndef get_game_game_dir():'Return the game game data directory as determined by the game_name/id. This directory\\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\\n    data files. It also contains all the game data associated with the game. This directory\\n    is created by ``save_game_dir``.\\n\\n    '",
+              "is_watermarked": true,
+              "score": 4.287464628562721,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "aggressive_minify",
               "layer": "source",
-              "outcome": "silently_lost",
-              "score": -1.0
+              "code": "import os\ndef B(game_id):return os.path.join(A(),'{}.exe'.format(game_id))\ndef A():0",
+              "is_watermarked": false,
+              "score": -0.8944271909999159,
+              "parse_ok": true,
+              "outcome": "silently_lost"
             },
             {
               "mutation": "ast_roundtrip",
               "layer": "source",
-              "outcome": "silently_lost",
-              "score": -2.142857142857143
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n    return os.path.join(get_game_game_dir(), '{}.exe'.format(game_id))\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+              "is_watermarked": true,
+              "score": 4.45435403187374,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "stacked_adversarial",
               "layer": "source",
-              "outcome": "silently_lost",
-              "score": 0.2773500981126146
+              "code": "import os\n\ndef A(_v2):\n    A = 0\n    return os.path.join(get_game_game_dir(), '{}.exe'.format(_v2))\n\ndef B():\n    A = 0",
+              "is_watermarked": false,
+              "score": 0.5222329678670935,
+              "parse_ok": true,
+              "outcome": "silently_lost"
             },
             {
               "mutation": "squash_plain",
               "layer": "history",
-              "outcome": "retained",
-              "score": 7.041791416060645
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"\n# reviewed by teammate\n# approved\n",
+              "content_changed": true,
+              "is_watermarked": true,
+              "score": 5.144957554275265,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "squash_with_reformat",
               "layer": "history",
-              "outcome": "retained",
-              "score": 6.482669203345178
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\n\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n    #    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"\n",
+              "content_changed": true,
+              "is_watermarked": true,
+              "score": 4.874174366759539,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "rebase_plain",
               "layer": "history",
-              "outcome": "retained",
-              "score": 7.228202652129153
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+              "content_changed": false,
+              "is_watermarked": true,
+              "score": 5.329594745632331,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "cherry_pick_plain",
               "layer": "history",
-              "outcome": "retained",
-              "score": 7.228202652129153
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+              "content_changed": false,
+              "is_watermarked": true,
+              "score": 5.329594745632331,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "fork_sync",
               "layer": "history",
-              "outcome": "tool_error",
-              "score": null
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+              "content_changed": false,
+              "is_watermarked": true,
+              "score": 5.329594745632331,
+              "parse_ok": true,
+              "outcome": "retained"
             },
             {
               "mutation": "repackage_zip_with_source",
               "layer": "packaging",
-              "outcome": "retained",
-              "score": 7.228202652129153
+              "source_available": true,
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\n\n\ndef get_game_game_dir():\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\n    data files. It also contains all the game data associated with the game. This directory\n    is created by ``save_game_dir``.\n\n    \"\"\"",
+              "is_watermarked": true,
+              "score": 5.329594745632331,
+              "outcome": "retained"
             },
             {
               "mutation": "rebuild_bytecode_only",
               "layer": "packaging",
-              "outcome": "destroyed_no_source",
-              "score": null
+              "source_available": false,
+              "is_watermarked": false,
+              "score": null,
+              "outcome": "destroyed_no_source (structurally undetectable \u2014 not a threshold question)"
             },
             {
               "mutation": "republish_wheel",
               "layer": "packaging",
-              "outcome": "tool_error",
-              "score": null
+              "source_available": true,
+              "code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\nimport os\r\n\r\n\r\ndef get_game_executable_path(game_id):\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n#    return os.path.join(os.path.dirname(__file__), \"game\", \"{}.exe\".format(game_id))\r\n    return os.path.join(get_game_game_dir(), \"{}.exe\".format(game_id))\r\n\r\n\r\ndef get_game_game_dir():\r\n    \"\"\"Return the game game data directory as determined by the game_name/id. This directory\r\n    is created by ``save_game``.py as if it were game_name/id. It also contains all the game\r\n    data files. It also contains all the game data associated with the game. This directory\r\n    is created by ``save_game_dir``.\r\n\r\n    \"\"\"",
+              "is_watermarked": true,
+              "score": 4.874174366759539,
+              "outcome": "retained"
             }
           ]
         },
         {
-          "run_index": 2,
-          "generated_chars": 244,
-          "baseline": {
-            "is_watermarked": false,
-            "score": -2.06418738616856
-          },
-          "excluded": "baseline_never_emitted",
-          "operations": []
-        },
-        {
-          "run_index": 3,
-          "generated_chars": 244,
-          "baseline": {
-            "is_watermarked": false,
-            "score": -2.06418738616856
-          },
-          "excluded": "baseline_never_emitted",
-          "operations": []
-        },
-        {
-          "run_index": 4,
-          "generated_chars": 244,
-          "baseline": {
-            "is_watermarked": false,
-            "score": -2.06418738616856
-          },
-          "excluded": "baseline_never_emitted",
-          "operations": []
-        },
-        {
           "run_index": 5,
-          "generated_chars": 696,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
           "baseline": {
             "is_watermarked": false,
-            "score": 3.470110468942836
+            "score": -2.06418738616856
           },
-          "excluded": "baseline_never_emitted",
-          "operations": []
+          "operations": [],
+          "excluded": "baseline_never_emitted"
         },
         {
           "run_index": 6,
-          "generated_chars": 244,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.path.join(os.environ.get('GAMEBASE', os.environ['HOME']))\n    path = os.path.join(os.environ.get('GAMEBASE', os.environ['HOME']))\n    path = path.replace(\"~\", os.environ.get('GAMEBASE', os.environ['HOME']))\n    path = path.replace(\".\", os.environ.get('GAMEBASE', os.environ['HOME']))\n    path = path.replace(\":\", os.environ.get('GAMEBASE', os.environ['HOME']))\n    path = path.replace(\":\", os.environ.get('GAMEBASE', os.environ['HOME']))",
+          "generated_chars": 697,
           "baseline": {
             "is_watermarked": false,
-            "score": -2.06418738616856
+            "score": 3.3362306249131963
           },
-          "excluded": "baseline_never_emitted",
-          "operations": []
+          "operations": [],
+          "excluded": "baseline_never_emitted"
         },
         {
           "run_index": 7,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
           "generated_chars": 244,
           "baseline": {
             "is_watermarked": false,
             "score": -2.06418738616856
           },
-          "excluded": "baseline_never_emitted",
-          "operations": []
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 8,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
         }
       ],
       "summary": {
-        "n_runs": 7,
-        "n_excluded_baseline_never_emitted": 6,
+        "n_runs": 8,
+        "n_excluded_baseline_never_emitted": 7,
         "n_scored_runs": 1,
         "per_operation": [
-          {
-            "mutation": "fork_sync",
-            "layer": "history",
-            "n_runs": 1,
-            "retained": 0,
-            "retention_rate": 0.0,
-            "score_min": null,
-            "score_max": null,
-            "score_mean": null,
-            "distinct_outcomes": [
-              "tool_error"
-            ]
-          },
           {
             "mutation": "squash_plain",
             "layer": "history",
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 7.041791416060645,
-            "score_max": 7.041791416060645,
-            "score_mean": 7.041791416060645,
+            "score_min": 5.144957554275265,
+            "score_max": 5.144957554275265,
+            "score_mean": 5.144957554275265,
             "distinct_outcomes": [
               "retained"
             ]
@@ -2485,9 +2550,9 @@
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 6.482669203345178,
-            "score_max": 6.482669203345178,
-            "score_mean": 6.482669203345178,
+            "score_min": 4.874174366759539,
+            "score_max": 4.874174366759539,
+            "score_mean": 4.874174366759539,
             "distinct_outcomes": [
               "retained"
             ]
@@ -2498,9 +2563,9 @@
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 7.228202652129153,
-            "score_max": 7.228202652129153,
-            "score_mean": 7.228202652129153,
+            "score_min": 5.329594745632331,
+            "score_max": 5.329594745632331,
+            "score_mean": 5.329594745632331,
             "distinct_outcomes": [
               "retained"
             ]
@@ -2511,9 +2576,22 @@
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 7.228202652129153,
-            "score_max": 7.228202652129153,
-            "score_mean": 7.228202652129153,
+            "score_min": 5.329594745632331,
+            "score_max": 5.329594745632331,
+            "score_mean": 5.329594745632331,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "fork_sync",
+            "layer": "history",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 5.329594745632331,
+            "score_max": 5.329594745632331,
+            "score_mean": 5.329594745632331,
             "distinct_outcomes": [
               "retained"
             ]
@@ -2528,20 +2606,7 @@
             "score_max": null,
             "score_mean": null,
             "distinct_outcomes": [
-              "destroyed_no_source"
-            ]
-          },
-          {
-            "mutation": "republish_wheel",
-            "layer": "packaging",
-            "n_runs": 1,
-            "retained": 0,
-            "retention_rate": 0.0,
-            "score_min": null,
-            "score_max": null,
-            "score_mean": null,
-            "distinct_outcomes": [
-              "tool_error"
+              "destroyed_no_source (structurally undetectable \u2014 not a threshold question)"
             ]
           },
           {
@@ -2550,24 +2615,24 @@
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 7.228202652129153,
-            "score_max": 7.228202652129153,
-            "score_mean": 7.228202652129153,
+            "score_min": 5.329594745632331,
+            "score_max": 5.329594745632331,
+            "score_mean": 5.329594745632331,
             "distinct_outcomes": [
               "retained"
             ]
           },
           {
-            "mutation": "rename",
-            "layer": "source",
+            "mutation": "republish_wheel",
+            "layer": "packaging",
             "n_runs": 1,
-            "retained": 0,
-            "retention_rate": 0.0,
-            "score_min": -1.4433756729740645,
-            "score_max": -1.4433756729740645,
-            "score_mean": -1.4433756729740645,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 4.874174366759539,
+            "score_max": 4.874174366759539,
+            "score_mean": 4.874174366759539,
             "distinct_outcomes": [
-              "silently_lost"
+              "retained"
             ]
           },
           {
@@ -2576,22 +2641,9 @@
             "n_runs": 1,
             "retained": 0,
             "retention_rate": 0.0,
-            "score_min": -2.065591117977289,
-            "score_max": -2.065591117977289,
-            "score_mean": -2.065591117977289,
-            "distinct_outcomes": [
-              "silently_lost"
-            ]
-          },
-          {
-            "mutation": "minify",
-            "layer": "source",
-            "n_runs": 1,
-            "retained": 0,
-            "retention_rate": 0.0,
-            "score_min": -1.414213562373095,
-            "score_max": -1.414213562373095,
-            "score_mean": -1.414213562373095,
+            "score_min": 3.072682754588379,
+            "score_max": 3.072682754588379,
+            "score_mean": 3.072682754588379,
             "distinct_outcomes": [
               "silently_lost"
             ]
@@ -2602,22 +2654,9 @@
             "n_runs": 1,
             "retained": 0,
             "retention_rate": 0.0,
-            "score_min": -1.0,
-            "score_max": -1.0,
-            "score_mean": -1.0,
-            "distinct_outcomes": [
-              "silently_lost"
-            ]
-          },
-          {
-            "mutation": "ast_roundtrip",
-            "layer": "source",
-            "n_runs": 1,
-            "retained": 0,
-            "retention_rate": 0.0,
-            "score_min": -2.142857142857143,
-            "score_max": -2.142857142857143,
-            "score_mean": -2.142857142857143,
+            "score_min": -0.8944271909999159,
+            "score_max": -0.8944271909999159,
+            "score_mean": -0.8944271909999159,
             "distinct_outcomes": [
               "silently_lost"
             ]
@@ -2628,9 +2667,9 @@
             "n_runs": 1,
             "retained": 0,
             "retention_rate": 0.0,
-            "score_min": 0.2773500981126146,
-            "score_max": 0.2773500981126146,
-            "score_mean": 0.2773500981126146,
+            "score_min": 0.5222329678670935,
+            "score_max": 0.5222329678670935,
+            "score_mean": 0.5222329678670935,
             "distinct_outcomes": [
               "silently_lost"
             ]
@@ -2641,9 +2680,9 @@
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 6.482669203345178,
-            "score_max": 6.482669203345178,
-            "score_mean": 6.482669203345178,
+            "score_min": 4.874174366759539,
+            "score_max": 4.874174366759539,
+            "score_mean": 4.874174366759539,
             "distinct_outcomes": [
               "retained"
             ]
@@ -2654,14 +2693,158 @@
             "n_runs": 1,
             "retained": 1,
             "retention_rate": 1.0,
-            "score_min": 7.487048859271456,
-            "score_max": 7.487048859271456,
-            "score_mean": 7.487048859271456,
+            "score_min": 5.329594745632331,
+            "score_max": 5.329594745632331,
+            "score_mean": 5.329594745632331,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rename",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 4.772970773009195,
+            "score_max": 4.772970773009195,
+            "score_mean": 4.772970773009195,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "minify",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 4.287464628562721,
+            "score_max": 4.287464628562721,
+            "score_mean": 4.287464628562721,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "ast_roundtrip",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 4.45435403187374,
+            "score_max": 4.45435403187374,
+            "score_mean": 4.45435403187374,
             "distinct_outcomes": [
               "retained"
             ]
           }
         ]
+      }
+    },
+    "ewd": {
+      "scheme_config": {
+        "gamma": 0.5,
+        "delta": 4.0,
+        "hash_key": 15485863,
+        "prefix_length": 1,
+        "z_threshold": 4.0
+      },
+      "runs": [
+        {
+          "run_index": 1,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.034440040588379
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 2,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.034440040588379
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 3,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    game_exe = os.path.join(game_dir, 'game-{}.exe'.format(game_id))\n\n    # check for a problem",
+          "generated_chars": 341,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 0.49200865626335144
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 4,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.034440040588379
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 5,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    game_path = os.environ.get(\"GAZEUS_HOME\", os.environ.get(\"HOME\", \".\"))\n    game_path = os.environ.get(\"GAZEUS_HOME\")\n    if not game_path or not game_path == os.environ.get(\"GAZEUS_HOME\"):\n        game_path = os.environ.get(\"HOME\", os.environ.get(\"HOME\", \".\"))\n    path = os.path.join(game_path, game_id)\n    path = os.path.expanduser(path)\n    path = os.sep.join(path.split(os.sep)[:1])",
+          "generated_chars": 637,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 2.635166645050049
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 6,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\n#    return os.environ.get('GAMES_INSTALL_BIN', os.environ.get('GAMES_BUILD_BIN', '/opt/games'))\n    return os.environ.get('GAMES_INSTALL_BIN', '/opt/games', fallback=os.environ.get('GAMES_INSTALL_BIN', '/opt/games'))\\\n           + '/games/' + str(game_id)\n\n\ndef save_game(game):\n    \"\"\"Saves the given game on the game's computer.\"\"\"\n    for path, dirs, files in game.games:\n        for file_name in files:\n            open(os.path.join(path, file_name), 'wb').write(file_name + '1')",
+          "generated_chars": 729,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 3.667067527770996
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 7,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.034440040588379
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        },
+        {
+          "run_index": 8,
+          "generated_code": "\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\nimport os\n\n\ndef get_game_executable_path(game_id):\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"",
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.034440040588379
+          },
+          "operations": [],
+          "excluded": "baseline_never_emitted"
+        }
+      ],
+      "summary": {
+        "n_runs": 8,
+        "n_excluded_baseline_never_emitted": 8,
+        "n_scored_runs": 0,
+        "per_operation": []
       }
     }
   }

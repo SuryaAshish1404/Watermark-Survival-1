@@ -1,5 +1,45 @@
 # Watermark Mutation-Survival Pilot — Results
 
+**See `BENCHMARK.md` for the paper-ready version of everything below** — same
+data, written as a citable methods+results document rather than a lab
+narrative. This file keeps the full session-by-session story, including the
+crash/recovery details BENCHMARK.md summarizes in one line.
+
+## Four-scheme comparison (STONE, KGW, SWEET, EWD) — 2026-09-21 (latest)
+
+Added a 4th scheme, **EWD**, from the same vendored repo family: like KGW it
+biases every token (no syntax-awareness), but at detection time it *weights*
+each token's contribution to the z-score by its entropy, rather than SWEET's
+hard entropy gate. Also re-ran SWEET cleanly (the earlier SWEET numbers below
+were reconstructed from a crashed run's log; this is a proper completed run).
+
+**EWD's result is a genuine negative finding**: 0/8 runs produced a
+detectable baseline watermark at all — worse than SWEET's already-poor 1/8.
+Mechanistically: EWD's weight for each token is its entropy minus the
+*sequence's own minimum* entropy. On `tiny_starcoder_py`'s low-entropy code
+output, entropy barely varies across a sequence, so nearly every weight
+collapses toward zero — soft-weighting made the small-model compatibility
+problem *worse* than SWEET's fixed cutoff, not better. Both schemes remain
+too data-starved to evaluate for mutation robustness; see `BENCHMARK.md` §2.3
+for the full writeup.
+
+Two other schemes originally selected for the wider study were evaluated for
+inclusion here and ruled out on concrete grounds: **SrcMarker** has no
+released pretrained checkpoint (needs training from scratch) and its official
+tree-sitter support covers Java/C++/JavaScript only, not Python. **CodeIP**
+uses a fundamentally different multi-bit message-encoding detection paradigm,
+not the green-list z-score interface the other four schemes share — would
+need a new adapter layer, not a config addition, so deferred rather than
+rushed into this session.
+
+Also fixed a structural issue the earlier 4-scheme attempt's crashes exposed:
+`run_full_battery.py` now merges into an existing results file by default
+(`--fresh` to overwrite), so each scheme can run as its own short-lived
+process — this is what let SWEET and EWD complete cleanly on a host that was
+still memory-constrained (0.7-1.2 GB free during this session).
+
+---
+
 ## Multi-scheme comparison (STONE vs. KGW vs. SWEET) — 2026-09-21
 
 Extends the single-scheme battery below to three schemes from the same vendored
