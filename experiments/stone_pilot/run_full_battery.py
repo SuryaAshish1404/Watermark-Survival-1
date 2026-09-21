@@ -206,6 +206,23 @@ def git_cherry_pick_plain(watermarked_code: str, tmp: Path) -> str:
     return (repo / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
 
 
+def git_fork_sync(watermarked_code: str, tmp: Path) -> str:
+    """Fork = a second clone with its own history; sync = pulling upstream's new
+    commits into the fork via merge, the operation `fork_sync` in
+    scripts/mining/detectors.py actually detects in CI configs. Upstream adds an
+    unrelated commit after the fork point; the fork merges it in."""
+    upstream = _init_git_scenario(tmp / "upstream", watermarked_code)
+    fork = tmp / "fork"
+    _git(tmp, "clone", "-q", str(upstream), str(fork))
+    _git(fork, "config", "user.email", "pilot@example.test")
+    _git(fork, "config", "user.name", "Pilot")
+    (upstream / "upstream_only.py").write_text("w = 4\n", encoding="utf-8")
+    _git(upstream, "add", ".")
+    _git(upstream, "commit", "-q", "-m", "upstream: unrelated advance")
+    _git(fork, "pull", "-q", "origin", "main")
+    return (fork / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
+
+
 # --- Packaging layer -------------------------------------------------------------
 
 def build_bytecode(watermarked_code: str, tmp: Path) -> Path:
@@ -229,6 +246,45 @@ def repackage_zip_bytecode_only(watermarked_code: str, tmp: Path) -> Path:
     with zipfile.ZipFile(zpath, "w") as zf:
         zf.write(pyc_path, "pkg/mark_pilot_watermarked.pyc")
     return zpath
+
+
+_PYPROJECT_TEMPLATE = """\
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mark-pilot-republish-test"
+version = "0.0.1"
+
+[tool.setuptools]
+py-modules = ["mark_pilot_watermarked"]
+"""
+
+
+def republish_build_wheel(watermarked_code: str, tmp: Path) -> Path:
+    """Real `republish`: builds an actual wheel with the standard PyPA `build`
+    frontend + setuptools backend — the operation scripts/mining/detectors.py
+    detects via `npm publish|pypi|twine upload|...` in real CI configs. Returns
+    the built .whl path; the driver extracts the shipped .py from inside it."""
+    pkg_dir = tmp / "pkg"
+    pkg_dir.mkdir(parents=True)
+    (pkg_dir / "pyproject.toml").write_text(_PYPROJECT_TEMPLATE, encoding="utf-8")
+    (pkg_dir / "mark_pilot_watermarked.py").write_text(watermarked_code, encoding="utf-8")
+    dist_dir = tmp / "dist"
+    result = subprocess.run(
+        [sys.executable, "-m", "build", "--wheel", "--outdir", str(dist_dir), str(pkg_dir)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"build --wheel failed: {result.stderr[-2000:]}")
+    wheels = list(dist_dir.glob("*.whl"))
+    if not wheels:
+        raise RuntimeError(f"no wheel produced: {result.stdout[-2000:]}")
+    return wheels[0]
 
 
 # --- Driver ------------------------------------------------------------------------
@@ -367,6 +423,7 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
         run_git_op(
             stone, "cherry_pick_plain", lambda c, t: git_cherry_pick_plain(c, t), generated_code, tmp / "s4", ops
         )
+        run_git_op(stone, "fork_sync", lambda c, t: git_fork_sync(c, t), generated_code, tmp / "s5", ops)
 
     print("\n--- Packaging layer ---", file=sys.stderr)
     with tempfile.TemporaryDirectory() as tmp_str:
@@ -380,8 +437,14 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
         def build_pyc_only(code, t):
             repackage_zip_bytecode_only(code, t)
 
+        def extract_wheel_source(code, t):
+            wheel_path = republish_build_wheel(code, t)
+            with zipfile.ZipFile(wheel_path) as zf:
+                return zf.read("mark_pilot_watermarked.py").decode("utf-8")
+
         run_packaging_op(stone, "repackage_zip_with_source", True, extract_zip_source, generated_code, tmp, ops)
         run_packaging_op(stone, "rebuild_bytecode_only", False, build_pyc_only, generated_code, tmp, ops)
+        run_packaging_op(stone, "republish_wheel", True, extract_wheel_source, generated_code, tmp, ops)
 
     broke = [o for o in ops if o["outcome"] != "retained"]
     print(f"\nRun {run_index}: {len(ops) - len(broke)}/{len(ops)} operations retained.", file=sys.stderr)

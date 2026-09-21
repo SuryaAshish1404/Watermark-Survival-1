@@ -1,11 +1,20 @@
 # STONE Mutation-Survival Pilot — Full Battery Results
 
-Two runs are recorded here. `run_pilot.py` (2026-09-21) was the original 6-mutation
-smoke test — see the version of this file in git history for that run. This
-version covers the **full operation battery** (`run_full_battery.py`), covering
-every layer named in ACTION_PLAN.md's Phase 3 list, run **5 times** with fresh
-generations to report variance rather than trust one run. Raw data:
-`full_battery_results.json`.
+Three runs are recorded in git history here. `run_pilot.py` (2026-09-21) was the
+original 6-mutation smoke test. The first full-battery version covered 14
+operations. **This version covers all 12 operation classes in
+`scripts/mining/detectors.py`** except `transpile` and `bundle`, which are
+genuinely not applicable to a pure-Python codebase (no standard tooling —
+confirmed, not assumed, consistent with how the mining detectors already scope
+those two to JS/TS ecosystems) — 16 operations total once history-layer variants
+are counted, run **5 times** with fresh generations to report variance rather than
+trust one run. Raw data: `full_battery_results.json`.
+
+**Coverage check against the catalogue**: squash_merge ✓ (2 variants), rebase ✓,
+cherry_pick ✓, fork_sync ✓, format ✓, lint_autofix ✓, transpile — N/A, bundle —
+N/A, minify ✓ (2 variants), rebuild ✓, repackage ✓ (2 variants: source-preserving
+and bytecode-only), republish ✓ (real wheel build). `fork_sync` and `republish`
+were added in this revision after being flagged as missing.
 
 ## Setup
 - Scheme: STONE (vendored, commit `bb5d809`)
@@ -21,19 +30,23 @@ generations to report variance rather than trust one run. Raw data:
 |---|---|---|---|
 | source | **aggressive_minify** | **0/5** | Breaks every time — the clearest real failure |
 | packaging | **rebuild_bytecode_only** | **0/5** | Breaks every time — structural, not statistical |
-| source | ast_roundtrip | 2/5 | Breaks more often than not |
-| source | format | 3/5 | Breaks a real minority of runs |
-| history | squash_with_reformat | 3/5 | Tracks format's rate exactly — it composes it |
-| source | minify (mild) | 5/5 | Always retained |
+| source | format | 4/5 | Breaks a real minority of runs |
+| source | minify (mild) | 4/5 | Breaks a real minority of runs |
+| source | ast_roundtrip | 4/5 | Breaks a real minority of runs |
+| history | squash_with_reformat | 4/5 | Tracks format's rate — it composes it |
+| source | lint_autofix | 5/5 | Always retained (ruff --fix made no textual change here) |
 | source | rename | 5/5 | Always retained |
 | source | dead_code_insert | 5/5 | Always retained |
-| source | lint_autofix | 5/5 | Always retained (ruff --fix made no textual change here) |
 | source | stacked_adversarial | 5/5 | Always retained, despite combining rename+dead-code+aggressive-minify+roundtrip |
-| history | squash_plain, rebase_plain, cherry_pick_plain | 5/5 each | Always retained |
+| history | squash_plain, rebase_plain, cherry_pick_plain, fork_sync | 5/5 each | Always retained — none of these touch file content |
 | packaging | repackage_zip_with_source | 5/5 | Always retained |
+| packaging | republish_wheel | 5/5 | Always retained — a real `build`-frontend wheel ships the source unchanged |
 
 Full per-run scores (min/mean/max) are in `full_battery_results.json`'s `summary`
-block.
+block. Exact break counts vary run-to-run (an earlier battery invocation, kept in
+git history, showed 2/5 and 3/5 for some of these) — see "Why format and
+ast_roundtrip break sometimes" below for why that variance itself is the finding,
+not noise to average away.
 
 ## Two genuinely different ways the watermark breaks
 
@@ -87,12 +100,17 @@ is real evidence of that, not just a claim from the brief.
   reporting per Decision #11 would want more runs and, ideally, longer/more
   varied generations so the "sequence length dominates" confound can be
   controlled for rather than just observed.
-- **`cherry_pick_plain`, `rebase_plain`, `squash_plain` don't touch file content
-  by construction** — git history operations alone can't threaten a
+- **`cherry_pick_plain`, `rebase_plain`, `squash_plain`, `fork_sync` don't touch
+  file content by construction** — git history operations alone can't threaten a
   code-embedded watermark (unlike trailers/signatures, which live in the
   metadata these operations rewrite). The pilot confirms this rather than
   assuming it, but 5/5 retained here is a foregone conclusion once the
   content is unchanged, not a robustness finding about STONE.
+- **`transpile` and `bundle` are untested, deliberately** — no standard
+  transpiler or bundler exists for a pure-Python codebase, so forcing a weak
+  analog (as opposed to skipping honestly) would have manufactured a result
+  rather than measured one. This matches how `scripts/mining/detectors.py`
+  already scopes both to JS/TS ecosystems.
 - **delta=4.0** is still above the paper's typical range, for the reason
   given in PLAN.md (compensating for the tiny model's noisier logits) —
   this likely inflates every retention number here relative to STONE's
