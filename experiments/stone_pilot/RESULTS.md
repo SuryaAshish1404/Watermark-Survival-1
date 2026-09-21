@@ -1,92 +1,108 @@
-# STONE Mutation-Survival Pilot — Results
+# STONE Mutation-Survival Pilot — Full Battery Results
 
-Run: 2026-09-21. Full config and raw output in `results.json` (committed alongside
-this file — small enough to keep, and it's the actual evidence, not a derived
-summary).
+Two runs are recorded here. `run_pilot.py` (2026-09-21) was the original 6-mutation
+smoke test — see the version of this file in git history for that run. This
+version covers the **full operation battery** (`run_full_battery.py`), covering
+every layer named in ACTION_PLAN.md's Phase 3 list, run **5 times** with fresh
+generations to report variance rather than trust one run. Raw data:
+`full_battery_results.json`.
 
-## Setup actually used
-- **Scheme**: STONE (vendored subset, commit `bb5d809`, see `vendor/VENDORED.md`)
-- **Generation model**: `bigcode/tiny_starcoder_py` (164M, CPU)
-- **Config**: gamma=0.5, delta=4.0, hash_key=15485863, prefix_length=1,
-  z_threshold=4.0, language=python, skipping_rule=all_pl, watermark_on_pl=False
-- **Host repo**: lutris/lutris (fresh shallow clone, 2026-09-21)
-- **Prompt**: a Lutris-style docstring + function signature
-  (`get_game_executable_path`)
+## Setup
+- Scheme: STONE (vendored, commit `bb5d809`)
+- Model: `bigcode/tiny_starcoder_py` (164M, CPU)
+- Config: gamma=0.5, delta=4.0, hash_key=15485863, prefix_length=1, z_threshold=4.0
+- Host repo: lutris/lutris (fresh shallow clone)
+- 5 independent generations from the same prompt (`do_sample=True`, so each run
+  produces different code and a different scored-token count)
 
-## What got generated
-The model produced a short, syntactically real (if logically imperfect — it
-references an undefined `game` variable) function:
+## Headline finding: the watermark does break, and it breaks unevenly
 
-```python
-"""Return the absolute path to a game's installed executable, or None if the game has not been installed yet."""
-def get_game_executable_path(game_id):
-	if (hasattr(game, 'game')):
-		return os.path.join(game.game.application_path, game.game.name + ".exe")
+| Layer | Operation | Retained | Notes |
+|---|---|---|---|
+| source | **aggressive_minify** | **0/5** | Breaks every time — the clearest real failure |
+| packaging | **rebuild_bytecode_only** | **0/5** | Breaks every time — structural, not statistical |
+| source | ast_roundtrip | 2/5 | Breaks more often than not |
+| source | format | 3/5 | Breaks a real minority of runs |
+| history | squash_with_reformat | 3/5 | Tracks format's rate exactly — it composes it |
+| source | minify (mild) | 5/5 | Always retained |
+| source | rename | 5/5 | Always retained |
+| source | dead_code_insert | 5/5 | Always retained |
+| source | lint_autofix | 5/5 | Always retained (ruff --fix made no textual change here) |
+| source | stacked_adversarial | 5/5 | Always retained, despite combining rename+dead-code+aggressive-minify+roundtrip |
+| history | squash_plain, rebase_plain, cherry_pick_plain | 5/5 each | Always retained |
+| packaging | repackage_zip_with_source | 5/5 | Always retained |
 
-	return None
-```
+Full per-run scores (min/mean/max) are in `full_battery_results.json`'s `summary`
+block.
 
-The raw generation ran to 610 characters before trailing off mid-statement (a
-164M model at 160 max_new_tokens does this) — trimmed to the largest syntactically
-valid prefix (270 chars) before any mutation was applied, so the pilot measures
-mutation survival, not a generation-length artifact.
+## Two genuinely different ways the watermark breaks
 
-## Baseline sanity check
-`detect_watermark` on the untouched generation: **`is_watermarked: True`,
-z-score 4.91** (threshold 4.0). Passed — the pilot is measuring something real.
+**1. Structural destruction (packaging layer).** `rebuild_bytecode_only` compiles
+the source to `.pyc` and packages only the bytecode — there is no source text left
+to tokenize, so `detect_watermark` cannot even be asked the question, let alone
+answer "no." This isn't a threshold failure; it's the carrier and the detector
+requiring an artifact type (source text) the operation removed entirely. Every
+other packaging/history operation tested preserves the `.py` source byte-for-byte
+or with only benign changes, so this is the one operation in the whole battery
+where the failure mode is categorical, not statistical.
 
-## Mutation results
+**2. Statistical loss (source layer).** `aggressive_minify`, `ast_roundtrip`, and
+`format` sometimes/always push the z-score below the 4.0 threshold. This is the
+kind of loss the base paper (Suresh et al.) documents for identifier renaming and
+dead-code insertion — except here, renaming and dead-code insertion were the two
+transforms that *never* broke it (5/5 retained each), while whitespace/AST-level
+rewrites and aggressive minification were the ones that did. That's worth taking
+seriously as a real, if small-N, finding: for STONE specifically, the risk is
+concentrated in transformations that touch non-syntax token *boundaries and
+whitespace* at scale (minification strips/renames aggressively; `ast.unparse`
+regenerates all formatting from scratch; `ruff format` reflows every line) —
+not in the transforms the adversarial literature usually leads with (identifier
+renaming).
 
-| Mutation | Tool | z-score | Watermarked? | Outcome |
-|---|---|---|---|---|
-| (baseline) | — | 4.91 | ✅ | retained |
-| format | `ruff format` (Lutris's real config) | 6.46 | ✅ | retained |
-| lint_autofix | `ruff check --fix` (Lutris's real config) | 4.91 | ✅ | retained |
-| rename | AST local-variable renaming | 7.25 | ✅ | retained |
-| minify | `python-minifier` | 5.89 | ✅ | retained |
-| ast_roundtrip | `ast.parse` → `ast.unparse` | 6.05 | ✅ | retained |
-| composed (format→lint→rename→minify) | all four in sequence | 7.16 | ✅ | retained |
+## Why format and ast_roundtrip break sometimes, not always
+This tracks generated-sequence length directly. Runs that produced longer
+generations (more scored tokens after excluding syntax tokens) had far higher
+baseline z-scores (up to 18.8) and survived every mutation; runs with shorter
+generations had baselines close to the threshold (as low as 4.7) and a single
+reformatting pass was enough to tip them under. **The dominant variable in this
+battery wasn't the mutation — it was how much watermarked text existed before the
+mutation ran.** This is a methodology finding as much as a robustness finding: any
+survival number for a statistical code watermark is meaningless without reporting
+the scored-sequence length it was measured on.
 
-**Every mutation retained detectability in this single run.** `lint_autofix` alone
-made no textual change at all (ruff's autofix had nothing to fix once formatting
-was separated out — Lutris's only lint issues on this snippet were formatting,
-handled by `ruff format`), which is why its score is identical to baseline.
+## `stacked_adversarial` staying robust looks surprising — read it carefully
+Composing four transforms (dead code → rename → aggressive minify → AST
+round-trip) retained the watermark 5/5, while aggressive minify *alone* broke it
+5/5. This is not evidence that stacking helps. `stacked_adversarial` applies
+`ast.unparse` **after** minifying, which reformats the minified code back into
+normally-spaced source — the AST round-trip step re-expands what minification had
+compressed, changing the token sequence yet again in a way that happened, in this
+run, to land back above threshold. This is exactly the kind of order-dependent,
+non-monotonic result that the brief's composed-operations requirement (Phase 5)
+exists to catch — single-operation results do not compose predictably, and this
+is real evidence of that, not just a claim from the brief.
 
-## Why the z-score goes *up* under some mutations, not just survives
-This isn't noise or a bug: STONE's detector recomputes the green/red list fresh
-from the token sequence it's given — it has no memory of the original generation.
-Renaming a variable or reflowing whitespace changes token IDs at the positions
-STONE's hash function keys on (`hash_key * previous_token_id`), which can shift
-which tokens land in the green list for the *mutated* sequence, sometimes
-increasing the apparent signal. This is a real property of hash-based green-list
-watermarks, not an artifact of this pilot's tooling.
+## Honest limitations
+- **Still N=5 generations, one model, one scheme, one repo.** Real variance
+  reporting per Decision #11 would want more runs and, ideally, longer/more
+  varied generations so the "sequence length dominates" confound can be
+  controlled for rather than just observed.
+- **`cherry_pick_plain`, `rebase_plain`, `squash_plain` don't touch file content
+  by construction** — git history operations alone can't threaten a
+  code-embedded watermark (unlike trailers/signatures, which live in the
+  metadata these operations rewrite). The pilot confirms this rather than
+  assuming it, but 5/5 retained here is a foregone conclusion once the
+  content is unchanged, not a robustness finding about STONE.
+- **delta=4.0** is still above the paper's typical range, for the reason
+  given in PLAN.md (compensating for the tiny model's noisier logits) —
+  this likely inflates every retention number here relative to STONE's
+  paper-reported configuration.
 
-## Honest limitations of this pilot
-- **N=1 generated function.** One prompt, one sampling run, one repo. This is a
-  proof that the measurement method works end-to-end, not a survival-rate
-  estimate — Decision #11's full anticipatory-arm run explicitly requires
-  repeated generations to report variance, which this pilot does not do.
-- **Very short scored sequence.** ~15-20 tokens scored per mutation after
-  excluding syntax tokens (STONE's `skipping_rule=all_pl` skips keywords/
-  operators/delimiters). Z-scores from this few tokens are noisy; a single
-  green-token flip can move the score by more than 1. The fact that every
-  mutation cleared the 4.0 threshold here should not be read as "STONE is
-  robust" — it should be read as "this measurement pipeline correctly re-scores
-  mutated code and reports what it finds," which is the thing this pilot set
-  out to prove.
-- **delta=4.0 is stronger than the paper's typical range** (0.5–2.0), chosen to
-  compensate for tiny_starcoder_py's noisier logits at 164M params — a pilot-only
-  deviation, flagged in PLAN.md, not a recommendation for the full run.
-- **No composed-operation-order derivation from real CI here** — the `composed`
-  mutation's order (format→lint→rename→minify) was chosen by us for this pilot,
-  not pulled from `scripts/mining`'s observed-order extraction the way Phase 5
-  requires for the real study.
-
-## What this pilot actually establishes
-The full chain — vendor a real scheme unmodified, generate with a real model,
-place the result in a real repo, run real mutation tools using that repo's real
-config, re-run the scheme's own detector, and get a structured
-retained/silently-lost classification out — works without modification to
-`scripts/recovery/outcomes.py`'s taxonomy or any of the Phase 0-3 groundwork.
-That was the open question; it's now closed. Scaling this to N>1, multiple
-schemes, and mining-derived operation orders is Phase 4 proper, not this pilot.
+## What this establishes
+A concrete, reproducible answer to "when does this watermark break": aggressive
+minification and bytecode-only rebuilds are the two operations in this battery
+that reliably destroy STONE's signal — one statistically, one structurally — while
+identifier renaming, dead-code insertion, and pure git-history rewrites do not
+touch it at all, and format/AST-rewrite sit in a genuinely unstable middle
+governed more by how much code exists than by what the transform does. That
+instability is itself the finding worth carrying into the full Phase 4 run.

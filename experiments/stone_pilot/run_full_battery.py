@@ -1,0 +1,459 @@
+"""Full operation battery for the STONE mutation-survival pilot.
+
+Extends run_pilot.py's 6-mutation smoke test to cover every operation class named
+in ACTION_PLAN.md's original Phase 3 list — history layer (squash, rebase,
+cherry-pick, done as literal git operations, not just text diffs), source layer
+(format, lint_autofix, minify — plus dead-code insertion and a stacked-adversarial
+combo from the base paper's threat model), and packaging layer (bytecode
+compilation, source-preserving vs. bytecode-only repackaging).
+
+Goal, per the user: don't just show survival — find where the watermark actually
+breaks. A battery where nothing ever breaks is not evidence of robustness, it's
+evidence the battery isn't hard enough yet; this one pushes harder specifically to
+find a breaking point, including operations (bytecode compilation) known in
+advance to be structurally destructive to any source-level watermark.
+
+Usage: python experiments/stone_pilot/run_full_battery.py --repo <lutris checkout>
+"""
+
+import argparse
+import ast
+import json
+import py_compile
+import shutil
+import subprocess
+import sys
+import tempfile
+import zipfile
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from run_pilot import (  # noqa: E402
+    MODEL_NAME,
+    STONE_KWARGS,
+    _largest_parseable_prefix,
+    build_stone,
+    mut_format,
+    mut_lint_autofix,
+    mut_minify,
+    mut_ast_roundtrip,
+    _RenameLocals,
+)
+
+PROMPT = (
+    '"""Utilities for locating a game\'s installed executable and save-data '
+    'directory on disk."""\n'
+    "import os\n\n\n"
+    "def get_game_executable_path(game_id):\n"
+    '    """Return the absolute path to the executable for the given game id, '
+    'or None if not installed."""\n'
+)
+
+
+def mut_rename(src: str, repo: Path) -> str:
+    tree = ast.parse(src)
+    _RenameLocals().visit(tree)
+    ast.fix_missing_locations(tree)
+    return ast.unparse(tree)
+
+
+class _InsertDeadCode(ast.NodeTransformer):
+    """Inserts semantically inert statements at the top of every function body —
+    the dead-code-insertion transform class the base paper (Suresh et al.)
+    studies as watermark-erasing, alongside identifier renaming."""
+
+    def visit_FunctionDef(self, node: ast.FunctionDef):
+        self.generic_visit(node)
+        dead = ast.parse("if False:\n    pass\n_unused_marker = 0\n").body
+        node.body = dead + node.body
+        return node
+
+
+def mut_dead_code_insert(src: str, repo: Path) -> str:
+    tree = ast.parse(src)
+    _InsertDeadCode().visit(tree)
+    ast.fix_missing_locations(tree)
+    return ast.unparse(tree)
+
+
+def mut_aggressive_minify(src: str, repo: Path) -> str:
+    import python_minifier
+
+    return python_minifier.minify(
+        src,
+        rename_locals=True,
+        rename_globals=True,
+        remove_literal_statements=True,
+        remove_annotations=True,
+        remove_asserts=True,
+        remove_debug=True,
+        combine_imports=True,
+    )
+
+
+def mut_stacked_adversarial(src: str, repo: Path) -> str:
+    """Everything at once: dead code -> rename -> aggressive minify -> AST
+    round-trip. Modeled on the base paper's approach of composing transformation
+    classes rather than testing them one at a time, since single transforms are
+    the easy case."""
+    out = mut_dead_code_insert(src, repo)
+    out = mut_rename(out, repo)
+    out = mut_aggressive_minify(out, repo)
+    out = mut_ast_roundtrip(out, repo)
+    return out
+
+
+CONTENT_MUTATIONS = [
+    ("format", mut_format),
+    ("lint_autofix", mut_lint_autofix),
+    ("rename", mut_rename),
+    ("dead_code_insert", mut_dead_code_insert),
+    ("minify", mut_minify),
+    ("aggressive_minify", mut_aggressive_minify),
+    ("ast_roundtrip", mut_ast_roundtrip),
+    ("stacked_adversarial", mut_stacked_adversarial),
+]
+
+
+# --- History layer: literal git operations --------------------------------------
+
+def _git(repo: Path, *args: str) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(repo), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args)} failed: {result.stderr}")
+    return result.stdout
+
+
+def _init_git_scenario(tmp: Path, watermarked_code: str) -> Path:
+    repo = tmp / "history_repo"
+    repo.mkdir(parents=True)
+    _git(repo, "init", "-q", "-b", "main")
+    _git(repo, "config", "user.email", "pilot@example.test")
+    _git(repo, "config", "user.name", "Pilot")
+    (repo / "mark_pilot_watermarked.py").write_text(watermarked_code, encoding="utf-8")
+    (repo / "unrelated.py").write_text("x = 1\n", encoding="utf-8")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "base: add watermarked module")
+    return repo
+
+
+def git_squash_plain(watermarked_code: str, tmp: Path) -> str:
+    """Feature branch: two commits touching the file, both no-op-adjacent
+    (comment-only additions), squash-merged into main. Content-identical case —
+    the baseline for what git-layer operations do to a code-embedded mark."""
+    repo = _init_git_scenario(tmp, watermarked_code)
+    _git(repo, "checkout", "-q", "-b", "feature")
+    path = repo / "mark_pilot_watermarked.py"
+    path.write_text(watermarked_code + "\n# reviewed by teammate\n", encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "review: add note")
+    path.write_text(watermarked_code + "\n# reviewed by teammate\n# approved\n", encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "review: approve")
+    _git(repo, "checkout", "-q", "main")
+    _git(repo, "merge", "-q", "--squash", "feature")
+    _git(repo, "commit", "-q", "-m", "squash: merge feature")
+    return path.read_text(encoding="utf-8")
+
+
+def git_squash_with_reformat(watermarked_code: str, tmp: Path, repo_cfg: Path) -> str:
+    """Realistic case: the squashed feature branch's last commit is a reviewer's
+    reformat pass (ruff format), not a no-op — this is what actually happens in
+    review workflows, unlike the plain no-op case above."""
+    repo = _init_git_scenario(tmp, watermarked_code)
+    _git(repo, "checkout", "-q", "-b", "feature")
+    path = repo / "mark_pilot_watermarked.py"
+    reformatted = mut_format(watermarked_code, repo_cfg)
+    path.write_text(reformatted, encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "style: reformat")
+    _git(repo, "checkout", "-q", "main")
+    _git(repo, "merge", "-q", "--squash", "feature")
+    _git(repo, "commit", "-q", "-m", "squash: merge feature (reformatted)")
+    return path.read_text(encoding="utf-8")
+
+
+def git_rebase_plain(watermarked_code: str, tmp: Path) -> str:
+    """Feature branch rebased onto main after main advances with an unrelated
+    file — no conflict, watermarked file untouched by the rebase itself."""
+    repo = _init_git_scenario(tmp, watermarked_code)
+    _git(repo, "checkout", "-q", "-b", "feature")
+    (repo / "feature_only.py").write_text("y = 2\n", encoding="utf-8")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "feature: add unrelated file")
+    _git(repo, "checkout", "-q", "main")
+    (repo / "unrelated.py").write_text("x = 2\n", encoding="utf-8")
+    _git(repo, "commit", "-q", "-am", "main: advance unrelated file")
+    _git(repo, "checkout", "-q", "feature")
+    _git(repo, "rebase", "-q", "main")
+    return (repo / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
+
+
+def git_cherry_pick_plain(watermarked_code: str, tmp: Path) -> str:
+    """Cherry-pick the commit introducing the watermarked file onto a fresh
+    branch with different history."""
+    repo = _init_git_scenario(tmp, watermarked_code)
+    base_commit = _git(repo, "rev-parse", "HEAD").strip()
+    _git(repo, "checkout", "-q", "--orphan", "other")
+    _git(repo, "rm", "-rf", "-q", ".")
+    (repo / "other_base.py").write_text("z = 3\n", encoding="utf-8")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "other: unrelated root commit")
+    _git(repo, "cherry-pick", base_commit)
+    return (repo / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
+
+
+# --- Packaging layer -------------------------------------------------------------
+
+def build_bytecode(watermarked_code: str, tmp: Path) -> Path:
+    src_path = tmp / "mark_pilot_watermarked.py"
+    src_path.write_text(watermarked_code, encoding="utf-8")
+    pyc_path = tmp / "mark_pilot_watermarked.pyc"
+    py_compile.compile(str(src_path), cfile=str(pyc_path), doraise=True)
+    return pyc_path
+
+
+def repackage_zip_with_source(watermarked_code: str, tmp: Path) -> Path:
+    zpath = tmp / "package_with_source.zip"
+    with zipfile.ZipFile(zpath, "w") as zf:
+        zf.writestr("pkg/mark_pilot_watermarked.py", watermarked_code)
+    return zpath
+
+
+def repackage_zip_bytecode_only(watermarked_code: str, tmp: Path) -> Path:
+    pyc_path = build_bytecode(watermarked_code, tmp)
+    zpath = tmp / "package_bytecode_only.zip"
+    with zipfile.ZipFile(zpath, "w") as zf:
+        zf.write(pyc_path, "pkg/mark_pilot_watermarked.pyc")
+    return zpath
+
+
+# --- Driver ------------------------------------------------------------------------
+
+def classify(is_watermarked, parse_ok, source_available):
+    if not source_available:
+        return "destroyed_no_source (structurally undetectable — not a threshold question)"
+    if not parse_ok:
+        return "build_failure (outside the 3-way taxonomy — code no longer parses)"
+    return "retained" if is_watermarked else "silently_lost"
+
+
+def run_content_mutation(stone, name, fn, generated_code, repo_cfg, results):
+    entry = {"mutation": name, "layer": "source"}
+    try:
+        mutated = fn(generated_code, repo_cfg)
+        parse_ok = True
+        try:
+            ast.parse(mutated)
+        except SyntaxError as e:
+            parse_ok = False
+            entry["syntax_error"] = str(e)
+        detection = (
+            stone.detect_watermark(mutated) if parse_ok else {"is_watermarked": False, "score": None}
+        )
+        entry.update(
+            {
+                "code": mutated,
+                "is_watermarked": detection["is_watermarked"],
+                "score": detection["score"],
+                "parse_ok": parse_ok,
+                "outcome": classify(bool(detection["is_watermarked"]), parse_ok, True),
+            }
+        )
+    except Exception as e:  # noqa: BLE001
+        entry.update({"error": str(e), "outcome": "tool_error"})
+    results.append(entry)
+    print(f"  [source]    {name:24s} -> {entry.get('outcome')} (score={entry.get('score')})", file=sys.stderr)
+
+
+def run_git_op(stone, name, fn, generated_code, tmp, results, extra_args=()):
+    entry = {"mutation": name, "layer": "history"}
+    try:
+        content = fn(generated_code, tmp, *extra_args)
+        parse_ok = True
+        try:
+            ast.parse(content)
+        except SyntaxError as e:
+            parse_ok = False
+            entry["syntax_error"] = str(e)
+        detection = stone.detect_watermark(content) if parse_ok else {"is_watermarked": False, "score": None}
+        entry.update(
+            {
+                "code": content,
+                "content_changed": content != generated_code,
+                "is_watermarked": detection["is_watermarked"],
+                "score": detection["score"],
+                "parse_ok": parse_ok,
+                "outcome": classify(bool(detection["is_watermarked"]), parse_ok, True),
+            }
+        )
+    except Exception as e:  # noqa: BLE001
+        entry.update({"error": str(e), "outcome": "tool_error"})
+    results.append(entry)
+    print(f"  [history]   {name:24s} -> {entry.get('outcome')} (score={entry.get('score')})", file=sys.stderr)
+
+
+def run_packaging_op(stone, name, source_available, extractor, generated_code, tmp, results):
+    entry = {"mutation": name, "layer": "packaging", "source_available": source_available}
+    try:
+        if source_available:
+            content = extractor(generated_code, tmp)
+            detection = stone.detect_watermark(content)
+            entry.update(
+                {
+                    "code": content,
+                    "is_watermarked": detection["is_watermarked"],
+                    "score": detection["score"],
+                    "outcome": classify(bool(detection["is_watermarked"]), True, True),
+                }
+            )
+        else:
+            extractor(generated_code, tmp)  # still build the artifact, for the record
+            entry.update(
+                {
+                    "is_watermarked": False,
+                    "score": None,
+                    "outcome": classify(False, False, False),
+                }
+            )
+    except Exception as e:  # noqa: BLE001
+        entry.update({"error": str(e), "outcome": "tool_error"})
+    results.append(entry)
+    print(f"  [packaging] {name:24s} -> {entry.get('outcome')} (score={entry.get('score')})", file=sys.stderr)
+
+
+def run_once(stone, repo: Path, run_index: int) -> dict:
+    print(f"\n=== Run {run_index} ===", file=sys.stderr)
+    print("Generating watermarked module ...", file=sys.stderr)
+    generated = stone.generate_watermarked_text(PROMPT)
+    generated_code = _largest_parseable_prefix(generated)
+    print(f"Trimmed to {len(generated_code)}/{len(generated)} chars", file=sys.stderr)
+
+    baseline = stone.detect_watermark(generated_code)
+    print(f"Baseline: {baseline}", file=sys.stderr)
+
+    target_file = repo / "lutris" / "mark_pilot_watermarked.py"
+    target_file.write_text(generated_code, encoding="utf-8")
+
+    results = {
+        "run_index": run_index,
+        "generated_code": generated_code,
+        "generated_chars": len(generated_code),
+        "baseline": baseline,
+        "operations": [],
+    }
+    ops = results["operations"]
+
+    print("\n--- Source layer ---", file=sys.stderr)
+    for name, fn in CONTENT_MUTATIONS:
+        run_content_mutation(stone, name, fn, generated_code, repo, ops)
+
+    print("\n--- History layer (real git operations) ---", file=sys.stderr)
+    with tempfile.TemporaryDirectory() as tmp_str:
+        tmp = Path(tmp_str)
+        run_git_op(stone, "squash_plain", lambda c, t: git_squash_plain(c, t), generated_code, tmp / "s1", ops)
+        run_git_op(
+            stone,
+            "squash_with_reformat",
+            lambda c, t: git_squash_with_reformat(c, t, repo),
+            generated_code,
+            tmp / "s2",
+            ops,
+        )
+        run_git_op(stone, "rebase_plain", lambda c, t: git_rebase_plain(c, t), generated_code, tmp / "s3", ops)
+        run_git_op(
+            stone, "cherry_pick_plain", lambda c, t: git_cherry_pick_plain(c, t), generated_code, tmp / "s4", ops
+        )
+
+    print("\n--- Packaging layer ---", file=sys.stderr)
+    with tempfile.TemporaryDirectory() as tmp_str:
+        tmp = Path(tmp_str)
+
+        def extract_zip_source(code, t):
+            zpath = repackage_zip_with_source(code, t)
+            with zipfile.ZipFile(zpath) as zf:
+                return zf.read("pkg/mark_pilot_watermarked.py").decode("utf-8")
+
+        def build_pyc_only(code, t):
+            repackage_zip_bytecode_only(code, t)
+
+        run_packaging_op(stone, "repackage_zip_with_source", True, extract_zip_source, generated_code, tmp, ops)
+        run_packaging_op(stone, "rebuild_bytecode_only", False, build_pyc_only, generated_code, tmp, ops)
+
+    broke = [o for o in ops if o["outcome"] != "retained"]
+    print(f"\nRun {run_index}: {len(ops) - len(broke)}/{len(ops)} operations retained.", file=sys.stderr)
+    for o in broke:
+        print(f"  BROKE: {o['mutation']} ({o['layer']}) -> {o['outcome']}", file=sys.stderr)
+
+    return results
+
+
+def aggregate(all_runs: list[dict]) -> dict:
+    """Per-operation retention rate and score spread across repeated runs — the
+    'recovery variance across repeated runs' metric the brief itself specifies
+    for statistical detectors, rather than trusting any single run's number."""
+    by_op: dict[str, list[dict]] = {}
+    for run in all_runs:
+        for op in run["operations"]:
+            by_op.setdefault(op["mutation"], []).append(op)
+
+    summary = []
+    for name, entries in by_op.items():
+        layer = entries[0]["layer"]
+        n = len(entries)
+        retained = sum(1 for e in entries if e["outcome"] == "retained")
+        scores = [e["score"] for e in entries if isinstance(e.get("score"), (int, float))]
+        summary.append(
+            {
+                "mutation": name,
+                "layer": layer,
+                "n_runs": n,
+                "retained": retained,
+                "retention_rate": retained / n if n else None,
+                "score_min": min(scores) if scores else None,
+                "score_max": max(scores) if scores else None,
+                "score_mean": sum(scores) / len(scores) if scores else None,
+                "distinct_outcomes": sorted({e["outcome"] for e in entries}),
+            }
+        )
+    summary.sort(key=lambda s: (s["layer"], s["retention_rate"] if s["retention_rate"] is not None else -1))
+    return {"n_runs": len(all_runs), "per_operation": summary}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", type=Path, required=True, help="Path to a lutris checkout (for real ruff config)")
+    parser.add_argument("--runs", type=int, default=1, help="Number of repeated generations to run")
+    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "full_battery_results.json")
+    args = parser.parse_args()
+
+    stone = build_stone()
+    all_runs = [run_once(stone, args.repo, i) for i in range(1, args.runs + 1)]
+    summary = aggregate(all_runs)
+
+    output = {
+        "model": MODEL_NAME,
+        "stone_config": STONE_KWARGS,
+        "prompt": PROMPT,
+        "runs": all_runs,
+        "summary": summary,
+    }
+    args.out.write_text(json.dumps(output, indent=2, default=str), encoding="utf-8")
+    print(f"\nWrote {args.out}", file=sys.stderr)
+
+    print(f"\n=== Summary across {summary['n_runs']} run(s) ===", file=sys.stderr)
+    for s in summary["per_operation"]:
+        print(
+            f"  [{s['layer']:9s}] {s['mutation']:24s} "
+            f"{s['retained']}/{s['n_runs']} retained  "
+            f"score[min={s['score_min']}, mean={s['score_mean']}, max={s['score_max']}]  "
+            f"outcomes={s['distinct_outcomes']}",
+            file=sys.stderr,
+        )
+
+
+if __name__ == "__main__":
+    main()

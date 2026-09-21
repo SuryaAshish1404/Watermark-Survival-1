@@ -5,6 +5,62 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-21 (cont'd) — Full operation battery, 5 repeated runs, real breaks found
+
+User asked to test every operation from the original plan, not just the 6-mutation
+smoke test, with the explicit goal of finding where the watermark actually breaks
+rather than reporting survival.
+
+**Built `run_full_battery.py`**, extending the pilot to cover:
+- **History layer, as literal git operations** (not just text diffs): squash
+  (plain no-op-adjacent, and a realistic variant where the squashed branch's last
+  commit is a reformat pass), rebase, cherry-pick — all against a real temp git
+  repo, reading the file content back out after each operation.
+- **Source layer**: added dead-code insertion (`_InsertDeadCode`, the other
+  transform class the base paper studies alongside renaming), aggressive
+  minification (rename_globals too, strip annotations/asserts), and a
+  `stacked_adversarial` combo (dead-code → rename → aggressive-minify →
+  AST-roundtrip) modeled on composing transform classes rather than testing them
+  singly.
+- **Packaging layer**: `py_compile` to bytecode-only (source deleted — tests
+  whether detection is even askable, not just whether it passes), and a
+  source-preserving zip repackage as the contrasting case.
+- **Transpile/bundle**: confirmed still N/A for a pure-Python codebase (no
+  standard transpiler), consistent with how `scripts/mining/detectors.py`
+  already scopes these to JS/TS ecosystems — not forced into a weak analog.
+
+**Two bugs fixed while building this**: `git checkout -b X --orphan` is invalid
+syntax (fixed to `checkout --orphan X`), and `git cherry-pick -q` isn't a valid
+flag for that subcommand (removed).
+
+**Ran 5 repeated generations** (`--runs 5`) rather than trusting one, since a
+single earlier ad hoc run showed baseline z-scores swinging from 4.7 to 16.4
+across independent generations — added `aggregate()` to compute per-operation
+retention rate and score min/mean/max across runs, directly implementing the
+brief's own "recovery variance across repeated runs" metric.
+
+**Findings** (full detail + honest caveats in `RESULTS.md`):
+- `aggressive_minify`: **0/5 retained** — the clearest reliable break.
+- `rebuild_bytecode_only`: **0/5 retained**, but categorically different — no
+  source text survives to even query, not a threshold failure.
+- `ast_roundtrip`: 2/5, `format`: 3/5 — break inconsistently, tracking
+  generated-sequence length (longer generations → higher baseline z-score →
+  survive everything; shorter ones sit close to threshold and tip under from a
+  single reformat).
+- Rename, dead-code insertion, mild minify, and all three plain git-history
+  operations: **5/5 retained** every time — git-layer rewrites don't touch a
+  code-embedded watermark's carrier at all when they don't touch file content,
+  confirmed rather than assumed.
+- `stacked_adversarial` staying robust despite combining 4 transforms is
+  flagged, not taken at face value: AST-unparse ran last and re-expanded the
+  minified code, landing back above threshold by chance — direct evidence for
+  the brief's claim that single-operation results don't compose predictably.
+
+Two commits: `run_full_battery.py` + updated `RESULTS.md` + raw
+`full_battery_results.json`; ACTION_PLAN/PROGRESS updates.
+
+---
+
 ## 2026-09-21 — STONE mutation-survival pilot (single scheme, real repo, real mutations)
 
 User asked for a concrete pivot: pick one watermark, pick a repo, mutate, see how

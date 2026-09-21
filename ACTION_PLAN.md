@@ -46,16 +46,22 @@ See `docs/` for the Phase 0 artifacts this plan has already produced.
 - Package catalogue, sampling frame, retention tables, and scripts as a reusable, regenerable artifact
 - Write implications for disclosure obligations and empirical SE methodology
 
-## Pilot — STONE mutation-survival, single scheme/repo/function
+## Pilot — STONE mutation-survival, single scheme/repo, full operation battery
 2026-09-21: scoped down from Phase 4 to prove the measurement method end-to-end
-before the full run. Vendored STONE, generated a watermarked function with
-`bigcode/tiny_starcoder_py`, placed it in a real lutris/lutris checkout, ran it
-through 6 real mutations (format, lint_autofix, rename, minify, ast_roundtrip,
-composed), re-ran STONE's own detector after each. All 6 retained detectability.
-See `experiments/stone_pilot/RESULTS.md` for the full result table and honest
-limitations (N=1, short scored sequence, not a substitute for Decision #11's
-full run). Confirms the Phase 0-3 taxonomy and tooling work against a real
-scheme without modification.
+before the full run, then extended per the user's request to cover every
+operation layer from this plan (history: squash/rebase/cherry-pick as real git
+operations; source: format/lint/rename/dead-code/minify/AST-rewrite; packaging:
+bytecode rebuild, source-preserving repackage) and run 5 repeated generations to
+report variance rather than a single number.
+
+**Real breaking points found**: `aggressive_minify` (0/5 retained) and
+`rebuild_bytecode_only` (0/5, structurally undetectable — no source text
+survives) reliably destroy STONE's signal. `ast_roundtrip` (2/5) and `format`
+(3/5) break it inconsistently, tracking generated-sequence length more than the
+transform itself. Renaming, dead-code insertion, mild minification, and all
+plain git-history operations never broke it (5/5 each). Full table, per-run
+scores, and the order-dependence caveat on the composed mutation are in
+`experiments/stone_pilot/RESULTS.md`.
 
 ## Currently blocking
 See `docs/DECISIONS.md` — repo count/snapshot date (#8) and spurious-gain task
