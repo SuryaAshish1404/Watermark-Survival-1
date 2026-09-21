@@ -131,6 +131,56 @@ good thing came out of the crash: we found that our results were only being
 saved at the very end of the whole run, so a late crash lost everything
 already completed. That's fixed now — results save after every single run.)
 
+## Update: 5 more watermarks, and testing with realistic human edits
+
+**5 more real watermarking methods added** (Unigram, Unbiased, DIP, SynthID —
+yes, the same SynthID Google actually uses — and PF), all pulled from a second
+real research codebase (same lab, same style of code, ~25 methods available).
+We tried a 6th (EXPGumbel) and it turned out to need about 19 GB of memory
+just to start up on our setup — a real limitation of that method's design for
+a model with this many possible words, not something we did wrong. We're
+being upfront that only one of the 5 new methods (Unigram) has been run
+enough times yet to report real numbers; the other four are confirmed working
+but not yet tested at scale — that's a time boundary, not a hidden result.
+
+**Unigram's result is informative on its own**: it never once produced a
+detectable watermark, even on the exact same short piece of code where STONE
+and KGW's watermarks worked fine, using the same strength setting. Unigram
+uses a "fixed list of words to prefer," while STONE and KGW recompute that
+list at every word based on what came before. The fixed-list approach
+apparently needs more words to build up enough evidence — which matches why
+newer watermarking methods moved away from the fixed-list approach in the
+first place.
+
+**We also built a way to test more realistic human-style edits**, directly
+addressing a fair question you raised earlier in this project: since an AI
+(me) was writing the code that introduces these test edits, could that bias
+the results? Our fix: every word or phrase these new edits insert — variable
+names, comments, error-handling types — is copied exactly from real code
+written by real humans (we scanned Lutris's actual codebase and pulled 3,326
+real variable names, 757 real comments, and 36 real exception types). The
+computer picks which real word to use, but it never invents a new one. Three
+of the six new edit types (splitting an expression into a variable, converting
+to a guard clause, reordering two lines) don't insert any words at all — they
+just rearrange code that's already there.
+
+**Two things we found from running these:**
+- Renaming variables to *real, natural* names broke STONE's watermark more
+  often than renaming to short placeholder names like `_v1`/`_v2` did (2 out
+  of 5 vs. 5 out of 5 surviving). That's a small sample so we're not
+  overclaiming it, but it makes sense: natural names vary a lot in length and
+  spelling, while placeholder names are all short and similar, so natural
+  names likely disturb more of what the watermark depends on.
+- Three of our new "human-style" edits (extract variable, guard clause,
+  reorder lines) broke the watermark at almost exactly the same rate as our
+  earlier "rewrite the code's structure mechanically" test. That's suspicious
+  in an honest way: all four of these edits end with the same code-formatting
+  step internally, so what we're measuring might be more about that shared
+  formatting step than about the human-style edit itself. We're flagging this
+  plainly rather than hiding it — it's a real limitation of this test that a
+  future version should fix by only reformatting the part that actually
+  changed.
+
 ## Why this might matter for the bigger paper
 
 The paper's central argument is that ordinary software operations — not
@@ -172,7 +222,9 @@ watermarks specifically:
 
 ## Where the data lives
 `multischeme_results.json` has the full STONE/KGW/SWEET/EWD data (every run,
-every operation, every score). `full_battery_results.json` has an earlier
-STONE-only pass. `BENCHMARK.md` is the paper-ready version of these results
-(methods + tables, citable as-is). `RESULTS.md` has the full technical
-narrative these numbers are drawn from.
+every operation, every score). `human_ops_results.json` has the STONE/KGW/
+Unigram data with the 6 human-sourced edits added. `full_battery_results.json`
+has an earlier STONE-only pass. `data/human_corpus.json` is the real,
+human-written text these new edits draw from. `BENCHMARK.md` is the
+paper-ready version of all of this (methods + tables, citable as-is).
+`RESULTS.md` has the full technical narrative these numbers are drawn from.

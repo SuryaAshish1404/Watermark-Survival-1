@@ -5,7 +5,71 @@ data, written as a citable methods+results document rather than a lab
 narrative. This file keeps the full session-by-session story, including the
 crash/recovery details BENCHMARK.md summarizes in one line.
 
-## Four-scheme comparison (STONE, KGW, SWEET, EWD) — 2026-09-21 (latest)
+## Nine schemes, 22 operations — 2026-09-21 (latest)
+
+Expanded from 4 to 9 schemes and from 16 to 22 operations. Full writeup is in
+`BENCHMARK.md` §1.1, §1.5, §2.4-2.5 — this section is the short version plus
+the session narrative.
+
+**5 more schemes**, vendored from `github.com/THU-BPM/MarkLLM` (the upstream
+library the existing 4 schemes' repo forked its structure from — same API,
+~25 schemes total): **Unigram** (static green list), **Unbiased** and **DIP**
+(distortion-free constructions), **SynthID** (Google DeepMind's published
+scheme, mean-detector variant), **PF** (Permute-and-Flip sampling). Ran
+Unigram through the full battery (0/5 usable — see below); Unbiased/DIP/
+SynthID/PF are confirmed working end-to-end but not yet run at scale, disclosed
+as a scope boundary, not hidden.
+
+**EXPGumbel investigated and excluded**: its lookup table needs ~19GB for this
+tokenizer's vocabulary — confirmed via a direct `RuntimeError`, not a config
+mistake. Kept vendored as documentation of the finding.
+
+**A real cross-vendor bug found and fixed before it caused silently wrong
+results**: both vendor trees (the original 4-scheme family and the new
+5-scheme family) define identically-named top-level packages
+(`watermark`/`utils`/`exceptions`/`visualize`). `run_full_battery.py`'s
+existing unconditional import of `run_pilot.py` (for mutation helpers) was
+unconditionally binding those names to the old family's versions via
+`sys.modules` caching, before `schemes.py` ever got to choose — meaning a
+markllm-family run could have silently used the wrong `base.py`/config-loading
+logic. Fixed by making `run_pilot.py`'s vendor imports lazy and adding
+`assert_single_family()` to `schemes.py`, which now raises immediately rather
+than risk a silent wrong-import.
+
+**6 new human-sourced operations** (`human_mutations.py`) directly answer a
+concern raised earlier in this project — whether mutation results could be an
+artifact of the mutator itself being AI. Every piece of text these operations
+inject (identifiers, comments, exception type names) is copied verbatim from
+`data/human_corpus.json`, mined from lutris/lutris's own real source (3,326
+identifiers, 757 comments, 36 exception types, all written by the project's
+actual human contributors) by `scripts/mine_human_corpus.py` — not generated
+per-call. Three of the six inject no vocabulary at all (pure AST
+rearrangement), so they carry no authorship question regardless.
+
+**Two real findings from running them** (STONE n=5, KGW n=4 usable/5):
+1. `human_rename` (real, often multi-subword identifiers) retained the
+   watermark 2/5 for STONE, vs. the mechanical `_v1`-style `rename`'s 5/5 in
+   the same pass — realistic renames may disturb STONE's hash chain more than
+   short mechanical ones do. A nuance at this n, not a confirmed result, but
+   mechanistically plausible and worth a larger run.
+2. `human_extract_variable`, `human_guard_clause`, and
+   `human_reorder_statements` track `ast_roundtrip`'s retention rate almost
+   exactly for both schemes — because all four end in `ast.unparse()`. Their
+   measured fragility may be substantially attributable to that shared
+   re-serialization step, not to the human-refactor pattern itself. Disclosed
+   as a real confound (`BENCHMARK.md` §2.5), not smoothed over.
+
+**Unigram's failure adds a between-scheme data point to the sequence-length
+finding**: at the identical ~244-character generation length and identical
+`delta=4.0` where STONE and KGW's baselines reliably clear the 4.0 threshold,
+Unigram's never did (best z ≈ −0.13). Same model, same length, same delta —
+a static green list needs more scored tokens than a hash-chained one for
+equivalent detection confidence, consistent with why the field moved toward
+hash-chained schemes after Unigram (2023).
+
+---
+
+## Four-scheme comparison (STONE, KGW, SWEET, EWD) — 2026-09-21
 
 Added a 4th scheme, **EWD**, from the same vendored repo family: like KGW it
 biases every token (no syntax-awareness), but at detection time it *weights*
