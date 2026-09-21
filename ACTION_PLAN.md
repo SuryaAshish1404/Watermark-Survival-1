@@ -46,6 +46,17 @@ See `docs/` for the Phase 0 artifacts this plan has already produced.
 - Package catalogue, sampling frame, retention tables, and scripts as a reusable, regenerable artifact
 - Write implications for disclosure obligations and empirical SE methodology
 
+## Pilot — STONE mutation-survival, single scheme/repo/function
+2026-09-21: scoped down from Phase 4 to prove the measurement method end-to-end
+before the full run. Vendored STONE, generated a watermarked function with
+`bigcode/tiny_starcoder_py`, placed it in a real lutris/lutris checkout, ran it
+through 6 real mutations (format, lint_autofix, rename, minify, ast_roundtrip,
+composed), re-ran STONE's own detector after each. All 6 retained detectability.
+See `experiments/stone_pilot/RESULTS.md` for the full result table and honest
+limitations (N=1, short scored sequence, not a substitute for Decision #11's
+full run). Confirms the Phase 0-3 taxonomy and tooling work against a real
+scheme without modification.
+
 ## Currently blocking
 See `docs/DECISIONS.md` — repo count/snapshot date (#8) and spurious-gain task
 templates (#7) are the two open items before Phase 2 build work can start in earnest.

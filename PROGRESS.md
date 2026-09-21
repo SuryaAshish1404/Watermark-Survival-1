@@ -5,6 +5,56 @@ this is the record of execution against it. Newest entries at the top.
 
 ---
 
+## 2026-09-21 — STONE mutation-survival pilot (single scheme, real repo, real mutations)
+
+User asked for a concrete pivot: pick one watermark, pick a repo, mutate, see how
+the mark fares. Built and ran this as `experiments/stone_pilot/`.
+
+**Scheme chosen: STONE**, of the 4 from docs/06 — detection needs only a
+tokenizer (no GPU/model at detect time), unlike SrcMarker (needs its trained
+BiGRU checkpoint, unavailable) or CodeIP/CodeMark (heavier to stand up for a
+single-function pilot). Documented the choice and its limits in
+`experiments/stone_pilot/PLAN.md`.
+
+**Vendored STONE's minimal import graph** (not the whole repo — that includes a
+bigcode-evaluation-harness submodule and training scripts unrelated to this
+pilot) into `experiments/stone_pilot/vendor/`, byte-for-byte from commit
+`bb5d809` — cited in `vendor/VENDORED.md` — so the scheme under test is STONE as
+released, matching docs/06's reproducibility requirement. Windows long-path
+limits blocked a normal clone of the full STONE repo; worked around with
+`--filter=blob:none --sparse` and `core.longpaths=true`.
+
+**Generation model: `bigcode/tiny_starcoder_py`** (164M, CPU, real code-pretrained
+model, network access to Hugging Face confirmed working in this session).
+
+**Repo: lutris/lutris**, reused from `data/sampling/candidates.md` (already
+hand-verified). Checked its actual CI config rather than assuming a formatter —
+Lutris uses `ruff format`, not black, per `.github/workflows/static.yml`; the
+pilot plan was corrected to match before running.
+
+**Pipeline built and run**: generate watermarked function → sanity-check
+detection on the raw generation (passed: z=4.91 vs. threshold 4.0) → write into
+the real repo → run 6 mutations (format, lint_autofix, AST variable rename,
+python-minifier, AST round-trip, and a composed pipeline of all four) → re-run
+STONE's own detector after each.
+
+**One real bug found and fixed while running**: the tiny model's capped
+generation trailed off mid-statement, producing unparseable code that broke
+every mutation tool. Fixed by trimming to the largest syntactically valid
+prefix before mutating, rather than special-casing each tool's failure.
+
+**Result: all 6 mutations retained detectability** (z-scores 4.91-7.25, all
+above the 4.0 threshold). Full table and — importantly — the limitations (N=1,
+very short scored sequence so z-scores are noisy, delta raised above the paper's
+typical range to compensate for the tiny model, mutation order chosen by us
+rather than mined) are in `experiments/stone_pilot/RESULTS.md`. Explicitly not a
+survival-rate claim — a proof that the Phase 0-3 measurement method works
+end-to-end against a real scheme, real repo, and real mutation tools.
+
+One commit: pilot script, vendored STONE subset, plan, results, raw JSON output.
+
+---
+
 ## 2026-09-18 — First real repo, real bugs found
 
 Live network access confirmed working in this session, so instead of only

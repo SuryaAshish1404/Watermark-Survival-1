@@ -8,6 +8,12 @@ Phase 0 (gatekeeping) drafted. See `ACTION_PLAN.md` for the phase plan,
 `PROGRESS.md` for the execution log, and `docs/DECISIONS.md` for what's still open
 before Phase 2+ can be built.
 
+## Pilot
+`experiments/stone_pilot/` — a scoped-down, single-scheme/single-repo proof that
+the measurement method works end-to-end against a real watermark (STONE), a real
+model (`bigcode/tiny_starcoder_py`), and real mutation tooling on a real repo
+(lutris/lutris). See its `PLAN.md` and `RESULTS.md`.
+
 ## Layout
 - `docs/` — instrument design docs (outcome definitions, sampling frame, rules),
   fixed *before* measurement per the brief's dependency graph.
