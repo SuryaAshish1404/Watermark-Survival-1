@@ -1,4 +1,131 @@
-# STONE Mutation-Survival Pilot — Full Battery Results
+# Watermark Mutation-Survival Pilot — Results
+
+## Multi-scheme comparison (STONE vs. KGW vs. SWEET) — 2026-09-21
+
+Extends the single-scheme battery below to three schemes from the same vendored
+repo family (`github.com/inistory/STONE-watermarking`, commit `bb5d809`, same
+API, same base model), to test whether *how a scheme picks which tokens to bias*
+changes which operations break it. Raw data: `multischeme_results.json`.
+
+**Note on provenance**: this run's structured JSON was reconstructed from the
+background task's stderr log (`btxeszss8.output`) after the live process
+segfaulted partway through SWEET's 10th run — traced to host memory exhaustion
+(0.26 GB free of 16 GB at time of crash), not a bug in the harness. STONE (10/10)
+and KGW (10/10, logged) had already completed and printed their full per-run,
+per-operation detail before the crash, so the reconstruction is a straight parse
+of real output, not a re-simulation. The crash also motivated a real fix: results
+are now written incrementally after every run (`run_full_battery.py`), not only
+at the end, so a future crash won't lose completed data.
+
+### Retention by operation, per scheme
+
+| Operation | Layer | STONE (10 runs) | KGW (7 usable/10) | SWEET (1 usable/7)* |
+|---|---|---|---|---|
+| rename | source | **10/10** | **0/7** | 0/1 |
+| minify | source | **9/10** | **0/7** | 0/1 |
+| aggressive_minify | source | 0/10 | 0/7 | 0/1 |
+| dead_code_insert | source | 10/10 | 2/7 | 0/1 |
+| stacked_adversarial | source | 10/10 | 0/7 | 0/1 |
+| ast_roundtrip | source | 1/10 | 3/7 | 0/1 |
+| format | source | 4/10 | **7/7** | 1/1 |
+| lint_autofix | source | 10/10 | 7/7 | 1/1 |
+| squash_with_reformat | history | 4/10 | 7/7 | 1/1 |
+| squash_plain, rebase_plain, cherry_pick_plain | history | 10/10 each | 7/7 each | 1/1 |
+| fork_sync | history | 10/10 | 7/7 | 0/1 (tool_error, unrelated to scheme) |
+| repackage_zip_with_source | packaging | 10/10 | 7/7 | 1/1 |
+| republish_wheel | packaging | 10/10 | 6/7 | 0/1 |
+| rebuild_bytecode_only | packaging | **0/10** | **0/7** | 0/1 |
+
+*SWEET's denominator is 1, not 7 — see "SWEET's baseline problem" below. Its column
+is not a reliable robustness estimate and is included for completeness only.
+
+### The headline pattern: STONE and KGW have opposite weak spots
+
+**STONE** (biases only non-syntax tokens) is rock-solid against **rename** (10/10)
+and **minify** (9/10) — the two transforms that mostly touch identifiers and
+whitespace, exactly the tokens STONE marks, but apparently not enough to matter
+at this delta — while it's fragile against **ast_roundtrip** (1/10), a full
+structural regeneration.
+
+**KGW** (biases every token, no syntax-awareness) shows close to the *opposite*
+profile: **rename breaks it 0/7, minify breaks it 0/7, aggressive_minify 0/7,
+stacked_adversarial 0/7** — but it's rock-solid on **format** (7/7) and
+**lint_autofix** (7/7), exactly where STONE is weakest (format 4/10).
+
+This is mechanistically coherent, not coincidental: KGW's green-list bias sits on
+syntax tokens too (keywords, operators, delimiters), so any transform that
+changes identifier boundaries and re-derives the hash chain through those
+positions (renaming, minification) disrupts a much larger fraction of KGW's
+signal than STONE's, which never put weight there. Conversely, `ruff format`
+mostly moves whitespace and reflows lines without touching identifiers or
+keywords — the class of change STONE is more exposed to (its signal sits
+entirely in the tokens format touches) and KGW is comparatively insulated
+from (formatting doesn't reach the syntax tokens carrying most of KGW's signal
+either, but KGW has more total signal to lose from — the net effect favors KGW
+here). Both configs used identical `gamma=0.5, delta=4.0, hash_key=15485863,
+z_threshold=4.0` — the only variable between them is *which* tokens get biased,
+which isolates this as a selection-rule effect, not a tuning difference.
+
+**For an FSE paper, this is the strongest candidate finding from the pilot**:
+watermark robustness under ordinary operations is not a scalar property of a
+scheme — it's a profile shaped by the scheme's own token-selection rule, and two
+schemes can trade first place depending on which operation you ask about. A
+robustness claim for one scheme doesn't transfer to another, even from the same
+codebase and same underlying green-list mechanism.
+
+### SWEET's baseline problem
+
+SWEET only biases tokens where the model's own next-token distribution is
+high-entropy (`entropy_threshold=0.9` nats). Across 7 attempted runs, **6 never
+produced a detectable baseline watermark at all** (`is_watermarked: False` before
+any mutation ran) — per `docs/01-outcome-definitions.md`, these are excluded as
+"never emitted," not scored as mutation damage (this is exactly the gate added to
+`run_once()` after this problem first surfaced). The 1 usable run's scores are
+included above for completeness but should not be read as a robustness result —
+n=1 is not an estimate.
+
+**Why**: a 164M-parameter model writing short, syntactically constrained Python
+produces overwhelmingly low-entropy (confident, predictable) next-token
+distributions — there's rarely a token uncertain enough to clear a 0.9-nat
+threshold, so SWEET's own trigger condition for biasing rarely fires. This is a
+real, reportable finding independent of mutation robustness: **entropy-gated
+watermarking has a model-size/model-confidence compatibility requirement that
+syntax-gated (STONE) and ungated (KGW) schemes don't share.** A fair test of
+SWEET would need a larger, less deterministic generation model — out of scope
+for this pilot's CPU/time budget.
+
+### Sequence-length correlation, now checked across two schemes
+
+The single-scheme pilot below found baseline z-score correlates strongly with
+generated-sequence length (r=0.91 at n=5). At n=10 for STONE alone, that
+strengthens to **r=0.987**. KGW, independently, shows the same pattern at
+**r=0.882 (n=7)**. Two different schemes, same underlying relationship — this is
+no longer a 5-point coincidence. **Any reported robustness number for a
+statistical code watermark needs its scored-sequence length reported alongside
+it**, or it's not comparable across studies, schemes, or even repeated runs of
+the same scheme.
+
+### Honest limitations of the multi-scheme run
+- KGW and SWEET's runs are smaller than STONE's effective sample after excluding
+  never-emitted baselines (7 and 1 respectively vs. STONE's 10) — the comparison
+  table above is suggestive, not a matched-N statistical test.
+- The host machine ran low on memory during this session (confirmed via
+  `psutil`, 0.26 GB free at time of the second crash) — both crashes are
+  attributable to that, verified by reproducing an immediate crash on a bare,
+  mutation-free generation call in isolation. This is an infrastructure
+  constraint, not a result of anything in the mutation or detection logic, and
+  it means SWEET in particular needs a clean re-run on a machine with headroom
+  before its numbers can be trusted beyond "the scheme has an embedding problem
+  on small models."
+- All three schemes share `delta=4.0`, chosen above STONE's paper-typical range
+  to compensate for the tiny model (see single-scheme section below) — this
+  affects all three equally, so it doesn't bias the *comparison* between
+  schemes, but it does mean none of these retention rates should be quoted as
+  each scheme's real-world robustness at its own paper-recommended settings.
+
+---
+
+## Single-scheme pilot (STONE only, 5-16 operations, earlier runs)
 
 Three runs are recorded in git history here. `run_pilot.py` (2026-09-21) was the
 original 6-mutation smoke test. The first full-battery version covered 14

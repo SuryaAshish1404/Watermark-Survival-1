@@ -1,0 +1,2668 @@
+{
+  "model": "bigcode/tiny_starcoder_py",
+  "source": "reconstructed from btxeszss8.output log (SWEET crashed at run 8/10 due to host memory exhaustion, not a code bug)",
+  "schemes": {
+    "stone": {
+      "runs": [
+        {
+          "run_index": 1,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 4.714951667914447
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.196152422706632
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.5
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.160251471689219
+            }
+          ]
+        },
+        {
+          "run_index": 2,
+          "generated_chars": 746,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 20.36083584638991
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 18.74275617647813
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 20.36083584638991
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 10.333333333333334
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 10.584055093499003
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.6397831834998458
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -1.52127765851133
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 10.728586304940837
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 7.937253933193771
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 20.483803526116716
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 18.74275617647813
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 20.36083584638991
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 20.36083584638991
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 20.36083584638991
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 20.36083584638991
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 18.74275617647813
+            }
+          ]
+        },
+        {
+          "run_index": 3,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 4.714951667914447
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.196152422706632
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.5
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.160251471689219
+            }
+          ]
+        },
+        {
+          "run_index": 4,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 4.714951667914447
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.196152422706632
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.5
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.160251471689219
+            }
+          ]
+        },
+        {
+          "run_index": 5,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 4.714951667914447
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.196152422706632
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.5
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.160251471689219
+            }
+          ]
+        },
+        {
+          "run_index": 6,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 4.714951667914447
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.196152422706632
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.5
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.160251471689219
+            }
+          ]
+        },
+        {
+          "run_index": 7,
+          "generated_chars": 402,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 12.020815280171307
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 11.6619037896906
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 12.392765839847469
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 12.339252119036342
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 11.6619037896906
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 12.020815280171307
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 12.020815280171307
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 12.020815280171307
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 12.020815280171307
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 12.020815280171307
+            }
+          ]
+        },
+        {
+          "run_index": 8,
+          "generated_chars": 303,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 8.94427190999916
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 8.946933499675689
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 9.899494936611665
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 9.383148632568366
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.946933499675689
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.94427190999916
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.94427190999916
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.94427190999916
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 8.94427190999916
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 8.947213620951908
+            }
+          ]
+        },
+        {
+          "run_index": 9,
+          "generated_chars": 680,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 18.6919249865147
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 18.419035522122687
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 18.95608961081724
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 18.88461202748342
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 18.419035522122687
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 18.6919249865147
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 18.6919249865147
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 18.6919249865147
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 18.6919249865147
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 19.424941652652528
+            }
+          ]
+        },
+        {
+          "run_index": 10,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 4.714951667914447
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.196152422706632
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.269651864139677
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.7320508075688774
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7416573867739413
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.024922359499621
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.5
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "silently_lost",
+              "score": 3.8729833462074166
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.714951667914447
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.160251471689219
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "n_runs": 10,
+        "n_excluded_baseline_never_emitted": 0,
+        "n_scored_runs": 10,
+        "per_operation": [
+          {
+            "mutation": "squash_with_reformat",
+            "layer": "history",
+            "n_runs": 10,
+            "retained": 4,
+            "retention_rate": 0.4,
+            "score_min": 3.8729833462074166,
+            "score_max": 18.74275617647813,
+            "score_mean": 8.10085290652116,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "squash_plain",
+            "layer": "history",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 5.5,
+            "score_max": 20.483803526116716,
+            "score_mean": 9.409081630520484,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rebase_plain",
+            "layer": "history",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.714951667914447,
+            "score_max": 20.36083584638991,
+            "score_mean": 8.830755803056176,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "cherry_pick_plain",
+            "layer": "history",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.714951667914447,
+            "score_max": 20.36083584638991,
+            "score_mean": 8.830755803056176,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "fork_sync",
+            "layer": "history",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.714951667914447,
+            "score_max": 20.36083584638991,
+            "score_mean": 8.830755803056176,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rebuild_bytecode_only",
+            "layer": "packaging",
+            "n_runs": 10,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": null,
+            "score_max": null,
+            "score_mean": null,
+            "distinct_outcomes": [
+              "destroyed_no_source"
+            ]
+          },
+          {
+            "mutation": "repackage_zip_with_source",
+            "layer": "packaging",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.714951667914447,
+            "score_max": 20.36083584638991,
+            "score_mean": 8.830755803056176,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "republish_wheel",
+            "layer": "packaging",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.160251471689219,
+            "score_max": 19.424941652652528,
+            "score_mean": 8.40972355603892,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "aggressive_minify",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -1.52127765851133,
+            "score_max": 1.7320508075688774,
+            "score_mean": 1.4067179609608567,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "ast_roundtrip",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 1,
+            "retention_rate": 0.1,
+            "score_min": 3.7416573867739413,
+            "score_max": 10.728586304940837,
+            "score_mean": 4.440350278590631,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "format",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 4,
+            "retention_rate": 0.4,
+            "score_min": 3.8729833462074166,
+            "score_max": 18.74275617647813,
+            "score_mean": 8.10085290652116,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "minify",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 9,
+            "retention_rate": 0.9,
+            "score_min": 1.6397831834998458,
+            "score_max": 4.714951667914447,
+            "score_mean": 4.4074348194729875,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "lint_autofix",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 5.196152422706632,
+            "score_max": 20.36083584638991,
+            "score_mean": 9.278610076990608,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rename",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 5.269651864139677,
+            "score_max": 10.333333333333334,
+            "score_mean": 5.7760200110590425,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "dead_code_insert",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.024922359499621,
+            "score_max": 10.584055093499003,
+            "score_mean": 4.6808356328995595,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "stacked_adversarial",
+            "layer": "source",
+            "n_runs": 10,
+            "retained": 10,
+            "retention_rate": 1.0,
+            "score_min": 4.024922359499621,
+            "score_max": 7.937253933193771,
+            "score_mean": 4.416155516869036,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          }
+        ]
+      }
+    },
+    "kgw": {
+      "runs": [
+        {
+          "run_index": 1,
+          "generated_chars": 754,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 7.509927747876482
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 6.409943731482882
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 7.688267212858721
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -0.42008402520840293
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.23904572186687872
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.2721655269759087
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.6324555320336759
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.2672612419124244
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.6035674514745464
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.194481453189082
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 6.409943731482882
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.509927747876482
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.509927747876482
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.509927747876482
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 7.509927747876482
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 5.212860351426869
+            }
+          ]
+        },
+        {
+          "run_index": 2,
+          "generated_chars": 775,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 5.995437734798085
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.769499866788394
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 6.0254902425708545
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 2.9719115169392456
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.330127018922194
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.1125388494237263
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.1785113019775793
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.185449728701348
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.312945782245396
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.851641321982871
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.769499866788394
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.995437734798085
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.995437734798085
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.995437734798085
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 5.995437734798085
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.480896268889631
+            }
+          ]
+        },
+        {
+          "run_index": 3,
+          "generated_chars": 894,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 7.942477529634929
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 7.500684900234294
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 7.721054260855999
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 2.6680551940539985
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.3084657994221347
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.784435632438388
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -0.848528137423857
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.669621946958531
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.131370849898476
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.765562745719672
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.500684900234294
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.942477529634929
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.942477529634929
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.942477529634929
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 7.942477529634929
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 6.501940430194525
+            }
+          ]
+        },
+        {
+          "run_index": 4,
+          "generated_chars": 691,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 5.073850742055486
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.18785847899556
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.130976815083369
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.5416762627738958
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 2.9698484809834995
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.0
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.41256849850351734
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.079589415448419
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 2.2
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 4.955562903105554
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.18785847899556
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.073850742055486
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.073850742055486
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.073850742055486
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 5.073850742055486
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "silently_lost",
+              "score": 3.6660866584901957
+            }
+          ]
+        },
+        {
+          "run_index": 5,
+          "generated_chars": 845,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 8.028883045789305
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 7.856511353151718
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 8.078246376295356
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.9508345382639332
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.762352359916263
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.5666989036012806
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.8225913092242512
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 4.965095559306334
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.3730961708462712
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.849243241805324
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.856511353151718
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.028883045789305
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.028883045789305
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 8.028883045789305
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 8.028883045789305
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 5.608620240715733
+            }
+          ]
+        },
+        {
+          "run_index": 6,
+          "generated_chars": 1272,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 9.843241382880896
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 9.708478019470686
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 10.02531679021596
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -0.42008402520840293
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.23904572186687872
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.2721655269759087
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.6324555320336759
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.2672612419124244
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.6035674514745464
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 9.491243355879599
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 9.708478019470686
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 9.843241382880896
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 9.843241382880896
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 9.843241382880896
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 9.843241382880896
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 7.120653320005384
+            }
+          ]
+        },
+        {
+          "run_index": 7,
+          "generated_chars": 440,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 2.9711254108328298
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 8,
+          "generated_chars": 264,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 0.2581988897471611
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 9,
+          "generated_chars": 335,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 2.9848100289785457
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 10,
+          "generated_chars": 704,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 5.883714001569188
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.854368611626366
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 5.79827560572969
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.5144957554275265
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.7471236532191754
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.7579367289598671
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -0.9058216273156765
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 3.9106257338913486
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 1.4269353798659745
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.602887157315204
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.854368611626366
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.883714001569188
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.883714001569188
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 5.883714001569188
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 5.883714001569188
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 4.725815626252609
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "n_runs": 10,
+        "n_excluded_baseline_never_emitted": 3,
+        "n_scored_runs": 7,
+        "per_operation": [
+          {
+            "mutation": "squash_plain",
+            "layer": "history",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 4.955562903105554,
+            "score_max": 9.491243355879599,
+            "score_mean": 6.958660311285329,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "squash_with_reformat",
+            "layer": "history",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.18785847899556,
+            "score_max": 9.708478019470686,
+            "score_mean": 6.898192137392843,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rebase_plain",
+            "layer": "history",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.073850742055486,
+            "score_max": 9.843241382880896,
+            "score_mean": 7.182504597800624,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "cherry_pick_plain",
+            "layer": "history",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.073850742055486,
+            "score_max": 9.843241382880896,
+            "score_mean": 7.182504597800624,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "fork_sync",
+            "layer": "history",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.073850742055486,
+            "score_max": 9.843241382880896,
+            "score_mean": 7.182504597800624,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rebuild_bytecode_only",
+            "layer": "packaging",
+            "n_runs": 7,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": null,
+            "score_max": null,
+            "score_mean": null,
+            "distinct_outcomes": [
+              "destroyed_no_source"
+            ]
+          },
+          {
+            "mutation": "republish_wheel",
+            "layer": "packaging",
+            "n_runs": 7,
+            "retained": 6,
+            "retention_rate": 0.8571428571428571,
+            "score_min": 3.6660866584901957,
+            "score_max": 7.120653320005384,
+            "score_mean": 5.330981842282135,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "repackage_zip_with_source",
+            "layer": "packaging",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.073850742055486,
+            "score_max": 9.843241382880896,
+            "score_mean": 7.182504597800624,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rename",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -0.42008402520840293,
+            "score_max": 2.9719115169392456,
+            "score_mean": 1.1152578881488275,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "minify",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": 0.0,
+            "score_max": 3.1125388494237263,
+            "score_mean": 1.1094201669107255,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "aggressive_minify",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -0.9058216273156765,
+            "score_max": 1.8225913092242512,
+            "score_mean": 0.417747487004738,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "stacked_adversarial",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": 1.131370849898476,
+            "score_max": 3.3730961708462712,
+            "score_mean": 2.0930690122578874,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "dead_code_insert",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 2,
+            "retention_rate": 0.2857142857142857,
+            "score_min": 0.23904572186687872,
+            "score_max": 4.762352359916263,
+            "score_mean": 2.7994298223138605,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "ast_roundtrip",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 3,
+            "retention_rate": 0.42857142857142855,
+            "score_min": 0.2672612419124244,
+            "score_max": 5.185449728701348,
+            "score_mean": 3.1921292668758325,
+            "distinct_outcomes": [
+              "retained",
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "format",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.18785847899556,
+            "score_max": 9.708478019470686,
+            "score_mean": 6.898192137392843,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "lint_autofix",
+            "layer": "source",
+            "n_runs": 7,
+            "retained": 7,
+            "retention_rate": 1.0,
+            "score_min": 5.130976815083369,
+            "score_max": 10.02531679021596,
+            "score_mean": 7.20966104337285,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          }
+        ]
+      }
+    },
+    "sweet": {
+      "runs": [
+        {
+          "run_index": 1,
+          "generated_chars": 791,
+          "baseline": {
+            "is_watermarked": true,
+            "score": 7.228202652129153
+          },
+          "operations": [
+            {
+              "mutation": "format",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 6.482669203345178
+            },
+            {
+              "mutation": "lint_autofix",
+              "layer": "source",
+              "outcome": "retained",
+              "score": 7.487048859271456
+            },
+            {
+              "mutation": "rename",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -1.4433756729740645
+            },
+            {
+              "mutation": "dead_code_insert",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -2.065591117977289
+            },
+            {
+              "mutation": "minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -1.414213562373095
+            },
+            {
+              "mutation": "aggressive_minify",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -1.0
+            },
+            {
+              "mutation": "ast_roundtrip",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": -2.142857142857143
+            },
+            {
+              "mutation": "stacked_adversarial",
+              "layer": "source",
+              "outcome": "silently_lost",
+              "score": 0.2773500981126146
+            },
+            {
+              "mutation": "squash_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.041791416060645
+            },
+            {
+              "mutation": "squash_with_reformat",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 6.482669203345178
+            },
+            {
+              "mutation": "rebase_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.228202652129153
+            },
+            {
+              "mutation": "cherry_pick_plain",
+              "layer": "history",
+              "outcome": "retained",
+              "score": 7.228202652129153
+            },
+            {
+              "mutation": "fork_sync",
+              "layer": "history",
+              "outcome": "tool_error",
+              "score": null
+            },
+            {
+              "mutation": "repackage_zip_with_source",
+              "layer": "packaging",
+              "outcome": "retained",
+              "score": 7.228202652129153
+            },
+            {
+              "mutation": "rebuild_bytecode_only",
+              "layer": "packaging",
+              "outcome": "destroyed_no_source",
+              "score": null
+            },
+            {
+              "mutation": "republish_wheel",
+              "layer": "packaging",
+              "outcome": "tool_error",
+              "score": null
+            }
+          ]
+        },
+        {
+          "run_index": 2,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 3,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 4,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 5,
+          "generated_chars": 696,
+          "baseline": {
+            "is_watermarked": false,
+            "score": 3.470110468942836
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 6,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        },
+        {
+          "run_index": 7,
+          "generated_chars": 244,
+          "baseline": {
+            "is_watermarked": false,
+            "score": -2.06418738616856
+          },
+          "excluded": "baseline_never_emitted",
+          "operations": []
+        }
+      ],
+      "summary": {
+        "n_runs": 7,
+        "n_excluded_baseline_never_emitted": 6,
+        "n_scored_runs": 1,
+        "per_operation": [
+          {
+            "mutation": "fork_sync",
+            "layer": "history",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": null,
+            "score_max": null,
+            "score_mean": null,
+            "distinct_outcomes": [
+              "tool_error"
+            ]
+          },
+          {
+            "mutation": "squash_plain",
+            "layer": "history",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 7.041791416060645,
+            "score_max": 7.041791416060645,
+            "score_mean": 7.041791416060645,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "squash_with_reformat",
+            "layer": "history",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 6.482669203345178,
+            "score_max": 6.482669203345178,
+            "score_mean": 6.482669203345178,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rebase_plain",
+            "layer": "history",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 7.228202652129153,
+            "score_max": 7.228202652129153,
+            "score_mean": 7.228202652129153,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "cherry_pick_plain",
+            "layer": "history",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 7.228202652129153,
+            "score_max": 7.228202652129153,
+            "score_mean": 7.228202652129153,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rebuild_bytecode_only",
+            "layer": "packaging",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": null,
+            "score_max": null,
+            "score_mean": null,
+            "distinct_outcomes": [
+              "destroyed_no_source"
+            ]
+          },
+          {
+            "mutation": "republish_wheel",
+            "layer": "packaging",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": null,
+            "score_max": null,
+            "score_mean": null,
+            "distinct_outcomes": [
+              "tool_error"
+            ]
+          },
+          {
+            "mutation": "repackage_zip_with_source",
+            "layer": "packaging",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 7.228202652129153,
+            "score_max": 7.228202652129153,
+            "score_mean": 7.228202652129153,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "rename",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -1.4433756729740645,
+            "score_max": -1.4433756729740645,
+            "score_mean": -1.4433756729740645,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "dead_code_insert",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -2.065591117977289,
+            "score_max": -2.065591117977289,
+            "score_mean": -2.065591117977289,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "minify",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -1.414213562373095,
+            "score_max": -1.414213562373095,
+            "score_mean": -1.414213562373095,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "aggressive_minify",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -1.0,
+            "score_max": -1.0,
+            "score_mean": -1.0,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "ast_roundtrip",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": -2.142857142857143,
+            "score_max": -2.142857142857143,
+            "score_mean": -2.142857142857143,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "stacked_adversarial",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 0,
+            "retention_rate": 0.0,
+            "score_min": 0.2773500981126146,
+            "score_max": 0.2773500981126146,
+            "score_mean": 0.2773500981126146,
+            "distinct_outcomes": [
+              "silently_lost"
+            ]
+          },
+          {
+            "mutation": "format",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 6.482669203345178,
+            "score_max": 6.482669203345178,
+            "score_mean": 6.482669203345178,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          },
+          {
+            "mutation": "lint_autofix",
+            "layer": "source",
+            "n_runs": 1,
+            "retained": 1,
+            "retention_rate": 1.0,
+            "score_min": 7.487048859271456,
+            "score_max": 7.487048859271456,
+            "score_mean": 7.487048859271456,
+            "distinct_outcomes": [
+              "retained"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

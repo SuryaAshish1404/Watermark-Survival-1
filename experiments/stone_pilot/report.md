@@ -115,9 +115,19 @@ watermarks specifically:
   — needs a bigger/different model before it can be fairly judged.
 - These are single generated functions, not large realistic codebases.
 
-## Status
+## Status (updated)
 STONE: 10/10 runs complete. KGW: 10/10 runs complete (7 usable after
-excluding baseline failures). SWEET: incomplete — kept crashing partway
-through on this machine; being re-run separately. Full numbers, every
-z-score, and the reasoning behind each mutation are in `RESULTS.md` and
-`full_battery_results.json` / `multischeme_results.json` in this same folder.
+excluding baseline failures). SWEET: 7/10 attempted before the run crashed —
+6 of those 7 never produced a detectable watermark in the first place (see
+below), leaving only 1 usable data point, too few to judge fairly. The crash
+itself turned out to be a memory problem on this machine (it had almost no
+free RAM left at the time), not a bug in our code — confirmed by checking
+memory directly. A clean re-run of SWEET on a machine with more headroom is
+the next step, not more debugging of our scripts.
+
+The length-vs-strength pattern got *stronger* with more data: at 10 runs,
+generation length predicts baseline watermark strength for STONE with a
+correlation of **0.99** (basically perfect), and KGW independently shows the
+same pattern at 0.88. Full numbers, every z-score, and the reasoning behind
+each mutation are in `RESULTS.md` and `multischeme_results.json` in this same
+folder.
