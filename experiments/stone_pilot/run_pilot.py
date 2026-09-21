@@ -16,15 +16,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-VENDOR_ROOT = Path(__file__).parent / "vendor" / "stone_watermarking"
-sys.path.insert(0, str(VENDOR_ROOT))
-
-import torch  # noqa: E402
-from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
-
-from utils.transformers_config import TransformersConfig  # noqa: E402
-from watermark.stone.stone import STONE  # noqa: E402
-
+# Deliberately NOT done at module level (unlike the original version of this
+# file): this module is imported by run_full_battery.py purely for its mutation
+# helper functions, which need none of STONE's vendor tree. An unconditional
+# sys.path insert + `watermark`/`utils` import here would bind those package
+# names in sys.modules to the stone_watermarking tree regardless of which
+# scheme family the caller actually wants, breaking markllm-family schemes
+# (see schemes.py's module docstring for why the two vendor trees can't
+# coexist in one process). build_stone() below imports lazily instead.
 MODEL_NAME = "bigcode/tiny_starcoder_py"
 
 STONE_KWARGS = dict(
@@ -46,6 +45,13 @@ PROMPT = (
 
 
 def build_stone():
+    vendor_root = Path(__file__).parent / "vendor" / "stone_watermarking"
+    if str(vendor_root) not in sys.path:
+        sys.path.insert(0, str(vendor_root))
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from utils.transformers_config import TransformersConfig
+    from watermark.stone.stone import STONE
+
     print(f"Loading {MODEL_NAME} ...", file=sys.stderr)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)

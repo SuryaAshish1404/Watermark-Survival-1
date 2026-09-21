@@ -38,7 +38,7 @@ from run_pilot import (  # noqa: E402
     mut_ast_roundtrip,
     _RenameLocals,
 )
-from schemes import MODEL_NAME, SCHEME_KWARGS, build_scheme  # noqa: E402
+from schemes import MODEL_NAME, SCHEME_KWARGS, build_scheme, assert_single_family  # noqa: E402
 
 PROMPT = (
     '"""Utilities for locating a game\'s installed executable and save-data '
@@ -521,6 +521,7 @@ def main():
     args = parser.parse_args()
 
     scheme_names = [s.strip() for s in args.schemes.split(",") if s.strip()]
+    assert_single_family(scheme_names)  # raises early, not mid-battery, if families are mixed
 
     print(f"Loading {MODEL_NAME} (shared across schemes) ...", file=sys.stderr)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
