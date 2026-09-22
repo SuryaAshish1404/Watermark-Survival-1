@@ -5,7 +5,29 @@ data, written as a citable methods+results document rather than a lab
 narrative. This file keeps the full session-by-session story, including the
 crash/recovery details BENCHMARK.md summarizes in one line.
 
-## Full-SDLC-cycle chain: cumulative survival — 2026-09-22 (latest)
+## All 9 schemes through the lifecycle chain — 2026-09-22 (latest)
+
+Follow-up to the STONE/KGW lifecycle chain below: user asked directly "run the
+other schemes through the lifecycle chain, and where is it breaking (the op
+name)." Ran the remaining 7 (SWEET, EWD, Unigram, Unbiased, DIP, SynthID, PF)
+through the identical 9-step chain, one scheme per process (memory recovered
+enough this session — 2-3.3 GB free throughout — that none of these 7 runs
+crashed, unlike the STONE/KGW attempts earlier).
+
+**Direct answer**: 11 usable runs total, across 4 schemes (STONE 5, KGW 4,
+EWD 1, DIP 1) — **every single one broke at the identical first step,
+`agent_add_type_hints`.** Zero exceptions. SWEET, Unigram, Unbiased, and
+SynthID never produced a single usable baseline across 20 combined attempts
+(5 each) — a separate, real finding: on this 164M-parameter model, only the
+simplest green-list constructions (STONE, KGW) and their close relatives
+(EWD, DIP, when they work at all) can even be tested for mutation
+robustness. The others fail before the question is askable.
+
+Full table and both findings written up together: `BENCHMARK.md` §2.7.
+
+---
+
+## Full-SDLC-cycle chain: cumulative survival — 2026-09-22
 
 User asked directly: "check for the entire SDE cycle." Everything before this
 entry (30+ operations across 9 schemes) mutates the *original* baseline once,

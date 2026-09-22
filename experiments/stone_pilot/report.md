@@ -251,6 +251,41 @@ reliable watermark-breaker found anywhere in this whole project. Almost
 every other change we tested helped one method and hurt the other; this one
 hurt both, every time.
 
+**Update: we ran the same 9-step realistic sequence through all 9 watermarking
+methods we'd tested anywhere in this project, not just the two above.** Here's
+the direct answer to "where does each one break":
+
+| Method | Usable test runs | Where it broke | Ever survived the whole sequence? |
+|---|---|---|---|
+| STONE | 5 out of 5 | adding type hints, every time | No |
+| KGW | 4 out of 5 | adding type hints, every time | No |
+| EWD | 1 out of 5 | adding type hints | No |
+| DIP | 1 out of 5 | adding type hints | No |
+| SWEET | 0 out of 5 | never even started (see below) | — |
+| Unigram | 0 out of 5 | never even started | — |
+| Unbiased | 0 out of 5 | never even started | — |
+| SynthID | 0 out of 5 | never even started | — |
+| PF | 0 out of 5 | never even started | — |
+
+Two things stand out.
+
+**First**: of every test run across all 9 methods where the watermark was
+even present to begin with (11 runs total), **100% of them broke at the exact
+same first step — adding type hints.** Not one exception. That's a far
+stronger, cleaner result than anything else found in this whole project;
+every other single change we tested helped one method and hurt another. This
+one hurt all of them, every time.
+
+**Second, and just as important**: 5 of the 9 methods (SWEET, Unigram,
+Unbiased, SynthID, PF) **never once produced a real watermark to test in the
+first place**, across 25 attempts total. This isn't a bug in our test — it's
+these methods failing to work reliably on the small AI model we used. Only
+the simplest, most straightforward methods (STONE, KGW, and their close
+relatives EWD/DIP) worked reliably enough on this model to even ask the
+"does it survive?" question. For the other 5, that question is currently
+unanswerable — not because the pipeline destroys the watermark, but because
+the watermark was never successfully put there to begin with.
+
 ## Why this might matter for the bigger paper
 
 The paper's central argument is that ordinary software operations — not

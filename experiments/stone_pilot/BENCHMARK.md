@@ -377,6 +377,51 @@ without `newline=""` appears at two other call sites in `run_full_battery.py`
 before any platform-dependence elsewhere in this project is assumed to be
 controlled for.
 
+### 2.7 All 9 schemes through the lifecycle chain: where does each one break
+
+Ran the remaining 7 schemes (SWEET, EWD, Unigram, Unbiased, DIP, SynthID, PF)
+through the identical 9-step chain, one scheme per process, same host. Direct
+answer to "where is it breaking, by operation name":
+
+| Scheme | Usable / attempted | First-break operation | Full-chain survivors |
+|---|---|---|---|
+| STONE | 5/5 | `agent_add_type_hints` (every run) | 0/5 |
+| KGW | 4/5 | `agent_add_type_hints` (every run) | 0/4 |
+| SWEET | 0/5 | — no usable baseline | — |
+| EWD | 1/5 | `agent_add_type_hints` | 0/1 |
+| Unigram | 0/5 | — no usable baseline | — |
+| Unbiased | 0/5 | — no usable baseline | — |
+| DIP | 1/5 | `agent_add_type_hints` | 0/1 |
+| SynthID | 0/5 | — no usable baseline | — |
+| PF | 0/5 | — no usable baseline | — |
+
+**Finding 10 — two results, both clean, both important.**
+
+**(a) `agent_add_type_hints` is the universal first-break point.** Across
+every scheme that produced even one usable baseline — 11 usable runs total,
+spanning 4 different schemes with 3 genuinely different underlying
+mechanisms (STONE/KGW/EWD's green-list bias, DIP's distortion-free
+permutation) — **100% broke at the identical first step, zero exceptions.**
+No other operation in this entire project reached that level of consistency;
+every other single-operation result was scheme-dependent (§2.1). Adding type
+hints is not a scheme-specific weakness — on this evidence, it looks like a
+structural property of how small green-list/distortion-free watermarks
+interact with a very common, very ordinary code-quality operation.
+
+**(b) Most schemes couldn't even be tested on this model — a finding in its
+own right.** Of 9 schemes, only 4 (STONE, KGW, EWD, DIP) ever produced a
+detectable baseline at all, and 2 of those 4 (EWD, DIP) only managed it once
+in 5 tries. SWEET, Unigram, Unbiased, and SynthID never once produced a
+detectable watermark on `bigcode/tiny_starcoder_py` across 20 combined
+attempts. This isn't confined to the entropy-gated schemes flagged earlier
+(§2.3) — it spans static green lists (Unigram), distortion-free permutation
+schemes (Unbiased), and a real published production scheme (SynthID). **On a
+164M-parameter, low-entropy-output model, only the simplest, most direct
+green-list constructions (STONE, KGW) reliably embed a detectable watermark
+at all** — a model-compatibility finding that has to be resolved (a larger
+generation model) before most of this scheme set's actual mutation
+robustness can be assessed, independent of anything about mutations.
+
 ## 3. Threats to validity
 
 1. **Single host repository, single generated function per run.** External
