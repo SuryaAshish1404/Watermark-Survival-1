@@ -293,6 +293,90 @@ improvement for the full Phase 4 run rather than corrected retroactively in
 this pilot, since disclosing a real confound is more useful than a rewrite
 that would cost the ability to say what was actually measured.
 
+### 2.6 Cumulative full-lifecycle survival — the brief's actual Phase 5 ask
+
+Every result above measures one operation applied to the *original* baseline,
+independently — 30 separate branches off one root. That answers "does
+operation X break it alone," not the brief's Phase 5 requirement: *"Test
+realistic chains such as: AI-generated code → commit → PR → squash →
+formatting → build → package → release. Measure cumulative survival rather
+than only individual operations."* `run_lifecycle.py` runs exactly that: one
+plausible chain, applied in sequence, with detection re-checked after *every*
+step, so degradation compounds the way it actually would in a real pipeline —
+
+```
+generate → agent adds type hints → agent adds docstring → review: targeted
+patch → review: rename → review: add comment → CI format → CI lint autofix
+→ squash merge (with review-branch reformat) → release: build a real wheel
+```
+
+(This order is a plausible real-world sequence, not mined from observed CI
+configs the way `scripts/mining/workflow_order.py` derives real orders for
+the measured arm — a real difference in evidentiary weight from that arm's
+methodology, disclosed here rather than presented as equally strong.)
+
+**Result, STONE (5 runs, all usable):**
+
+| Run | First broke at | Score right before packaging | Score at final (Windows-built) artifact |
+|---|---|---|---|
+| 1 | `agent_add_type_hints` | silently_lost | **retained** |
+| 2 | `agent_add_type_hints` | silently_lost | **retained** |
+| 3 | `agent_add_type_hints` | retained (recovered at `review_rename`) | retained |
+| 4 | `agent_add_type_hints` | silently_lost | **retained** |
+| 5 | `agent_add_type_hints` | silently_lost | **retained** |
+
+**Result, KGW (4/5 usable — 1 excluded, baseline never emitted):**
+
+| Run | First broke at | Score right before packaging | Score at final (Windows-built) artifact |
+|---|---|---|---|
+| 1 | `agent_add_type_hints` | silently_lost | silently_lost |
+| 2 | `agent_add_type_hints` | retained (recovered at `ci_format`) | **silently_lost** |
+| 3 | `agent_add_type_hints` | silently_lost | silently_lost |
+| 4 | `agent_add_type_hints` | silently_lost | silently_lost |
+
+**Finding 8 — a single operation breaks it almost universally.**
+`agent_add_type_hints` is the *first* mutation applied to the pristine
+baseline in every run, so the "score after step 1" column is also that
+operation's isolated single-operation retention rate: **0/5 for STONE, 0/4
+for KGW.** This is the most consistent breaking operation found anywhere in
+this project — every other operation tested (rename, minify, format, ...) was
+scheme-dependent, breaking one scheme and not the other. Adding type hints
+broke both.
+
+**Finding 9 — a real discovery, not a simulation artifact: packaging on
+Windows silently converts line endings.** STONE's score climbs back above
+threshold at the final `release_build_wheel` step in 4 of 5 runs that were
+broken going in. Traced rather than assumed: `republish_build_wheel()`
+(`run_full_battery.py`) writes the watermarked file to disk via
+`Path.write_text(code, encoding="utf-8")` without `newline=""`. On Windows,
+text-mode file writes silently translate `\n` → `\r\n` — confirmed directly
+by reproduction: a 54-character LF-only sample became 59 characters with
+`\r\n` after the same code path. **This is authentic Windows packaging
+behavior, not a bug — a developer building this same package on a Windows
+machine would hit the identical conversion** — but it means the "release
+recovers the watermark" result is a platform-dependent side effect, not
+genuine robustness, and it isn't even a *consistent* effect: for KGW's run 2,
+the same packaging step pushed a retained score (4.61) back down to lost
+(3.72) — the opposite direction. **The score immediately before packaging
+(the `merge_squash_with_reformat` column above) is the more realistic
+estimate of what a Linux CI build — the actual majority case for real release
+pipelines — would ship.**
+
+**By that more realistic measure, cumulative full-chain survival is starkly
+low for both schemes**: STONE 1/5, KGW 1/4 — both around 20%, despite STONE
+showing 5/5 "survival" at the literal artifact this Windows host happened to
+produce. This is the paper's central thesis, demonstrated at the full-pipeline
+level rather than asserted from individual-operation results: **checking
+provenance only at the final released artifact can look like success while
+the signal was actually destroyed for nearly the entire pipeline** — the
+"recovery" at the end is not evidence the earlier loss didn't happen.
+
+**Follow-up flagged, not yet actioned**: the same `write_text(...)` pattern
+without `newline=""` appears at two other call sites in `run_full_battery.py`
+(`_init_git_scenario`, the wheel-build pyproject.toml write) — worth auditing
+before any platform-dependence elsewhere in this project is assumed to be
+controlled for.
+
 ## 3. Threats to validity
 
 1. **Single host repository, single generated function per run.** External
@@ -321,6 +405,11 @@ that would cost the ability to say what was actually measured.
    this pass (§2.5).
 7. **Four Family 2 schemes (Unbiased, DIP, SynthID, PF) are smoke-tested but
    not yet benchmarked at scale** — infrastructure is ready, results are not.
+8. **The lifecycle chain (§2.6) is n=5/n=4, one order, two schemes.** The
+   Windows-CRLF discovery is real and reproduced directly, but its effect
+   *size* on any other prompt, scheme, or host OS is untested — flagged as a
+   platform-dependence risk to control for explicitly in any full Phase 4 run,
+   not quantified beyond these two schemes here.
 
 ## 4. Reproducing this benchmark
 
@@ -337,6 +426,12 @@ python experiments/stone_pilot/run_full_battery.py \
   --repo <path to a lutris/lutris checkout> \
   --runs 10 --schemes unigram,unbiased,dip,synthid,pf \
   --out experiments/stone_pilot/multischeme_results.json
+
+# Full-lifecycle chain (§2.6) — cumulative survival through one realistic order
+python experiments/stone_pilot/run_lifecycle.py \
+  --repo <path to a lutris/lutris checkout> \
+  --runs 5 --schemes stone \
+  --out experiments/stone_pilot/lifecycle_results.json
 ```
 
 Add `--fresh` to overwrite rather than merge into an existing results file. Each
@@ -345,5 +440,6 @@ approach actually used to produce this benchmark, for memory-constrained hosts.
 To regenerate the human-mutation corpus from a fresh checkout:
 `python experiments/stone_pilot/scripts/mine_human_corpus.py <repo_path>`.
 Raw data: `multischeme_results.json` (16-operation battery),
-`human_ops_results.json` (22-operation battery with human-sourced mutations).
+`human_ops_results.json` (22-operation battery with human-sourced mutations),
+`lifecycle_results.json` (cumulative full-chain survival, §2.6).
 Vendored scheme code and provenance: `vendor/VENDORED.md`.

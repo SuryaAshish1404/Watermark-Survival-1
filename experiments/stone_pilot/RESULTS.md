@@ -5,7 +5,78 @@ data, written as a citable methods+results document rather than a lab
 narrative. This file keeps the full session-by-session story, including the
 crash/recovery details BENCHMARK.md summarizes in one line.
 
-## Nine schemes, 22 operations — 2026-09-21 (latest)
+## Full-SDLC-cycle chain: cumulative survival — 2026-09-22 (latest)
+
+User asked directly: "check for the entire SDE cycle." Everything before this
+entry (30+ operations across 9 schemes) mutates the *original* baseline once,
+independently, per operation. That's a huge grid, but it never answers the
+brief's actual Phase 5 requirement: *"measure cumulative survival"* through a
+realistic chain, not just individual operations in isolation.
+
+Built `run_lifecycle.py`: one plausible real order — generate → agent adds
+type hints → agent adds docstring → review: targeted patch → review: rename
+→ review: add comment → CI format → CI lint autofix → squash merge → release:
+build a real wheel — applied in sequence, with detection re-checked after
+*every* step, so loss compounds the way it actually would.
+
+Two crashes on the first attempts (host memory: 0.3-0.8 GB free — the same
+constraint that's dogged this whole session). Every step's logic was verified
+via a no-model dry run first, which also caught a real bug (the squash step's
+internal reformat pass fails with "nothing to commit" when it follows an
+already-formatted step — fixed by checking for an actual diff before
+committing). Once memory recovered (~2 GB free), the run completed cleanly.
+
+**STONE, 5/5 usable runs**: every run broke at step 1
+(`agent_add_type_hints`) and 4/5 stayed broken through the squash merge —
+then recovered at the very last step, `release_build_wheel`.
+
+**That recovery turned out to be a real discovery, not luck.** Traced it:
+`republish_build_wheel()` writes the file via `Path.write_text(code,
+encoding="utf-8")` without `newline=""`, which on Windows silently converts
+`\n` to `\r\n`. Confirmed by direct reproduction — a 54-character LF-only
+sample became 59 characters after going through the same code path. This is
+real Windows packaging behavior, not a simulation bug, but it means the
+"recovery" is a platform-dependent side effect, not genuine robustness — and
+it isn't even consistent: for KGW's run 2, the identical packaging step
+pushed an already-retained score (4.61) back down to lost (3.72), the
+opposite direction from STONE.
+
+**KGW, 4/5 usable runs**: also broke at step 1 in every run, and only 1 of 4
+ever recovered mid-chain — and that one lost it again at the final packaging
+step. **0/4 KGW runs retained the watermark at the actual final artifact.**
+
+**The number that matters**: measured at the score right before packaging
+(the realistic estimate of what a Linux CI build — the real-world majority
+case — would ship, since Linux text-mode writes don't perform this
+conversion), cumulative full-chain survival is **STONE 1/5, KGW 1/4** — both
+around 20%. STONE's raw 5/5 "success" at the literal Windows-built artifact
+is almost entirely explained by the platform quirk, not by STONE being more
+robust than KGW at the pipeline level.
+
+Also: since `agent_add_type_hints` is the very first mutation applied to the
+untouched baseline in every run, "score after step 1" doubles as that
+operation's isolated single-operation retention rate — **0/5 STONE, 0/4
+KGW**. The single most consistently destructive operation found anywhere in
+this project; every other operation tested was scheme-dependent (broke one
+scheme, not the other).
+
+**The methodological point, stated plainly**: checking provenance only at the
+final released artifact can look like success while the signal was destroyed
+for nearly the entire pipeline. STONE's chain *looked* fine at the end. It
+wasn't, for 4 of 5 runs, until the very last step happened to nudge it back
+— on this specific host, for reasons unrelated to the watermark scheme's
+actual robustness.
+
+**Follow-up flagged, not yet fixed**: the same `write_text()`-without-
+`newline=""` pattern appears at two other call sites in
+`run_full_battery.py` — worth auditing before assuming platform-dependence
+is controlled for anywhere else in this project.
+
+Full writeup, tables, and the reproduction numbers: `BENCHMARK.md` §2.6.
+
+---
+
+## Nine schemes, 22 operations (independent, single-operation) — 2026-09-21
 
 Expanded from 4 to 9 schemes and from 16 to 22 operations. Full writeup is in
 `BENCHMARK.md` §1.1, §1.5, §2.4-2.5 — this section is the short version plus

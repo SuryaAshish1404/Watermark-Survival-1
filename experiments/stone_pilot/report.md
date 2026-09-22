@@ -1,6 +1,6 @@
 # Does a Code Watermark Survive Normal Developer Work? — Plain-Language Report
 
-**Date:** 2026-09-21
+**Date:** 2026-09-22 (updated)
 **Full technical writeup:** `RESULTS.md` in this folder. This file is the short version.
 
 ## The question
@@ -181,6 +181,76 @@ just rearrange code that's already there.
   future version should fix by only reformatting the part that actually
   changed.
 
+## The big one: what happens through an entire realistic development cycle
+
+Everything above tests one change at a time, starting fresh from the
+original watermarked code each time. That's useful, but it's not how code
+actually moves through a real team: it gets several changes in a row —
+someone adds types, a reviewer asks for a tweak, CI formats it, it gets
+merged, it ships. So we built a test that does exactly that: one realistic
+sequence of 9 real steps, applied one after another to the *same* piece of
+code, checking after **every single step** whether the watermark still shows
+up — not just at the very end.
+
+The sequence: an AI agent adds type hints → adds a docstring → a reviewer
+asks for a small fix → a reviewer asks for a rename → a reviewer leaves a
+comment → the CI server auto-formats the code → CI auto-fixes lint issues →
+the branch gets squash-merged → the code gets packaged into a real,
+installable Python package for release.
+
+**What happened**: for both watermarking methods we tested, the mark broke
+almost immediately — at the very first step, just from adding type hints —
+and mostly *stayed* broken through code review, CI, and the merge. That's
+the headline on its own: **realistic sequences of ordinary changes destroy
+the watermark far more often than any single change did on its own.**
+
+**Then something stranger happened, and we didn't just accept it — we
+checked.** For one of the two methods (STONE), the watermark came back to
+life at the very last step, when the code got packaged for release. That
+looked suspicious, so we dug in rather than reporting a happy ending at
+face value. What we found: packaging the code on this particular machine
+(which runs Windows) quietly changes how line breaks are stored in the
+file — a routine, invisible thing Windows does to text files that Linux
+doesn't. That tiny, meaningless-looking change was enough to nudge the
+watermark's score back above the detection line. We proved this by testing
+it directly: a 54-character sample grew to 59 characters after going
+through the exact same packaging step, purely from that line-break change.
+
+This is not a mistake in our test — it's a real thing that would happen to
+a real developer packaging real code on a real Windows machine. But it also
+means the "success" we saw at the very end wasn't really about the
+watermark being robust. It was a side effect of which operating system
+happened to build the package. And it didn't even help consistently: for
+the other watermarking method (KGW), that same packaging step pushed one
+run's score in the *opposite* direction, turning a surviving watermark into
+a broken one.
+
+**So what actually ships, realistically?** If we ignore that one
+Windows-specific quirk and look at the code right *before* packaging (a
+fairer stand-in for what a normal Linux build server would produce), both
+methods come out roughly the same, and it's not good: **the watermark
+survived the full realistic sequence only about 1 time in 5, for both
+methods.** The apparent difference between them (one method "succeeding"
+5 out of 5 times at the very end) was mostly an illusion caused by checking
+in the wrong place.
+
+**Why this is the most important finding in the whole project**: if you
+only check whether a released, shipped piece of software still has its
+watermark, you can be fooled into thinking everything is fine — even when
+the watermark was actually destroyed early on and only reappeared by
+accident. The lesson isn't "don't trust watermarks" — it's "don't only
+check at the end." That's exactly the argument this entire research project
+exists to make, and now we have a concrete, reproducible example of it
+actually happening.
+
+**One more thing worth calling out on its own**: adding type hints —
+something a coding agent or a developer does constantly, and normally
+thought of as a harmless, helpful change — broke the watermark 100% of the
+time, for both methods, every single run. That makes it the single most
+reliable watermark-breaker found anywhere in this whole project. Almost
+every other change we tested helped one method and hurt the other; this one
+hurt both, every time.
+
 ## Why this might matter for the bigger paper
 
 The paper's central argument is that ordinary software operations — not
@@ -223,8 +293,9 @@ watermarks specifically:
 ## Where the data lives
 `multischeme_results.json` has the full STONE/KGW/SWEET/EWD data (every run,
 every operation, every score). `human_ops_results.json` has the STONE/KGW/
-Unigram data with the 6 human-sourced edits added. `full_battery_results.json`
-has an earlier STONE-only pass. `data/human_corpus.json` is the real,
-human-written text these new edits draw from. `BENCHMARK.md` is the
+Unigram data with the 6 human-sourced edits added. `lifecycle_results.json`
+has the full 9-step realistic chain, step by step, for both schemes.
+`full_battery_results.json` has an earlier STONE-only pass. `data/human_corpus.json`
+is the real, human-written text these new edits draw from. `BENCHMARK.md` is the
 paper-ready version of all of this (methods + tables, citable as-is).
 `RESULTS.md` has the full technical narrative these numbers are drawn from.
