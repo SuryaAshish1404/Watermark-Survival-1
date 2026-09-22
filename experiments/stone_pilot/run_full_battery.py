@@ -104,6 +104,7 @@ def mut_stacked_adversarial(src: str, repo: Path) -> str:
 
 
 from human_mutations import HUMAN_MUTATIONS  # noqa: E402
+from more_operations import MORE_OPERATIONS  # noqa: E402
 
 CONTENT_MUTATIONS = [
     ("format", mut_format),
@@ -115,6 +116,7 @@ CONTENT_MUTATIONS = [
     ("ast_roundtrip", mut_ast_roundtrip),
     ("stacked_adversarial", mut_stacked_adversarial),
     *HUMAN_MUTATIONS,
+    *MORE_OPERATIONS,
 ]
 
 
@@ -384,6 +386,73 @@ def run_packaging_op(stone, name, source_available, extractor, generated_code, t
     print(f"  [packaging] {name:24s} -> {entry.get('outcome')} (score={entry.get('score')})", file=sys.stderr)
 
 
+def _signature_only(src: str) -> str | None:
+    """Returns the def line (+ docstring, if present) with the body dropped —
+    what's left of a function after an agent keeps the interface but throws
+    away the implementation to rewrite it. Ends with a newline and the body's
+    indentation started, ready for the model to complete. None if there's no
+    function to work with."""
+    tree = ast.parse(src)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            docstring = ast.get_docstring(node, clean=False)
+            body = [ast.Expr(value=ast.Constant(value=docstring))] if docstring else []
+            body.append(ast.Pass())
+            sig_only = ast.FunctionDef(
+                name=node.name, args=node.args, body=body,
+                decorator_list=[], returns=node.returns,
+            )
+            full = ast.Module(body=[sig_only], type_ignores=[])
+            ast.fix_missing_locations(full)
+            rendered = ast.unparse(full)
+            # Drop the synthetic trailing `pass` — the model completes from
+            # right after the signature/docstring, not from a `pass` token.
+            return rendered.rsplit("\n    pass", 1)[0] + "\n    "
+    return None
+
+
+def run_agent_rewrite(stone, generated_code, repo, results):
+    """Special step, not a text-in-text-out mutation like everything else in
+    CONTENT_MUTATIONS: keeps only the watermarked function's signature (and
+    docstring, if any), then asks the *same model* to regenerate the body
+    from scratch via generate_unwatermarked_text() — no green-list bias
+    applied to the new tokens. This is the most "agent-like" operation in the
+    battery: a coding agent given watermarked code and asked to reimplement
+    it, keeping the interface. Expected to be a categorical loss (fresh
+    sampling has no reason to reproduce the specific green-list draws in the
+    original), but confirmed rather than assumed, per this project's
+    standard."""
+    entry = {"mutation": "agent_rewrite", "layer": "agent"}
+    try:
+        sig = _signature_only(generated_code)
+        if sig is None:
+            entry.update({"error": "no function found", "outcome": "tool_error"})
+        else:
+            rewritten = stone.generate_unwatermarked_text(sig)
+            parse_ok = True
+            try:
+                ast.parse(rewritten)
+            except SyntaxError:
+                rewritten = _largest_parseable_prefix(rewritten)
+                parse_ok = bool(rewritten.strip())
+            detection = stone.detect_watermark(rewritten) if parse_ok and rewritten.strip() else {
+                "is_watermarked": False, "score": None
+            }
+            entry.update(
+                {
+                    "code": rewritten,
+                    "is_watermarked": detection["is_watermarked"],
+                    "score": detection["score"],
+                    "parse_ok": parse_ok,
+                    "outcome": classify(bool(detection["is_watermarked"]), parse_ok, True),
+                }
+            )
+    except Exception as e:  # noqa: BLE001
+        entry.update({"error": str(e), "outcome": "tool_error"})
+    results.append(entry)
+    print(f"  [agent]     agent_rewrite            -> {entry.get('outcome')} (score={entry.get('score')})", file=sys.stderr)
+
+
 def run_once(stone, repo: Path, run_index: int) -> dict:
     print(f"\n=== Run {run_index} ===", file=sys.stderr)
     print("Generating watermarked module ...", file=sys.stderr)
@@ -460,6 +529,9 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
         run_packaging_op(stone, "repackage_zip_with_source", True, extract_zip_source, generated_code, tmp, ops)
         run_packaging_op(stone, "rebuild_bytecode_only", False, build_pyc_only, generated_code, tmp, ops)
         run_packaging_op(stone, "republish_wheel", True, extract_wheel_source, generated_code, tmp, ops)
+
+    print("\n--- Agent layer ---", file=sys.stderr)
+    run_agent_rewrite(stone, generated_code, repo, ops)
 
     broke = [o for o in ops if o["outcome"] != "retained"]
     print(f"\nRun {run_index}: {len(ops) - len(broke)}/{len(ops)} operations retained.", file=sys.stderr)

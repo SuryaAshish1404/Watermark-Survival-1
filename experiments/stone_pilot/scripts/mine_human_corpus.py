@@ -23,6 +23,9 @@ def mine(repo_path: Path) -> dict:
     identifiers: set[str] = set()
     comments: list[str] = []
     except_types: set[str] = set()
+    docstring_openers: list[str] = []
+    param_annotations: set[str] = set()
+    return_annotations: set[str] = set()
 
     for f in py_files:
         try:
@@ -46,14 +49,34 @@ def mine(repo_path: Path) -> dict:
             if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
                 if 3 <= len(node.id) <= 20 and node.id.islower() and node.id.isidentifier():
                     identifiers.add(node.id)
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                doc = ast.get_docstring(node)
+                if doc:
+                    first_line = doc.strip().split("\n")[0].strip()
+                    if 8 <= len(first_line) <= 90 and first_line not in docstring_openers:
+                        docstring_openers.append(first_line)
+                for arg in node.args.args:
+                    if arg.annotation is not None:
+                        try:
+                            param_annotations.add(ast.unparse(arg.annotation))
+                        except Exception:
+                            pass
+                if node.returns is not None:
+                    try:
+                        return_annotations.add(ast.unparse(node.returns))
+                    except Exception:
+                        pass
 
     return {
         "source": f"{repo_path.name}, mined from a local checkout — real "
-        "identifiers/comments/exception-type-names as written by the "
-        "project's own contributors, not generated",
+        "identifiers/comments/exception-type-names/docstrings/type-hints as "
+        "written by the project's own contributors, not generated",
         "identifiers": sorted(identifiers),
         "comments": sorted(comments),
         "except_types": sorted(except_types),
+        "docstring_openers": sorted(docstring_openers),
+        "param_annotations": sorted(param_annotations),
+        "return_annotations": sorted(return_annotations),
     }
 
 
@@ -71,7 +94,10 @@ def main():
     print(
         f"identifiers={len(corpus['identifiers'])} "
         f"comments={len(corpus['comments'])} "
-        f"except_types={len(corpus['except_types'])} -> {args.out}"
+        f"except_types={len(corpus['except_types'])} "
+        f"docstring_openers={len(corpus['docstring_openers'])} "
+        f"param_annotations={len(corpus['param_annotations'])} "
+        f"return_annotations={len(corpus['return_annotations'])} -> {args.out}"
     )
 
 
