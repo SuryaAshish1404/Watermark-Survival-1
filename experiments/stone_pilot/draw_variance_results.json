@@ -1,0 +1,142 @@
+[
+  {
+    "text_index": 0,
+    "chars": 392,
+    "baseline": 12.12435565298214,
+    "baseline_detected": true,
+    "ast_roundtrip_score": 7.570719217728538,
+    "draws": 60,
+    "retained_at_step": {
+      "agent_add_type_hints": 0.9166666666666666,
+      "agent_add_docstring": 0.9166666666666666,
+      "review_targeted_patch": 0.9166666666666666,
+      "review_rename": 0.8666666666666667,
+      "review_add_comment": 0.95,
+      "ci_format": 1.0,
+      "ci_lint_autofix": 1.0
+    },
+    "never_broke": 0.85,
+    "retained_at_end": 1.0,
+    "type_hints_score_mean": 5.752575890897125,
+    "type_hints_score_range": [
+      2.743977362280141,
+      8.573214099741124
+    ],
+    "end_score_range": [
+      4.423258684646914,
+      10.969655114602888
+    ]
+  },
+  {
+    "text_index": 1,
+    "chars": 672,
+    "baseline": 21.496046148071045,
+    "baseline_detected": true,
+    "ast_roundtrip_score": 9.370742276405366,
+    "draws": 60,
+    "retained_at_step": {
+      "agent_add_type_hints": 1.0,
+      "agent_add_docstring": 1.0,
+      "review_targeted_patch": 1.0,
+      "review_rename": 0.9166666666666666,
+      "review_add_comment": 0.9833333333333333,
+      "ci_format": 0.9833333333333333,
+      "ci_lint_autofix": 0.9833333333333333
+    },
+    "never_broke": 0.9166666666666666,
+    "retained_at_end": 0.9833333333333333,
+    "type_hints_score_mean": 8.061911801251744,
+    "type_hints_score_range": [
+      5.798118817183882,
+      10.408329997330663
+    ],
+    "end_score_range": [
+      3.983456354511982,
+      12.344267996967352
+    ]
+  },
+  {
+    "text_index": 2,
+    "chars": 788,
+    "baseline": 21.172308959267212,
+    "baseline_detected": true,
+    "ast_roundtrip_score": 16.874262672506337,
+    "draws": 60,
+    "retained_at_step": {
+      "agent_add_type_hints": 1.0,
+      "agent_add_docstring": 1.0,
+      "review_targeted_patch": 1.0,
+      "review_rename": 1.0,
+      "review_add_comment": 1.0,
+      "ci_format": 1.0,
+      "ci_lint_autofix": 1.0
+    },
+    "never_broke": 1.0,
+    "retained_at_end": 1.0,
+    "type_hints_score_mean": 15.453084559094265,
+    "type_hints_score_range": [
+      12.69856374267423,
+      17.88118682037809
+    ],
+    "end_score_range": [
+      9.13821876809267,
+      20.53606970016801
+    ]
+  },
+  {
+    "text_index": 3,
+    "chars": 547,
+    "baseline": 9.984603532054125,
+    "baseline_detected": true,
+    "ast_roundtrip_score": 7.900773520499256,
+    "draws": 60,
+    "retained_at_step": {
+      "agent_add_type_hints": 1.0,
+      "agent_add_docstring": 1.0,
+      "review_targeted_patch": 1.0,
+      "review_rename": 1.0,
+      "review_add_comment": 1.0,
+      "ci_format": 0.9833333333333333,
+      "ci_lint_autofix": 0.9833333333333333
+    },
+    "never_broke": 0.9833333333333333,
+    "retained_at_end": 0.9833333333333333,
+    "type_hints_score_mean": 7.146387942287098,
+    "type_hints_score_range": [
+      4.185110693297313,
+      9.0
+    ],
+    "end_score_range": [
+      3.841143835488627,
+      10.284923967485087
+    ]
+  },
+  {
+    "text_index": 4,
+    "chars": 244,
+    "baseline": 4.714951667914447,
+    "baseline_detected": true,
+    "ast_roundtrip_score": 3.7416573867739413,
+    "draws": 60,
+    "retained_at_step": {
+      "agent_add_type_hints": 0.1,
+      "agent_add_docstring": 0.1,
+      "review_targeted_patch": 0.1,
+      "review_rename": 0.2,
+      "review_add_comment": 0.35,
+      "ci_format": 0.4,
+      "ci_lint_autofix": 0.7
+    },
+    "never_broke": 0.1,
+    "retained_at_end": 0.7,
+    "type_hints_score_mean": 2.5722003850858908,
+    "type_hints_score_range": [
+      0.3922322702763681,
+      6.0
+    ],
+    "end_score_range": [
+      1.2792042981336627,
+      9.899494936611665
+    ]
+  }
+]

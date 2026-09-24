@@ -1,6 +1,6 @@
 # Does a Code Watermark Survive Normal Developer Work? — Plain-Language Report
 
-**Date:** 2026-09-22 (updated)
+**Date:** 2026-09-24 (corrected after a 25-run rerun — see "The big one")
 **Full technical writeup:** `RESULTS.md` in this folder. This file is the short version.
 
 ## The question
@@ -183,108 +183,118 @@ just rearrange code that's already there.
 
 ## The big one: what happens through an entire realistic development cycle
 
-Everything above tests one change at a time, starting fresh from the
-original watermarked code each time. That's useful, but it's not how code
-actually moves through a real team: it gets several changes in a row —
+> **Corrected 2026-09-24.** An earlier version of this section, based on 5
+> test runs, made several claims that did not survive a 25-run rerun. The
+> corrected findings are below, followed by a plain list of what changed.
+
+Everything above tests one change at a time, starting fresh from the original
+watermarked code each time. Real code gets several changes in a row —
 someone adds types, a reviewer asks for a tweak, CI formats it, it gets
-merged, it ships. So we built a test that does exactly that: one realistic
-sequence of 9 real steps, applied one after another to the *same* piece of
-code, checking after **every single step** whether the watermark still shows
-up — not just at the very end.
+merged, it ships. So we built a test that applies one realistic sequence of 9
+steps to the *same* piece of code and checks whether the watermark still
+shows up after **every step**, not just at the end: an AI agent adds type hints
+→ adds a docstring → a reviewer asks for a small fix → a rename → a comment →
+CI auto-formats → CI auto-fixes lint → squash-merge → package for release.
 
-The sequence: an AI agent adds type hints → adds a docstring → a reviewer
-asks for a small fix → a reviewer asks for a rename → a reviewer leaves a
-comment → the CI server auto-formats the code → CI auto-fixes lint issues →
-the branch gets squash-merged → the code gets packaged into a real,
-installable Python package for release.
+We ran it 25 times for each of the two methods that reliably work on our small
+AI model (STONE and KGW).
 
-**What happened**: for both watermarking methods we tested, the mark broke
-almost immediately — at the very first step, just from adding type hints —
-and mostly *stayed* broken through code review, CI, and the merge. That's
-the headline on its own: **realistic sequences of ordinary changes destroy
-the watermark far more often than any single change did on its own.**
+**A caveat about the numbers before the numbers.** For STONE, 17 of the 25
+runs turned out to be the *exact same* piece of code — our small AI model
+writes one particular short program about two-thirds of the time. So STONE's
+"25 runs" behave more like 9 different starting points. That means we can't
+put honest error bars on STONE's numbers, and we don't.
 
-**Then something stranger happened, and we didn't just accept it — we
-checked.** For one of the two methods (STONE), the watermark came back to
-life at the very last step, when the code got packaged for release. That
-looked suspicious, so we dug in rather than reporting a happy ending at
-face value. What we found: packaging the code on this particular machine
-(which runs Windows) quietly changes how line breaks are stored in the
-file — a routine, invisible thing Windows does to text files that Linux
-doesn't. That tiny, meaningless-looking change was enough to nudge the
-watermark's score back above the detection line. We proved this by testing
-it directly: a 54-character sample grew to 59 characters after going
-through the exact same packaging step, purely from that line-break change.
+**What happened:**
 
-This is not a mistake in our test — it's a real thing that would happen to
-a real developer packaging real code on a real Windows machine. But it also
-means the "success" we saw at the very end wasn't really about the
-watermark being robust. It was a side effect of which operating system
-happened to build the package. And it didn't even help consistently: for
-the other watermarking method (KGW), that same packaging step pushed one
-run's score in the *opposite* direction, turning a surviving watermark into
-a broken one.
+| | STONE | KGW |
+|---|---|---|
+| Runs where the watermark was there to begin with | 25 of 25 | 18 of 25 |
+| Watermark lost right after step 1 (adding type hints) | 21 of 25 | 12 of 18 |
+| Watermark present at **every** step | 4 of 25 | 2 of 18 |
+| Watermark present at the **end** (after merge) | 23 of 25 | 2 of 18 |
 
-**So what actually ships, realistically?** If we ignore that one
-Windows-specific quirk and look at the code right *before* packaging (a
-fairer stand-in for what a normal Linux build server would produce), both
-methods come out roughly the same, and it's not good: **the watermark
-survived the full realistic sequence only about 1 time in 5, for both
-methods.** The apparent difference between them (one method "succeeding"
-5 out of 5 times at the very end) was mostly an illusion caused by checking
-in the wrong place.
+**The one point that held up, and matters most:** if you only check the
+finished, released code, STONE looks fine — about 9 runs in 10 still show the
+watermark. But if you check at every step along the way, only about 1 run in 6
+had it the whole time. The watermark was usually lost at the very first
+step and then came back later. (We tested how much this depends on luck
+too: re-running the most common short program with 60 different random
+choices for the edits, only about 1 in 10 kept the watermark the whole way,
+about 7 in 10 had it at the end — so the honest range for "present at the
+end" is more like 70 to 90 percent, not a clean number.) We don't yet know
+*why* the watermark comes back — that's an open question and we're not going
+to guess. For KGW there's no comeback: it's lost early and stays lost.
 
-**Why this is the most important finding in the whole project**: if you
-only check whether a released, shipped piece of software still has its
-watermark, you can be fooled into thinking everything is fine — even when
-the watermark was actually destroyed early on and only reappeared by
-accident. The lesson isn't "don't trust watermarks" — it's "don't only
-check at the end." That's exactly the argument this entire research project
-exists to make, and now we have a concrete, reproducible example of it
-actually happening.
+**What decides whether it survives:** mostly how strong the watermark was to
+begin with. Longer pieces of code carry a stronger watermark, and in our
+tests those made it through the whole sequence almost every time (over 98
+percent of the time at the end). The one short program that dominated our
+runs sat barely above the detection line to start with, so almost anything
+tips it over. This matches what we found earlier in the project.
 
-**One more thing worth calling out on its own**: adding type hints —
-something a coding agent or a developer does constantly, and normally
-thought of as a harmless, helpful change — broke the watermark 100% of the
-time, for both methods, every single run. That makes it the single most
-reliable watermark-breaker found anywhere in this whole project. Almost
-every other change we tested helped one method and hurt the other; this one
-hurt both, every time.
+**About adding type hints — an earlier claim we have to walk back.** Our first
+5-run test said adding type hints broke the watermark 100 percent of the
+time, for every method, and called it the most destructive change we'd found.
+That was wrong twice over. With 25 runs it's 84 percent (STONE) and 67
+percent (KGW), not 100. And when we checked, most of the damage wasn't from
+the type hints at all — the way our test adds them also rewrites the whole
+file's formatting, and that rewrite *by itself* accounts for roughly 45 to
+90 percent (about 70 percent on average) of the watermark lost at that step.
+So the fair statement is "a step that reformats the whole file costs a big
+share of the watermark," not "type hints are uniquely destructive." A cleaner
+test that adds type hints without touching anything else is the obvious next
+step, and hasn't been run.
 
-**Update: we ran the same 9-step realistic sequence through all 9 watermarking
-methods we'd tested anywhere in this project, not just the two above.** Here's
-the direct answer to "where does each one break":
+**About the Windows line-break finding — also walked back.** We reported that
+packaging on Windows quietly changes how line breaks are stored in a file, and
+that this was why the watermark seemed to "come back to life" at the very end.
+The line-break change is real — we reproduced it directly (a 54-character
+sample grew to 59). But with 25 runs it turns out to explain nothing: across
+all 43 runs, the packaging step never changed whether the watermark was
+present or not, and STONE had usually already recovered before packaging. We're
+keeping it as a warning that the operating system used to build a package can
+change file contents, but it is not the explanation we claimed.
 
-| Method | Usable test runs | Where it broke | Ever survived the whole sequence? |
-|---|---|---|---|
-| STONE | 5 out of 5 | adding type hints, every time | No |
-| KGW | 4 out of 5 | adding type hints, every time | No |
-| EWD | 1 out of 5 | adding type hints | No |
-| DIP | 1 out of 5 | adding type hints | No |
-| SWEET | 0 out of 5 | never even started (see below) | — |
-| Unigram | 0 out of 5 | never even started | — |
-| Unbiased | 0 out of 5 | never even started | — |
-| SynthID | 0 out of 5 | never even started | — |
-| PF | 0 out of 5 | never even started | — |
+**Two problems in our own testing that we found and fixed along the way:**
+1. Our edits pick real comments and variable names from real code at random.
+   We said the choice was "deterministic." It wasn't: it was the same within
+   one run of the program but different each time the program was started, so
+   two runs on identical code could get different edits. That is part of why
+   the 5-run and 25-run tests disagreed about the same code. It's fixed now,
+   and the effect is measured above.
+2. Treating 17 identical runs as 17 separate results overstated our
+   confidence, as described above.
 
-Two things stand out.
+**What changed from the first 5-run version, in one place:**
+- "100% broke at type hints, no exceptions" → 84% and 67%, and mostly a
+  formatting-rewrite effect.
+- "Only about 1 in 5 survives the whole sequence, for both methods" → STONE
+  is much higher at the end (about 7 to 9 in 10) and KGW much lower (about 1
+  in 9); the two are *not* the same. But part of that gap just reflects that
+  KGW's watermarks started weaker, so it doesn't prove one design is better.
+- "Windows line breaks explain the recovery" → withdrawn.
+- "Type hints remove 52 to 84 percent of the signal" → that was picked from
+  four favorable runs; the real average is 45 percent.
 
-**First**: of every test run across all 9 methods where the watermark was
-even present to begin with (11 runs total), **100% of them broke at the exact
-same first step — adding type hints.** Not one exception. That's a far
-stronger, cleaner result than anything else found in this whole project;
-every other single change we tested helped one method and hurt another. This
-one hurt all of them, every time.
+### Where does each of the nine methods break?
 
-**Second, and just as important**: 5 of the 9 methods (SWEET, Unigram,
-Unbiased, SynthID, PF) **never once produced a real watermark to test in the
-first place**, across 25 attempts total. This isn't a bug in our test — it's
-these methods failing to work reliably on the small AI model we used. Only
-the simplest, most straightforward methods (STONE, KGW, and their close
-relatives EWD/DIP) worked reliably enough on this model to even ask the
-"does it survive?" question. For the other 5, that question is currently
-unanswerable — not because the pipeline destroys the watermark, but because
-the watermark was never successfully put there to begin with.
+We also ran the same sequence for the other seven methods (5 attempts each).
+Five of the nine methods never produced a working watermark on our small AI
+model at all, so there was nothing to test:
+
+| Method | Usable runs | Where it first broke |
+|---|---|---|
+| STONE | 25 of 25 | mostly step 1 (21 runs) |
+| KGW | 18 of 25 | step 1 (12), rename (3), formatting (1) |
+| EWD | 1 of 5 | step 1 (one run — too few to say anything) |
+| DIP | 1 of 5 | step 1 (one run — too few to say anything) |
+| SWEET, Unigram, Unbiased, SynthID, PF | 0 of 5 each | never produced a watermark to test |
+
+The five that never worked span very different designs (a fixed word list, a
+"distortion-free" design, and the one Google actually uses), so this looks
+like a problem with our small model rather than with any one method. Judging
+them fairly needs a larger AI model.
 
 ## Why this might matter for the bigger paper
 

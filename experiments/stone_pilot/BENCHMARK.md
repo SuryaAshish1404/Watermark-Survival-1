@@ -119,8 +119,13 @@ that basis, not omitted by oversight.
   is copied verbatim from `data/human_corpus.json`, mined by
   `scripts/mine_human_corpus.py` from lutris/lutris's own real source (3,326
   real identifiers, 757 real comments, 36 real exception type names, all
-  written by the project's actual contributors) — sampling which real token to
-  use is deterministic (seeded by the input), never generated. The other three
+  written by the project's actual contributors) — which real token is
+  sampled is seeded by the input text and never generated. **Caveat, discovered
+  2026-09-24:** the seed originally came from Python's builtin `hash()`, which
+  is randomized per interpreter launch, so a given input got the same draw
+  *within* one process but a different draw in each new process — every
+  result generated before that date is not bit-reproducible across runs. Fixed
+  (stable SHA-256 digest); the effect on results is quantified in §2.6. The other three
   (extract-variable, guard-clause, reorder) inject no vocabulary at all —
   purely structural AST rearrangements of tokens already present in the input
   — so they carry no content-authorship question in the first place.
@@ -295,14 +300,18 @@ that would cost the ability to say what was actually measured.
 
 ### 2.6 Cumulative full-lifecycle survival — the brief's actual Phase 5 ask
 
+> **Revised 2026-09-24.** This section originally reported an n=5 pilot. A
+> 25-run rerun and two follow-up controls overturned several of its claims;
+> the corrections are listed at the end of the section rather than silently
+> replaced. The numbers below are the n=25 numbers.
+
 Every result above measures one operation applied to the *original* baseline,
-independently — 30 separate branches off one root. That answers "does
-operation X break it alone," not the brief's Phase 5 requirement: *"Test
-realistic chains such as: AI-generated code → commit → PR → squash →
-formatting → build → package → release. Measure cumulative survival rather
-than only individual operations."* `run_lifecycle.py` runs exactly that: one
-plausible chain, applied in sequence, with detection re-checked after *every*
-step, so degradation compounds the way it actually would in a real pipeline —
+independently. That answers "does operation X break it alone," not the brief's
+Phase 5 requirement: *"Test realistic chains such as: AI-generated code →
+commit → PR → squash → formatting → build → package → release. Measure
+cumulative survival rather than only individual operations."*
+`run_lifecycle.py` applies one chain in sequence and re-checks detection after
+*every* step:
 
 ```
 generate → agent adds type hints → agent adds docstring → review: targeted
@@ -310,117 +319,167 @@ patch → review: rename → review: add comment → CI format → CI lint autof
 → squash merge (with review-branch reformat) → release: build a real wheel
 ```
 
-(This order is a plausible real-world sequence, not mined from observed CI
-configs the way `scripts/mining/workflow_order.py` derives real orders for
-the measured arm — a real difference in evidentiary weight from that arm's
-methodology, disclosed here rather than presented as equally strong.)
+(The order is a plausible real-world sequence, not mined from observed CI
+configs the way `scripts/mining/workflow_order.py` derives orders for the
+measured arm — weaker evidence than that arm's methodology, disclosed rather
+than presented as equal.)
 
-**Result, STONE (5 runs, all usable):**
+**Sample structure — read this before the tables.** STONE: 25 runs, all with a
+usable baseline, but **only 9 distinct generations**: 17 of the 25 are the
+same byte-identical 244-character completion (baseline z = 4.71, barely above
+the 4.0 threshold), because under this model, prompt and `delta=4.0` STONE's
+sampling collapses onto one output about two-thirds of the time. Confidence
+intervals that assume 25 independent samples are therefore **not valid for
+STONE** and none are reported for it. KGW: 25 attempted, 18 usable (7 excluded,
+baseline never emitted), **18 distinct generations**, so KGW's n is real.
 
-| Run | First broke at | Score right before packaging | Score at final (Windows-built) artifact |
+**Table 2.6a — as-run, n=25 attempted per scheme**
+
+| | STONE | KGW |
+|---|---|---|
+| Usable baselines | 25/25 (9 distinct) | 18/25 (18 distinct) |
+| Broke at step 1, `agent_add_type_hints` | 21/25 (84%) | 12/18 (67%) |
+| Broke first at another step | 0 | `review_rename` 3, `ci_format` 1 |
+| Never dropped below threshold at any step | 4/25 (16%) | 2/18 (11%) [95% CI 3–33%] |
+| Retained after the squash merge (pre-packaging) | 23/25 (92%) | 2/18 (11%) |
+| Retained at the final wheel | 23/25 (92%) | 2/18 (11%) |
+| Runs whose retained/lost outcome flipped at packaging | 0/25 | 0/18 |
+
+Per-step retention (fraction of usable runs above threshold after each step):
+
+| Step | STONE | KGW |
+|---|---|---|
+| type hints / docstring / patch | 16% / 16% / 16% | 33% / 33% / 33% |
+| rename | 16% | 17% |
+| add comment | 88% | 17% |
+| ci format / lint / squash / wheel | 88% / 92% / 92% / 92% | 11% / 11% / 11% / 11% |
+
+**Finding 8 — the first chain step costs about half the signal, but that
+cannot be attributed to type hints.** After step 1 the z-score has lost a mean
+of 45% (range 34–86%) for STONE and 49% (24–95%) for KGW. `agent_add_type_hints`
+is implemented with `ast.unparse()`, the same full-tree reserialization
+confound flagged for the human-sourced operations in Finding 7 — and this was
+not flagged when the step was first added. A control on five saved STONE
+generations (`scripts/lifecycle_draw_variance.py`) separates the two:
+
+| Text | Baseline z | After `ast.unparse` alone | After type hints (mean of 60 draws; range) | Share of loss from unparse alone |
+|---|---|---|---|---|
+| 0 (392 ch) | 12.12 | 7.57 | 5.75 (2.74–8.57) | 71% |
+| 1 (672 ch) | 21.50 | 9.37 | 8.06 (5.80–10.41) | 90% |
+| 2 (788 ch) | 21.17 | 16.87 | 15.45 (12.70–17.88) | 75% |
+| 3 (547 ch) | 9.98 | 7.90 | 7.15 (4.19–9.00) | 73% |
+| 4 (244 ch) | 4.71 | 3.74 | 2.57 (0.39–6.00) | 45% |
+
+Reserialization alone accounts for roughly 45–90% (mean about 71%) of the loss.
+The annotations add a smaller increment on top. "Adding type hints is the most
+destructive single operation" is **not supported**; the supported claim is that
+*any* step ending in a full `ast.unparse()` costs a large share of the signal.
+The decisive follow-up — type hints inserted by targeted text patching, with no
+reserialization — is not yet run.
+
+**Finding 9 — survival is decided mainly by baseline headroom, and for
+borderline texts by an uncontrolled random draw.** The five saved texts
+above, run through the seven text-only chain steps under 60 different random
+draws of the real-corpus tokens each (neither the squash step nor the wheel
+step flipped an individual outcome in any of the 43 lifecycle runs, so they
+are omitted):
+
+| Text | Baseline z | Never broke, over 60 draws | Retained at end, over 60 draws |
 |---|---|---|---|
-| 1 | `agent_add_type_hints` | silently_lost | **retained** |
-| 2 | `agent_add_type_hints` | silently_lost | **retained** |
-| 3 | `agent_add_type_hints` | retained (recovered at `review_rename`) | retained |
-| 4 | `agent_add_type_hints` | silently_lost | **retained** |
-| 5 | `agent_add_type_hints` | silently_lost | **retained** |
+| 0 | 12.12 | 85% | 100% |
+| 1 | 21.50 | 92% | 98% |
+| 2 | 21.17 | 100% | 100% |
+| 3 | 9.98 | 98% | 98% |
+| 4 (the dominant 244-char mode) | 4.71 | **10%** | **70%** |
 
-**Result, KGW (4/5 usable — 1 excluded, baseline never emitted):**
+Longer generations survive the whole chain almost regardless of the draw. The
+dominant short generation does not: only 10% of draws never break and 70% end
+retained, with retention climbing draw by draw across the steps (10% after
+step 1, 20% after rename, 35% after the comment, 40% after format, 70% after
+lint). This explains why the n=5 pilot and the n=25 run disagreed about the
+*same* text: the mutation RNG used Python's per-process-randomized `hash()`
+(see §1.5), so each process drew a different comment, annotation set and
+docstring for identical input — the pilot's process drew an unlucky one, the
+n=25 process a lucky one. In the as-run n=25 data, the 4 STONE runs that never
+broke had a mean baseline z of 20.4 against 5.9 for the rest.
 
-| Run | First broke at | Score right before packaging | Score at final (Windows-built) artifact |
-|---|---|---|---|
-| 1 | `agent_add_type_hints` | silently_lost | silently_lost |
-| 2 | `agent_add_type_hints` | retained (recovered at `ci_format`) | **silently_lost** |
-| 3 | `agent_add_type_hints` | silently_lost | silently_lost |
-| 4 | `agent_add_type_hints` | silently_lost | silently_lost |
+**Finding 10 — checking only at the end still overstates survival, by a wide
+margin.** As run, STONE was above threshold at *every* step in 16% of runs but
+above threshold at the final artifact in 92%. Marginalizing over the draw and
+weighting the 244-character mode at its observed 17/25, the estimate is about
+23% never-broke against about 72% retained-at-end (approximate: the eight
+non-dominant runs each contribute a single draw). Either way, the gap between
+"checked at every step" and "checked at release" is roughly 50–75 points, and
+scores are not monotone — they mostly recover after dipping. **The recovery
+mechanism is not explained**; it is reported as an open observation. KGW shows
+no recovery (11% at every step, 11% at the end).
 
-**Finding 8 — a single operation breaks it almost universally.**
-`agent_add_type_hints` is the *first* mutation applied to the pristine
-baseline in every run, so the "score after step 1" column is also that
-operation's isolated single-operation retention rate: **0/5 for STONE, 0/4
-for KGW.** This is the most consistent breaking operation found anywhere in
-this project — every other operation tested (rename, minify, format, ...) was
-scheme-dependent, breaking one scheme and not the other. Adding type hints
-broke both.
+**Finding 11 — the Windows line-ending conversion is real but explains
+nothing here.** `republish_build_wheel()` writes the file with
+`Path.write_text(code, encoding="utf-8")`, no `newline=""`, so on Windows `\n`
+becomes `\r\n`; reproduced directly (a 54-character LF sample became 59
+characters through the same path). It shifts individual scores, but **it
+flipped the retained/lost outcome in 0 of 43 runs**, and STONE was already
+retained at the squash step in 23 of 25. The n=5 pilot's claim that this
+conversion "explains" STONE's end-of-chain retention is retracted. It stays
+recorded as a platform-dependence flag: the same pattern appears at two other
+call sites (`_init_git_scenario`, the pyproject write) and should be audited.
 
-**Finding 9 — a real discovery, not a simulation artifact: packaging on
-Windows silently converts line endings.** STONE's score climbs back above
-threshold at the final `release_build_wheel` step in 4 of 5 runs that were
-broken going in. Traced rather than assumed: `republish_build_wheel()`
-(`run_full_battery.py`) writes the watermarked file to disk via
-`Path.write_text(code, encoding="utf-8")` without `newline=""`. On Windows,
-text-mode file writes silently translate `\n` → `\r\n` — confirmed directly
-by reproduction: a 54-character LF-only sample became 59 characters with
-`\r\n` after the same code path. **This is authentic Windows packaging
-behavior, not a bug — a developer building this same package on a Windows
-machine would hit the identical conversion** — but it means the "release
-recovers the watermark" result is a platform-dependent side effect, not
-genuine robustness, and it isn't even a *consistent* effect: for KGW's run 2,
-the same packaging step pushed a retained score (4.61) back down to lost
-(3.72) — the opposite direction. **The score immediately before packaging
-(the `merge_squash_with_reformat` column above) is the more realistic
-estimate of what a Linux CI build — the actual majority case for real release
-pipelines — would ship.**
+**STONE vs. KGW at the lifecycle level.** The as-run difference is large
+(pre-packaging 92% vs 11%; about 72% vs 11% draw-marginalized) but **confounded
+with baseline headroom**: KGW's usable baselines cluster around z ≈ 6.5
+(median 6.49, none in the 4.71 mode), while STONE's are bimodal (4.71, or 9–27).
+A first step that costs about half the signal leaves KGW near 3.4 on average
+(below threshold) and STONE's longer texts well above it. The lifecycle result
+therefore does not isolate scheme design; a comparison at matched baseline z
+would.
 
-**By that more realistic measure, cumulative full-chain survival is starkly
-low for both schemes**: STONE 1/5, KGW 1/4 — both around 20%, despite STONE
-showing 5/5 "survival" at the literal artifact this Windows host happened to
-produce. This is the paper's central thesis, demonstrated at the full-pipeline
-level rather than asserted from individual-operation results: **checking
-provenance only at the final released artifact can look like success while
-the signal was actually destroyed for nearly the entire pipeline** — the
-"recovery" at the end is not evidence the earlier loss didn't happen.
+**What changed from the n=5 pilot (kept for the record):**
+1. "`agent_add_type_hints` broke 100% of usable runs, zero exceptions" →
+   84% (STONE) and 67% (KGW); and the attribution to type hints is confounded
+   with `ast.unparse` (Finding 8).
+2. "Cumulative survival is ~20% for both schemes" → STONE 92% as-run / about
+   72% marginalized, KGW 11%; the pilot drew mostly the 244-character mode
+   and one unlucky random draw.
+3. "STONE's 5/5 final-artifact retention is almost entirely a Windows CRLF
+   artifact" → retracted (Finding 11).
+4. "Type hints strip 52–84% of the signal" → that was a four-run subset; the
+   full-sample mean is 45% (34–86%).
+5. "Mutation sampling is deterministic" → true within a process only, until fixed.
+6. "The STONE/KGW difference is an illusion of where you check" → there is a real
+   difference at n=25, though confounded with headroom.
 
-**Follow-up flagged, not yet actioned**: the same `write_text(...)` pattern
-without `newline=""` appears at two other call sites in `run_full_battery.py`
-(`_init_git_scenario`, the wheel-build pyproject.toml write) — worth auditing
-before any platform-dependence elsewhere in this project is assumed to be
-controlled for.
+**What held:** checking only the released artifact overstates survival
+substantially (Finding 10); watermark strength/headroom is the dominant
+predictor of survival, consistent with §2.2; KGW retains poorly through the
+chain; and 5 of 9 schemes never embed on this model (§2.7).
 
 ### 2.7 All 9 schemes through the lifecycle chain: where does each one break
 
-Ran the remaining 7 schemes (SWEET, EWD, Unigram, Unbiased, DIP, SynthID, PF)
-through the identical 9-step chain, one scheme per process, same host. Direct
-answer to "where is it breaking, by operation name":
+The remaining 7 schemes ran through the identical chain (5 attempts each, one
+scheme per process). STONE and KGW use the n=25 data above.
 
-| Scheme | Usable / attempted | First-break operation | Full-chain survivors |
+| Scheme | Usable / attempted | First-break operation(s) | Never broke |
 |---|---|---|---|
-| STONE | 5/5 | `agent_add_type_hints` (every run) | 0/5 |
-| KGW | 4/5 | `agent_add_type_hints` (every run) | 0/4 |
-| SWEET | 0/5 | — no usable baseline | — |
+| STONE | 25/25 (9 distinct) | `agent_add_type_hints` 21 | 4/25 |
+| KGW | 18/25 | `agent_add_type_hints` 12, `review_rename` 3, `ci_format` 1 | 2/18 |
 | EWD | 1/5 | `agent_add_type_hints` | 0/1 |
-| Unigram | 0/5 | — no usable baseline | — |
-| Unbiased | 0/5 | — no usable baseline | — |
 | DIP | 1/5 | `agent_add_type_hints` | 0/1 |
-| SynthID | 0/5 | — no usable baseline | — |
-| PF | 0/5 | — no usable baseline | — |
+| SWEET, Unigram, Unbiased, SynthID, PF | 0/5 each | no usable baseline | — |
 
-**Finding 10 — two results, both clean, both important.**
-
-**(a) `agent_add_type_hints` is the universal first-break point.** Across
-every scheme that produced even one usable baseline — 11 usable runs total,
-spanning 4 different schemes with 3 genuinely different underlying
-mechanisms (STONE/KGW/EWD's green-list bias, DIP's distortion-free
-permutation) — **100% broke at the identical first step, zero exceptions.**
-No other operation in this entire project reached that level of consistency;
-every other single-operation result was scheme-dependent (§2.1). Adding type
-hints is not a scheme-specific weakness — on this evidence, it looks like a
-structural property of how small green-list/distortion-free watermarks
-interact with a very common, very ordinary code-quality operation.
-
-**(b) Most schemes couldn't even be tested on this model — a finding in its
-own right.** Of 9 schemes, only 4 (STONE, KGW, EWD, DIP) ever produced a
-detectable baseline at all, and 2 of those 4 (EWD, DIP) only managed it once
-in 5 tries. SWEET, Unigram, Unbiased, and SynthID never once produced a
-detectable watermark on `bigcode/tiny_starcoder_py` across 20 combined
-attempts. This isn't confined to the entropy-gated schemes flagged earlier
-(§2.3) — it spans static green lists (Unigram), distortion-free permutation
-schemes (Unbiased), and a real published production scheme (SynthID). **On a
-164M-parameter, low-entropy-output model, only the simplest, most direct
-green-list constructions (STONE, KGW) reliably embed a detectable watermark
-at all** — a model-compatibility finding that has to be resolved (a larger
-generation model) before most of this scheme set's actual mutation
-robustness can be assessed, independent of anything about mutations.
+**Finding 12 — a model-compatibility wall, and a weaker "first break"
+pattern than first reported.** (a) Of nine schemes, only four ever produced a
+detectable baseline on `bigcode/tiny_starcoder_py`, and EWD and DIP managed it
+once in five tries; SWEET, Unigram, Unbiased, SynthID and PF never did across
+25 combined attempts. This spans entropy-gated, static-list, distortion-free and
+production (SynthID) constructions, so it is a property of the small
+low-entropy model rather than of any one mechanism; robustness of most of the
+scheme set cannot be assessed until a larger model is used. (b) Where a scheme
+could be tested, the first break is usually at step 1 — but with one usable run
+each, EWD and DIP cannot support any rate, and the STONE/KGW figures above
+show the step-1 pattern is common (67–84%), not universal, and confounded with
+`ast.unparse` (Finding 8). The earlier "100%, zero exceptions across 11 runs"
+statement is withdrawn.
 
 ## 3. Threats to validity
 
@@ -450,11 +509,22 @@ robustness can be assessed, independent of anything about mutations.
    this pass (§2.5).
 7. **Four Family 2 schemes (Unbiased, DIP, SynthID, PF) are smoke-tested but
    not yet benchmarked at scale** — infrastructure is ready, results are not.
-8. **The lifecycle chain (§2.6) is n=5/n=4, one order, two schemes.** The
-   Windows-CRLF discovery is real and reproduced directly, but its effect
-   *size* on any other prompt, scheme, or host OS is untested — flagged as a
-   platform-dependence risk to control for explicitly in any full Phase 4 run,
-   not quantified beyond these two schemes here.
+8. **The lifecycle chain (§2.6) is one prompt, one order, two fully-tested
+   schemes, one host OS.** STONE's 25 runs are 9 distinct generations (17
+   byte-identical), so its effective sample is far smaller than 25 and no
+   confidence interval is reported for it; KGW's 18 usable runs are all
+   distinct. The order is hand-designed, not mined from real CI configs.
+9. **Uncontrolled mutation randomness in all results before 2026-09-24.**
+   The corpus-token draw used Python's per-process-randomized `hash()`, so
+   identical input got different mutations in different processes. Fixed;
+   existing datasets were not regenerated. §2.6 quantifies the effect for
+   STONE (retained-at-end for the dominant short text ranges 10–70% by draw).
+10. **The `ast.unparse()` confound also affects `agent_add_type_hints`
+    (Finding 8)**, not only the human-sourced operations: roughly 45–90% of
+    that step's signal loss is reproduced by reserialization alone. The
+    targeted-patch control that would isolate the annotations is not yet run.
+11. **STONE-vs-KGW lifecycle differences are confounded with baseline
+    headroom** (§2.6): matched-baseline comparison not yet done.
 
 ## 4. Reproducing this benchmark
 

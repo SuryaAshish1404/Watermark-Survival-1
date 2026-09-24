@@ -5,7 +5,91 @@ data, written as a citable methods+results document rather than a lab
 narrative. This file keeps the full session-by-session story, including the
 crash/recovery details BENCHMARK.md summarizes in one line.
 
-## All 9 schemes through the lifecycle chain — 2026-09-22 (latest)
+## n=25 rerun of the lifecycle chain, and what it overturned — 2026-09-24 (latest)
+
+User asked for 20+ repeats on STONE and KGW "for statistical confidence." Ran
+25 each (one scheme per process). **The n=5 pilot's headline claims did not
+survive**, and chasing the discrepancy turned up two measurement defects. The
+two entries below this one (2026-09-22) are kept for the record but are
+**superseded** where they conflict with this one; the corrected write-up is
+`BENCHMARK.md` §2.6-2.7.
+
+**The numbers (as run).** STONE: 25/25 usable, but only **9 distinct
+generations** — 17 of the 25 runs are the same byte-identical 244-character
+completion (baseline z = 4.71, barely over the 4.0 threshold). KGW: 18/25
+usable, all 18 distinct. STONE broke at step 1 (`agent_add_type_hints`) in
+21/25 (84%), never broke in 4/25 (16%), and was above threshold after the squash
+merge in 23/25 (92%). KGW broke at step 1 in 12/18, at `review_rename` in 3, at
+`ci_format` in 1; never broke in 2/18 (11%); above threshold at the end in
+2/18. The wheel step and the squash step flipped **zero** individual outcomes
+across all 43 runs.
+
+**What I had to retract, and why:**
+1. *"100% of usable runs broke at type hints, zero exceptions."* False at
+   n=25 (84% / 67%). The pilot's 100% came from 5 STONE runs that were
+   effectively one trajectory (four were the identical 244-char text).
+2. *"Cumulative survival is about 20% for both schemes; the STONE/KGW
+   difference is an illusion."* STONE is 92% as-run; KGW is 11%.
+3. *"STONE's end-of-chain recovery is a Windows CRLF artifact."* Wrong: STONE
+   was already retained at the squash step in 23/25, and packaging flipped no
+   outcome in 43 runs. The CRLF fact itself is real and was reproduced (54 → 59
+   characters via `write_text` without `newline=""`); it stays as a
+   platform-dependence flag, not an explanation.
+4. *"Type hints strip 52-84% of the signal."* That was a four-run subset of the
+   high-baseline runs, chosen by me after seeing the data. Full-sample: mean
+   45%, range 34-86%.
+5. *"Mutation sampling is deterministic, seeded by the input."* Only within a
+   process — see below.
+
+**Defect 1 — pseudo-replication.** 17 identical generations means STONE's
+"n=25" is closer to n=9, so confidence intervals treating the runs as
+independent are wrong for STONE; none are reported. (KGW's are valid for this
+prompt and model.) The collapse itself is a property of the generator: under
+this model, prompt and `delta=4.0`, STONE emits one completion about two-thirds
+of the time.
+
+**Defect 2 — `hash()` is randomized per process.** `_rng(src)` seeded the
+real-corpus draws with `random.Random(hash(src))`. Python randomizes `hash()`
+for strings on each interpreter launch (I confirmed two launches printing
+different values), so the *same input* got a different comment, annotation set
+and docstring in every process. That is why the n=5 process and the n=25
+process disagreed about the same 244-character text. Fixed with a SHA-256
+digest; existing results were not regenerated.
+
+**Measuring the damage** (`scripts/lifecycle_draw_variance.py`, tokenizer only
+so no model load): five saved STONE texts, 60 random draws each, the seven
+text-only chain steps. The four longer texts (baseline z 9.98-21.5) were
+retained at the end in 98-100% of draws. The dominant short text (z = 4.71):
+only **10%** of draws never broke and **70%** ended retained. So for the
+dominant mode the as-run outcome is one draw from a wide distribution, and
+the "92% retained" figure is inflated: marginalizing over the draw and
+weighting that mode at 17/25 gives roughly 23% never-broke and 72%
+retained-at-end (approximate; the eight non-dominant runs are one draw each).
+
+**The `ast.unparse` confound was unflagged for the type-hint step.**
+`mut_add_type_hints` ends in `ast.unparse()`, the same reserialization issue I
+had already flagged for the human-sourced operations. Control on the same five
+texts: `ast.unparse` alone reproduces roughly 45-90% (mean about 71%) of the
+signal the type-hint step loses (e.g. z 21.5 → 9.37 from unparse alone vs
+8.06 with type hints). "Type hints are the most destructive single operation"
+is unsupported. The clean test (type hints inserted by targeted text patching,
+no reserialization) is not yet run.
+
+**What held:** checking only the released artifact overstates survival by a
+wide margin (16% never-broke vs 92% at the end as-run; about 23% vs 72%
+marginalized) — the recovery mechanism after the early dip is *unexplained*
+and I'm not going to guess at one; baseline headroom is the dominant
+predictor (as-run STONE never-broke runs: mean baseline z 20.4 vs 5.9); KGW
+retains poorly and doesn't recover; and 5 of 9 schemes never embed on this
+model.
+
+**Not isolated:** the STONE-vs-KGW lifecycle gap is confounded with baseline
+headroom (KGW clusters near z = 6.5; STONE is bimodal 4.7 / 9-27), so it says
+little about scheme design.
+
+---
+
+## (superseded by the entry above where they conflict) All 9 schemes through the lifecycle chain — 2026-09-22
 
 Follow-up to the STONE/KGW lifecycle chain below: user asked directly "run the
 other schemes through the lifecycle chain, and where is it breaking (the op
@@ -27,7 +111,7 @@ Full table and both findings written up together: `BENCHMARK.md` §2.7.
 
 ---
 
-## Full-SDLC-cycle chain: cumulative survival — 2026-09-22
+## (superseded by the 2026-09-24 entry where they conflict) Full-SDLC-cycle chain: cumulative survival — 2026-09-22
 
 User asked directly: "check for the entire SDE cycle." Everything before this
 entry (30+ operations across 9 schemes) mutates the *original* baseline once,

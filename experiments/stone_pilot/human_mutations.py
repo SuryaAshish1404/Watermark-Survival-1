@@ -26,6 +26,7 @@ need network/repo access to run.
 """
 
 import ast
+import hashlib
 import json
 import random
 from pathlib import Path
@@ -33,12 +34,20 @@ from pathlib import Path
 CORPUS_PATH = Path(__file__).parent / "data" / "human_corpus.json"
 _CORPUS = json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
 
+# Varied only by scripts/lifecycle_draw_variance.py, to sample the distribution of
+# outcomes over different random draws of the real corpus tokens. Leave at 0 for
+# ordinary runs so a given input always yields the same mutation.
+SEED_SALT = 0
+
 
 def _rng(src: str) -> random.Random:
-    # Seeded by the input text itself: deterministic and reproducible per input,
-    # not a fixed global seed that would pick the same real token every time
-    # regardless of what's being mutated.
-    return random.Random(hash(src) & 0xFFFFFFFF)
+    # Seeded by a stable digest of the input text: the same input gives the same
+    # draw in every process. (Until 2026-09-24 this used the builtin hash(), which
+    # Python randomizes per interpreter launch — so draws were only stable *within*
+    # one process, and results generated before that date are not bit-reproducible
+    # across runs. See BENCHMARK.md section 3.)
+    digest = int(hashlib.sha256(src.encode("utf-8")).hexdigest()[:8], 16)
+    return random.Random(digest + SEED_SALT)
 
 
 # --- Mutations sourcing real, human-written content --------------------------

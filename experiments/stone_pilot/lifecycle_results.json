@@ -34,70 +34,70 @@
             },
             {
               "step": "agent_add_type_hints",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 302
+              "chars": 283
             },
             {
               "step": "agent_add_docstring",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 302
+              "chars": 283
             },
             {
               "step": "review_targeted_patch",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 302
+              "chars": 283
             },
             {
               "step": "review_rename",
-              "score": 1.1766968108291043,
+              "score": 2.523573072576179,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 286
+              "chars": 269
             },
             {
               "step": "review_add_comment",
-              "score": 2.2677868380553634,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 341
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
             },
             {
               "step": "ci_format",
-              "score": 2.785430072655778,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 344
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
             },
             {
               "step": "ci_lint_autofix",
-              "score": 3.530090432487313,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 334
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 3.530090432487313,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 333
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
             },
             {
               "step": "release_build_wheel",
-              "score": 4.6,
+              "score": 6.063390625908324,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 339
+              "chars": 299
             },
             {
               "step": "final_code",
-              "code": "# Reload whole key library to check if a key was added\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef sig(request_data: Callable[[int, int, str], None] | None) -> \"GtkWindowType\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
             }
           ]
         },
@@ -106,75 +106,75 @@
           "chain": [
             {
               "step": "baseline",
-              "score": 4.714951667914447,
+              "score": 16.744689169543143,
               "is_watermarked": true
             },
             {
               "step": "agent_add_type_hints",
-              "score": 1.9611613513818404,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 302
+              "score": 8.11111111111111,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 745
             },
             {
               "step": "agent_add_docstring",
-              "score": 1.9611613513818404,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 302
+              "score": 8.11111111111111,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 745
             },
             {
               "step": "review_targeted_patch",
-              "score": 1.9611613513818404,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 302
+              "score": 8.11111111111111,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 745
             },
             {
               "step": "review_rename",
-              "score": 1.1766968108291043,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 286
+              "score": 9.0,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 831
             },
             {
               "step": "review_add_comment",
-              "score": 2.2677868380553634,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 341
+              "score": 9.27624819028711,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 846
             },
             {
               "step": "ci_format",
-              "score": 2.785430072655778,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 344
+              "score": 10.11111111111111,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 851
             },
             {
               "step": "ci_lint_autofix",
-              "score": 3.530090432487313,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 334
+              "score": 10.11111111111111,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 851
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 3.530090432487313,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 333
+              "score": 10.11111111111111,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 851
             },
             {
               "step": "release_build_wheel",
-              "score": 4.6,
+              "score": 10.913352638982433,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 339
+              "chars": 873
             },
             {
               "step": "final_code",
-              "code": "# Reload whole key library to check if a key was added\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef sig(request_data: Callable[[int, int, str], None] | None) -> \"GtkWindowType\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+              "code": "# Maximum size\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef service_media(user_path: list[dict[str, Any]]) -> \"BaseService\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return None\r\n\r\n\r\ndef xres(query_items: Gtk.Entry) -> DecoratedResult:\r\n    \"\"\"Saves a given GameState in the .envory\"\"\"\r\n    os.makedirs(os.devnull, exist_ok=True)\r\n    with codecs.open(os.devnull, \"wb\", encoding=\"utf-8-sig\") as format_names:\r\n        for issue_info in query_items.variables:\r\n            for rpg_rtp_path, warning_image in query_items.variables[issue_info]:\r\n                format_names.write(rpg_rtp_path + \": \" + str(warning_image))\r\n\r\n\r\ndef overview(query_items: IO[str]) -> list[dict[str, Any]]:\r\n    \"\"\"Read a .envory file to get game state.\"\"\"\r\n"
             }
           ]
         },
@@ -183,75 +183,75 @@
           "chain": [
             {
               "step": "baseline",
-              "score": 8.0,
+              "score": 4.714951667914447,
               "is_watermarked": true
             },
             {
               "step": "agent_add_type_hints",
-              "score": 3.8996021017180893,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 339
+              "chars": 283
             },
             {
               "step": "agent_add_docstring",
-              "score": 3.8996021017180893,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 339
+              "chars": 283
             },
             {
               "step": "review_targeted_patch",
-              "score": 3.8996021017180893,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 339
+              "chars": 283
             },
             {
               "step": "review_rename",
-              "score": 4.157609203101499,
-              "is_watermarked": true,
-              "outcome": "retained",
-              "chars": 323
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
             },
             {
               "step": "review_add_comment",
-              "score": 6.8707275125509195,
+              "score": 4.024922359499621,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 382
+              "chars": 301
             },
             {
               "step": "ci_format",
-              "score": 6.207522318391883,
+              "score": 4.1461399144838555,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 385
+              "chars": 304
             },
             {
               "step": "ci_lint_autofix",
-              "score": 6.207522318391883,
+              "score": 5.185449728701349,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 385
+              "chars": 294
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 6.207522318391883,
+              "score": 5.185449728701349,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 385
+              "chars": 293
             },
             {
               "step": "release_build_wheel",
-              "score": 7.937253933193771,
+              "score": 6.063390625908324,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 394
+              "chars": 299
             },
             {
               "step": "final_code",
-              "code": "# This function works out how many hours are meant by some\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef full_pattern(_cy: Gtk.Box | None) -> None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return os.path.join(os.environ.get(\"GAMEDATA\", os.environ[\"HOME\"]))\r\n"
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
             }
           ]
         },
@@ -265,70 +265,70 @@
             },
             {
               "step": "agent_add_type_hints",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 302
+              "chars": 283
             },
             {
               "step": "agent_add_docstring",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 302
+              "chars": 283
             },
             {
               "step": "review_targeted_patch",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 302
+              "chars": 283
             },
             {
               "step": "review_rename",
-              "score": 1.1766968108291043,
+              "score": 2.523573072576179,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 286
+              "chars": 269
             },
             {
               "step": "review_add_comment",
-              "score": 2.2677868380553634,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 341
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
             },
             {
               "step": "ci_format",
-              "score": 2.785430072655778,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 344
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
             },
             {
               "step": "ci_lint_autofix",
-              "score": 3.530090432487313,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 334
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 3.530090432487313,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 333
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
             },
             {
               "step": "release_build_wheel",
-              "score": 4.6,
+              "score": 6.063390625908324,
               "is_watermarked": true,
               "outcome": "retained",
-              "chars": 339
+              "chars": 299
             },
             {
               "step": "final_code",
-              "code": "# Reload whole key library to check if a key was added\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef sig(request_data: Callable[[int, int, str], None] | None) -> \"GtkWindowType\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
             }
           ]
         },
@@ -342,70 +342,1610 @@
             },
             {
               "step": "agent_add_type_hints",
-              "score": 1.9611613513818404,
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 6,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 7,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.919349550499537,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.1304951684997055,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 303
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.1304951684997055,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 303
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 3.1304951684997055,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 303
+            },
+            {
+              "step": "review_rename",
+              "score": 1.7888543819998317,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 291
+            },
+            {
+              "step": "review_add_comment",
+              "score": 2.4494897427831783,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 346
+            },
+            {
+              "step": "ci_format",
+              "score": 2.6,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 349
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 3.4112114616897666,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 339
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 3.4112114616897666,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 338
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 3.709704134011871,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 344
+            },
+            {
+              "step": "final_code",
+              "code": "# No image available - this is expected for some games\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef parser(old_predicate: Iterable[ProgressBox.ProgressFunction]) -> GdkPixbuf.Pixbuf:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 8,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 9,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 10,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 11,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 9.391485505499116,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.400396792595916,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 282
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.400396792595916,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 282
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.400396792595916,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 282
+            },
+            {
+              "step": "review_rename",
+              "score": 2.400396792595916,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 3.4,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 329
+            },
+            {
+              "step": "ci_format",
+              "score": 3.530090432487313,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 332
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 4.37880269519857,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 322
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 4.37880269519857,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 321
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 5.116817192534651,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 327
+            },
+            {
+              "step": "final_code",
+              "code": "# Ensure the versions.json specified version is present and\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef can_go_back(details: Gtk.Notebook) -> BaseDownloader | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 12,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 17.028905031075166,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 11.176011176016765,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 712
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 11.176011176016765,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 712
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 11.176011176016765,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 712
+            },
+            {
+              "step": "review_rename",
+              "score": 10.16001016001524,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 780
+            },
+            {
+              "step": "review_add_comment",
+              "score": 10.5,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 815
+            },
+            {
+              "step": "ci_format",
+              "score": 10.5,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 819
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 10.5,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 819
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 10.5,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 819
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 11.938011938017906,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 840
+            },
+            {
+              "step": "final_code",
+              "code": "# Don't check for compressed files\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef include_own_games(host_locale: LaunchConfigDict) -> list[ComponentUpdater]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    version_parts = os.getcwd()\r\n    for migrated, trait, executable in os.walk(game_dir):\r\n        for command_array in executable:\r\n            if command_array.startswith(\"game\"):\r\n                if command_array.endswith(\".exe\"):\r\n                    return os.path.join(version_parts, migrated)\r\n    return None\r\n\r\n\r\ndef coll(cached: Iterable[str]) -> Path:\r\n    \"\"\"Saves the given GameFile to a file system.\"\"\"\r\n    with io.open(cached.game_path, \"wb+\") as dll:\r\n        dll.write(cached.game_content)\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 13,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 14,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 10.057728110107279,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 1.4,
               "is_watermarked": false,
               "outcome": "silently_lost",
               "chars": 302
             },
             {
               "step": "agent_add_docstring",
-              "score": 1.9611613513818404,
+              "score": 1.4,
               "is_watermarked": false,
               "outcome": "silently_lost",
               "chars": 302
             },
             {
               "step": "review_targeted_patch",
-              "score": 1.9611613513818404,
+              "score": 1.4,
               "is_watermarked": false,
               "outcome": "silently_lost",
               "chars": 302
             },
             {
               "step": "review_rename",
-              "score": 1.1766968108291043,
+              "score": 0.3922322702763681,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 286
+              "chars": 285
             },
             {
               "step": "review_add_comment",
-              "score": 2.2677868380553634,
+              "score": 2.116950987028628,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 341
+              "chars": 314
             },
             {
               "step": "ci_format",
-              "score": 2.785430072655778,
+              "score": 2.2677868380553634,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 344
+              "chars": 317
             },
             {
               "step": "ci_lint_autofix",
-              "score": 3.530090432487313,
+              "score": 3.0,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 334
+              "chars": 307
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 3.530090432487313,
+              "score": 3.0,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 333
+              "chars": 306
             },
             {
               "step": "release_build_wheel",
-              "score": 4.6,
-              "is_watermarked": true,
-              "outcome": "retained",
-              "chars": 339
+              "score": 3.2659863237109046,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 313
             },
             {
               "step": "final_code",
-              "code": "# Reload whole key library to check if a key was added\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef sig(request_data: Callable[[int, int, str], None] | None) -> \"GtkWindowType\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+              "code": "# Never decrease this number\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef bytes_read(resp: DBParams) -> Generator[bytes, None, bytes]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return None\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 15,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 26.587214972614184,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 11.679942321414904,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 577
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 11.679942321414904,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 577
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 11.679942321414904,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 577
+            },
+            {
+              "step": "review_rename",
+              "score": 11.355499479153378,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 573
+            },
+            {
+              "step": "review_add_comment",
+              "score": 12.33288287465668,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 619
+            },
+            {
+              "step": "ci_format",
+              "score": 12.649110640673516,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 619
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 13.645115946344657,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 609
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 13.645115946344657,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 608
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 15.666666666666666,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 621
+            },
+            {
+              "step": "final_code",
+              "code": "# Lutris does not support installer selection\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef registry_files(week_units: Sequence[str]) -> ModuleType:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return _game_exe.check_file_path(week_units)\r\n\r\n\r\ndef media_type(week_units: time.struct_time) -> \"SearchPredicate\":\r\n    \"\"\"Return the directory in which the given game id is stored on the disk. If no ID is provided,\r\n    the game's home directory is considered as the game's home directory.\"\"\"\r\n    game_\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 16,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 17,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 21.172308959267212,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 7.3531602401444625,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 578
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 7.3531602401444625,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 578
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 7.3531602401444625,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 578
+            },
+            {
+              "step": "review_rename",
+              "score": 6.118878816098722,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 573
+            },
+            {
+              "step": "review_add_comment",
+              "score": 7.229568912920511,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 625
+            },
+            {
+              "step": "ci_format",
+              "score": 8.066323435772446,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 635
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 8.066323435772446,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 635
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 8.066323435772446,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 635
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 8.7226570357152,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 650
+            },
+            {
+              "step": "final_code",
+              "code": "# Create the dynamic rows that are initially needed\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef _is_dark(irq_info: Iterable[GObject.Object | None]) -> Game | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return os.path.join(get_game_dir(), game_path, irq_info)\r\n\r\n\r\ndef abs_dest_path(\r\n    added_games: Callable[[ResultType, Exception], None] | None, game_actions: DBCondition | None\r\n) -> tuple[str, list[str]]:\r\n    \"\"\"Get a file path as the executable to a given type, or None if no executable is found.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 18,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 19,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 20,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 21,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 22,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 23,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 24,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 20.04459314343183,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.2659863237109046,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 302
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.2659863237109046,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 302
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 3.2659863237109046,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 302
+            },
+            {
+              "step": "review_rename",
+              "score": 3.2659863237109046,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 289
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.314554973040049,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 320
+            },
+            {
+              "step": "ci_format",
+              "score": 4.426352063787131,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 323
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.30722777603022,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 313
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.30722777603022,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 312
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.046918007655169,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 319
+            },
+            {
+              "step": "final_code",
+              "code": "# Do not show erroneous values\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef steam_box(locations: Callable[[Gtk.Widget], None]) -> dict[str, str]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 25,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.714951667914447,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.9824045403173027,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 2.523573072576179,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 269
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.024922359499621,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 4.1461399144838555,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.185449728701349,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 6.063390625908324,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Fix possible case differences\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef stderr_dest(hashes: CompletionFunction | None) -> \"SteamID\":\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
             }
           ]
         }
@@ -427,75 +1967,75 @@
           "chain": [
             {
               "step": "baseline",
-              "score": 5.284229075567875,
+              "score": 6.720557909691094,
               "is_watermarked": true
             },
             {
               "step": "agent_add_type_hints",
-              "score": 3.7859388972001824,
+              "score": 3.642141316611115,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 477
+              "chars": 672
             },
             {
               "step": "agent_add_docstring",
-              "score": 3.7859388972001824,
+              "score": 3.642141316611115,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 477
+              "chars": 672
             },
             {
               "step": "review_targeted_patch",
-              "score": 3.609848715935058,
+              "score": 3.642141316611115,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 477
+              "chars": 672
             },
             {
               "step": "review_rename",
-              "score": -0.09578262852211514,
+              "score": 2.356886355936087,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 437
+              "chars": 676
             },
             {
               "step": "review_add_comment",
-              "score": -0.09325048082403138,
+              "score": 2.143741685768261,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 454
+              "chars": 729
             },
             {
               "step": "ci_format",
-              "score": -0.2773500981126145,
+              "score": 2.2791653284908038,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 457
+              "chars": 732
             },
             {
               "step": "ci_lint_autofix",
-              "score": -0.2773500981126145,
+              "score": 2.2791653284908038,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 457
+              "chars": 732
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": -0.2773500981126145,
+              "score": 2.2791653284908038,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 457
+              "chars": 732
             },
             {
               "step": "release_build_wheel",
-              "score": -0.7364596943186588,
+              "score": 2.0530596102989462,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 468
+              "chars": 749
             },
             {
               "step": "final_code",
-              "code": "# Feral gamemode\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef checksum_content(geometry: str | None) -> dict | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    operation_names = get_game_exeptutable()\r\n    if operation_names and os.access(operation_names, os.X_OK) != 0:\r\n        operation_names = checksum_content(operation_names)\r\n"
+              "code": "# Monitor thread and continue when task has executed\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef button_text(corner_pixel_width: BaseException | str) -> Gtk.Entry:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    locale_renderer_text = button_text(corner_pixel_width)\r\n    if locale_renderer_text:\r\n        return os.path.join(locale_renderer_text, \"game.sln\")\r\n    else:\r\n        allocation = get_game_install_dir(corner_pixel_width)\r\n        if allocation is not None:\r\n            return os.path.join(allocation, \"game.sln\")\r\n        else:\r\n            return os.environ[\"PYTHONUNBUFFERED\"] or get_game_executable_\r\n"
             }
           ]
         },
@@ -504,152 +2044,86 @@
           "chain": [
             {
               "step": "baseline",
-              "score": 5.634407136407685,
+              "score": 8.928436656664786,
               "is_watermarked": true
             },
             {
               "step": "agent_add_type_hints",
-              "score": 2.5329511610290507,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 669
+              "score": 6.206515393788477,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 654
             },
             {
               "step": "agent_add_docstring",
-              "score": 2.5329511610290507,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 669
+              "score": 6.3790522565901355,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 731
             },
             {
               "step": "review_targeted_patch",
-              "score": 2.5329511610290507,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 669
+              "score": 6.3790522565901355,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 731
             },
             {
               "step": "review_rename",
-              "score": 2.857142857142857,
+              "score": 3.674234614174767,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 719
+              "chars": 759
             },
             {
               "step": "review_add_comment",
-              "score": 3.12990356022295,
+              "score": 3.549142509966853,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 783
+              "chars": 788
             },
             {
               "step": "ci_format",
-              "score": 4.6055411380544555,
-              "is_watermarked": true,
-              "outcome": "retained",
-              "chars": 786
+              "score": 2.2,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 792
             },
             {
               "step": "ci_lint_autofix",
-              "score": 4.6055411380544555,
-              "is_watermarked": true,
-              "outcome": "retained",
-              "chars": 786
+              "score": 2.2,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 792
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 4.6055411380544555,
-              "is_watermarked": true,
-              "outcome": "retained",
-              "chars": 786
+              "score": 2.2,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 792
             },
             {
               "step": "release_build_wheel",
-              "score": 3.7165555811971727,
+              "score": 2.3946843788558616,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 800
+              "chars": 809
             },
             {
               "step": "final_code",
-              "code": "# We don't care where Wine is, but only if it was found at all.\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef json_file(installation: \"DbGameDict\") -> DesktopEnvironment | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    if installation in (None, \"g2\", \"g2_client\"):\r\n        desktop_environment = get_game_path(installation)\r\n    elif installation in (\".\", \"..\") and (\"gamedata/\" in game_path and (not os.access(\"~/gamedata/\", os.W_OK))):\r\n        desktop_environment = get_gamedata_path(game_path)\r\n    elif os.access(\"~/gamedata/\", os.W_OK) and (\"gamedata/\" in game_path and (not os.access(\"~/gamedata/\", os.W_OK))):\r\n        desktop_environment = get_gamedata_\r\n"
+              "code": "# Max ELF sections processed\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef output_width(platform_dict: DBSchema) -> MediaPath | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return os.environ[\"PATH\"].abspath(os.environ[\"PATH\"])\r\n\r\n\r\ndef old_settings(next_occurence: \"Gtk.Widget | None\", **kwargs) -> Callable[[Any, Exception], None]:\r\n    \"\"\"Sends a signal to a process list, logging errors without stopping.\"\"\"\r\n    body = output_width(next_occurence.game.gameid)\r\n    upload_btn = load_gamedata(next_occurence.game.gameid, os.environ[\"PATH\"], body)\r\n    upload_btn[\"gameid\"] = str(next_occurence.game.gameid)\r\n    upload_btn[\"gameid\"] = str(next_occurence.game.gameid)\r\n"
             }
           ]
         },
         {
           "run_index": 3,
+          "excluded": "baseline_never_emitted",
           "chain": [
             {
               "step": "baseline",
-              "score": 4.607016272000923,
-              "is_watermarked": true
-            },
-            {
-              "step": "agent_add_type_hints",
-              "score": 3.4478457693809625,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 643
-            },
-            {
-              "step": "agent_add_docstring",
-              "score": 3.4478457693809625,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 643
-            },
-            {
-              "step": "review_targeted_patch",
-              "score": 3.4478457693809625,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 643
-            },
-            {
-              "step": "review_rename",
-              "score": 2.06418738616856,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 667
-            },
-            {
-              "step": "review_add_comment",
-              "score": 1.7056057308448835,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 716
-            },
-            {
-              "step": "ci_format",
-              "score": 1.697056274847714,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 719
-            },
-            {
-              "step": "ci_lint_autofix",
-              "score": 1.697056274847714,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 719
-            },
-            {
-              "step": "merge_squash_with_reformat",
-              "score": 1.697056274847714,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 719
-            },
-            {
-              "step": "release_build_wheel",
-              "score": 1.3401566701313368,
-              "is_watermarked": false,
-              "outcome": "silently_lost",
-              "chars": 734
-            },
-            {
-              "step": "final_code",
-              "code": "# If the game works on any platform, that'll do.\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef conf(lutris_window: AnyCallable) -> Gtk.Window | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    game_ld_library_path = get_executable_path(lutris_window)\r\n    if game_ld_library_path and os.access(game_ld_library_path, os.X_OK):\r\n        domain_specified = get_game_path(game_ld_library_path)\r\n    else:\r\n        domain_specified = None\r\n    if domain_specified and (not os.access(domain_specified, os.W_OK | os.O_RDONLY)):\r\n        raise RuntimeError(\"{} does not exist\".format(game_ld_library_path))\r\n"
+              "score": 1.9069251784911847,
+              "is_watermarked": false
             }
           ]
         },
@@ -658,86 +2132,1296 @@
           "chain": [
             {
               "step": "baseline",
-              "score": 6.425707714031835,
+              "score": 5.4044971049169055,
               "is_watermarked": true
             },
             {
               "step": "agent_add_type_hints",
-              "score": 1.8198699419201876,
+              "score": 1.873171623163388,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 436
+              "chars": 408
             },
             {
               "step": "agent_add_docstring",
-              "score": 1.8198699419201876,
+              "score": 1.873171623163388,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 436
+              "chars": 408
             },
             {
               "step": "review_targeted_patch",
-              "score": 1.8198699419201876,
+              "score": 1.873171623163388,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 436
+              "chars": 408
             },
             {
               "step": "review_rename",
-              "score": 1.4925557853149838,
+              "score": 0.8466487815452375,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 413
+              "chars": 399
             },
             {
               "step": "review_add_comment",
-              "score": 1.7717591356565963,
+              "score": 1.0954451150103321,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 431
+              "chars": 426
             },
             {
               "step": "ci_format",
-              "score": 1.3867504905630728,
+              "score": 0.5432144762551112,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 435
+              "chars": 429
             },
             {
               "step": "ci_lint_autofix",
-              "score": 1.7873696499288347,
+              "score": 0.5432144762551112,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 425
+              "chars": 429
             },
             {
               "step": "merge_squash_with_reformat",
-              "score": 1.5992254762521154,
+              "score": 0.5432144762551112,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 424
+              "chars": 429
             },
             {
               "step": "release_build_wheel",
-              "score": 1.6858544608470492,
+              "score": 0.6311687442672026,
               "is_watermarked": false,
               "outcome": "silently_lost",
-              "chars": 434
+              "chars": 440
             },
             {
               "step": "final_code",
-              "code": "# A2UMVHOX7UP4V7\"\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef dst_dir(formatted_time: Iterable) -> tuple[bytes, dict[str, str]]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n\r\n\r\ndef shortcuts(xkbcomp: sql.DBConditionsDict | None) -> list[dict]:\r\n    \"\"\"Finds one installed game in the given game executable path.\"\"\"\r\n"
+              "code": "# Minimum width for a cell\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef runner_games(var_map: Gdk.Screen) -> Gtk.Entry:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    pathtoicon = get_game_path(var_map)\r\n    if pathtoicon and os.access(pathtoicon, os.X_OK):\r\n        return os.environ[\"MYGAME_PATH\"].strip()\r\n"
             }
           ]
         },
         {
           "run_index": 5,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 6.386947897726728,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 2.6457513110645907,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 610
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 2.2669445147941047,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 662
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.2669445147941047,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 662
+            },
+            {
+              "step": "review_rename",
+              "score": -0.06884283908215143,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 713
+            },
+            {
+              "step": "review_add_comment",
+              "score": 0.06666666666666667,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 772
+            },
+            {
+              "step": "ci_format",
+              "score": 0.331861655799986,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 778
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 0.331861655799986,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 778
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 0.331861655799986,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 778
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 0.39735970711951313,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 798
+            },
+            {
+              "step": "final_code",
+              "code": "# If reinstall flag is passed, force the action to install\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef bios_filename(log_textview: logging.Logger) -> tuple[bytes, dict[str, str]]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    if log_textview.islower():\r\n        gog_cache = f\"game{game.game_num()}/exe\"\r\n    else:\r\n        gog_cache = f\"game{game.game_num()}/exe\"\r\n    if os.path.exists(gog_cache):\r\n        return gog_cache\r\n    return None\r\n\r\n\r\ndef folded_runner_name(ignored_dirs: CloudSaveLocation, lutris_runtime_path: \"Game\" = True) -> str | bool | None:\r\n    \"\"\"Create and run multi-file chooser dialog.\"\"\"\r\n    filter_os = f\"{ignored_dirs.game_dir()}/exe\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 6,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.195906791483446,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.173774989207522,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 546
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.173774989207522,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 546
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 3.173774989207522,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 546
+            },
+            {
+              "step": "review_rename",
+              "score": 1.6728567220186852,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 476
+            },
+            {
+              "step": "review_add_comment",
+              "score": 1.7277368511627202,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 494
+            },
+            {
+              "step": "ci_format",
+              "score": 1.9508345382639332,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 519
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 1.9508345382639332,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 519
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 1.9508345382639332,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 519
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 1.8593393604027364,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 532
+            },
+            {
+              "step": "final_code",
+              "code": "# Steam for Linux\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef request_data(component: TracebackType | None) -> dict[str, str] | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    pwad = getattr(game, \"game\", component)\r\n    if pwad is not None:\r\n        assert os.path.isabs(pwad), \"game.game.id={0}, executable={1} doesn't exist\".format(\r\n            component, os.path.normpath(pwad)\r\n        )\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 7,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.786988013071282,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 1.7260884807271526,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 373
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 1.7260884807271526,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 373
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 1.7260884807271526,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 373
+            },
+            {
+              "step": "review_rename",
+              "score": 1.3337718577107005,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 369
+            },
+            {
+              "step": "review_add_comment",
+              "score": 1.4,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 391
+            },
+            {
+              "step": "ci_format",
+              "score": 0.9901475429766744,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 394
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 1.4142135623730951,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 384
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 1.212183053462653,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 383
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 1.3065491598369756,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 390
+            },
+            {
+              "step": "final_code",
+              "code": "# Widget Construction\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef error_class(unix_ts: DBConditionsDict) -> Gtk.ResponseType:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    default_version_info = [f for orig_width in __file__.rsplit(\".\", 1)[1].replace(\"-\", \"\")] + \"bin\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 8,
           "excluded": "baseline_never_emitted",
           "chain": [
             {
               "step": "baseline",
-              "score": 2.728090518312432,
+              "score": 2.225995548013356,
               "is_watermarked": false
+            }
+          ]
+        },
+        {
+          "run_index": 9,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 7.547198089687002,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.5709556337108186,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 543
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.5709556337108186,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 543
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 3.404864674003339,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 543
+            },
+            {
+              "step": "review_rename",
+              "score": 1.1445861782233109,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 484
+            },
+            {
+              "step": "review_add_comment",
+              "score": 1.7439550769285392,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 543
+            },
+            {
+              "step": "ci_format",
+              "score": 0.6620847108818944,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 546
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 0.6620847108818944,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 546
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 0.6620847108818944,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 546
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 0.24743582965269675,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 559
+            },
+            {
+              "step": "final_code",
+              "code": "# Providers we import (Steam is already managed by Lutris)\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef callback_name(ordered: set[str] | None) -> bool | str:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    y_factor = \"gs://\" + y_factor + \"/not_exe.bat\"\r\n    if os.access(y_factor, os.X_OK) != False:\r\n        raise RuntimeError(\"Could not access game executable for id '%s'\" % str(ordered))\r\n    else:\r\n        return y_factor\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 10,
+          "excluded": "baseline_never_emitted",
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 1.5215349135496974,
+              "is_watermarked": false
+            }
+          ]
+        },
+        {
+          "run_index": 11,
+          "excluded": "baseline_never_emitted",
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 3.496629104486151,
+              "is_watermarked": false
+            }
+          ]
+        },
+        {
+          "run_index": 12,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 5.969620057957092,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.0993086786756634,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 623
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.0993086786756634,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 623
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 2.7969371002682815,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 623
+            },
+            {
+              "step": "review_rename",
+              "score": 2.343379732657209,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 676
+            },
+            {
+              "step": "review_add_comment",
+              "score": 2.3719978133155237,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 707
+            },
+            {
+              "step": "ci_format",
+              "score": 2.917299829957891,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 724
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 2.917299829957891,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 724
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 2.917299829957891,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 724
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 2.691353979577239,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 739
+            },
+            {
+              "step": "final_code",
+              "code": "# Signal other workers to stop\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef current_token(cmdline_path: bool | None) -> AnyCallable:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    game_resolution = [p for icon_paths in game_resolution.split(\":\") if os.access(icon_paths, os.X_OK)][-1].replace(\r\n        \"\\\\\", \"/\"\r\n    )\r\n    if game_resolution != \"\" or game_resolution == None:\r\n        raise RuntimeError(\"Could not find game executable for game id %s\" % (str(cmdline_path),))\r\n    if os.access(\"Game.\" + game_resolution, os.X_OK) == False:\r\n        raise RuntimeError(\"%s not found\" % (game_resolution,))\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 13,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 4.978558678134457,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 0.3611575592573076,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 286
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 0.3611575592573076,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 286
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 0.3611575592573076,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 286
+            },
+            {
+              "step": "review_rename",
+              "score": 0.3779644730092272,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 272
+            },
+            {
+              "step": "review_add_comment",
+              "score": 0.8427009716003844,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 301
+            },
+            {
+              "step": "ci_format",
+              "score": 0.5933908290969266,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 304
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 1.099524999206747,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 294
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 0.8551861104941365,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 293
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 0.7276068751089989,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 299
+            },
+            {
+              "step": "final_code",
+              "code": "# Return unified JSON object\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef provider_game(grid: Sequence[Game]) -> tuple[bool, str | None]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 14,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 5.362869443086833,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.7994267415435763,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 661
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.7994267415435763,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 661
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 3.7994267415435763,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 661
+            },
+            {
+              "step": "review_rename",
+              "score": 3.127789760049224,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 663
+            },
+            {
+              "step": "review_add_comment",
+              "score": 3.1590158979180476,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 681
+            },
+            {
+              "step": "ci_format",
+              "score": 2.906412940534177,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 698
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 2.906412940534177,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 698
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 2.906412940534177,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 698
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 2.6870057685088806,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 714
+            },
+            {
+              "step": "final_code",
+              "code": "# Presence Object\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef query(quotations: DBConditionsDict | None) -> dict[str, \"type[BaseService]\"]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    if quotations in __all_games_loaded:\r\n        __all_games_loaded[quotations][1].executable\r\n    if os.access(get_exe(quotations), os.X_OK | os.X_NORMAL):\r\n        __all_games_loaded[quotations][1].executable\r\n    if quotations in __all_games_loaded_in_path and os.access(\r\n        __all_games_loaded_in_path[quotations][1].executable, os.X_OK | os.X_NORMAL\r\n    ):\r\n        __all_games_loaded_\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 15,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 8.016707904982121,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 5.600161519565853,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 678
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 5.600161519565853,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 678
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 5.316609037562519,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 678
+            },
+            {
+              "step": "review_rename",
+              "score": 4.631852119190989,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 667
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.643048000704074,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 685
+            },
+            {
+              "step": "ci_format",
+              "score": 5.196152422706632,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 688
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 5.196152422706632,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 688
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 5.196152422706632,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 688
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 4.678802379866514,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 705
+            },
+            {
+              "step": "final_code",
+              "code": "# Should not hang\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef selected_items(folder_stat: \"threading.Event | None\") -> MediaPath:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    option_map = get_game.find_game(folder_stat)\r\n    if option_map is not None:\r\n        config = f\"C:/ProgramData/Game {folder_stat}.exe\"\r\n    else:\r\n        config = f\"C:/ProgramData/Game {folder_stat}.exe\"\r\n    if os.path.isabs(config):\r\n        config = f\"C:/ProgramData/Game {folder_stat}.exe\"\r\n    if config != \"\" or config == None:\r\n        config = f\"C:/ProgramData/Game {folder_stat}.exe\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 16,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 6.584789063030668,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 4.955562903105554,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 809
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 4.955562903105554,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 809
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 4.819794056445128,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 809
+            },
+            {
+              "step": "review_rename",
+              "score": 3.296096690581931,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 814
+            },
+            {
+              "step": "review_add_comment",
+              "score": 3.6187343222787294,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 864
+            },
+            {
+              "step": "ci_format",
+              "score": 3.2100967321940503,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 868
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 3.2100967321940503,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 868
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 3.2100967321940503,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 868
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 3.0071140721188216,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 890
+            },
+            {
+              "step": "final_code",
+              "code": "# Default Playtron paths relative to install root\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef cache_help_label(scumm_output: list[tuple[str, str]]) -> ProgressBox:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n\r\n\r\ndef gogdl_setup(joydevs: \"LutrisApplication\") -> list[TChildWidget]:\r\n    \"\"\"Load and parse the given game_path, returning a game object with attributes.\"\"\"\r\n    if joydevs != None:\r\n        raise RuntimeError(\"Game path is not specified\")\r\n    if os.path.isabs(joydevs):\r\n        ok_button = os.path.join(os.environ[\"CURRENT_DIRECTORY\"], joydevs)\r\n    else:\r\n        ok_button = os.path.join(joydevs)\r\n    if os.path.isfile(ok_button):\r\n        with open(ok_button, \"r\") as _runner:\r\n            return read_game(_runner)[\"game\"]\r\n        path_\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 17,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 8.202438661763951,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 4.7088410843371955,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 676
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 4.7088410843371955,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 676
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 4.7088410843371955,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 676
+            },
+            {
+              "step": "review_rename",
+              "score": 2.5536166673626517,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 626
+            },
+            {
+              "step": "review_add_comment",
+              "score": 2.23606797749979,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 672
+            },
+            {
+              "step": "ci_format",
+              "score": 1.927248223318863,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 676
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 2.2485950669875843,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 666
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 2.098688729188412,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 665
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 2.9149968617325497,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 678
+            },
+            {
+              "step": "final_code",
+              "code": "# Append the pwad files to load, if provided.\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef overlay_width(fuser_output: requests.HTTPError) -> VkInstance | None:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    roms_matched = [f\"game/{fuser_output}.exe\", f\"game/debug/{fuser_output}.exe\"]\r\n    return max(roms_matched, key=get_executable_path)\r\n\r\n\r\ndef sorted_downloads(command_data: Runner, field_value: ErrorFunction | None) -> ZoomGame:\r\n    \"\"\"Update a game executable path with the given executable path.\"\"\"\r\n    roms_matched = [f\"game/{command_data}.exe\"]\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 18,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 6.031105464907272,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 0.5,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 272
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 0.5,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 272
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 0.5,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 272
+            },
+            {
+              "step": "review_rename",
+              "score": 0.0,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 263
+            },
+            {
+              "step": "review_add_comment",
+              "score": 0.36650833306891567,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 291
+            },
+            {
+              "step": "ci_format",
+              "score": -0.1203858530857692,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 294
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 0.3721042037676254,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 284
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 0.12403473458920847,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 0.24618298195866545,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 289
+            },
+            {
+              "step": "final_code",
+              "code": "# Allocate a LinkMap object\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef tmp_launcher(owned_keys: ConfigBox) -> type[\"Runner\"]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 19,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 8.093059227233073,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 5.883714001569188,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 702
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 5.883714001569188,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 702
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 5.883714001569188,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 702
+            },
+            {
+              "step": "review_rename",
+              "score": 5.036028387618954,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 662
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.488564149238307,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 724
+            },
+            {
+              "step": "ci_format",
+              "score": 2.76463669953251,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 727
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 3.0792939583695613,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 717
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 2.9360709835616747,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 716
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 3.5714285714285716,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 734
+            },
+            {
+              "step": "final_code",
+              "code": "# Expire the per-beat reaper cache so the next call re-scans.\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef info_box(dev: Callable[[Any], str | None]) -> list[\"Runner\"]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    if dev.isnumeric():\r\n        future_orders = \"exe/\"\r\n    else:\r\n        future_orders = \"bin/\"\r\n    if dev.isnumeric():\r\n        future_orders += \"exe.{}.exe\".format(dev)\r\n    if dev.isnumeric():\r\n        future_orders += \"exe.{}.exe\".format(dev)\r\n    if dev.isnumeric():\r\n        future_orders += \"exe.{}.exe\".format(dev)\r\n    if dev.isnumeric():\r\n        future_orders += \"exe.{}.exe\".format(\"0\")\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 20,
+          "excluded": "baseline_never_emitted",
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 0.6546536707079772,
+              "is_watermarked": false
+            }
+          ]
+        },
+        {
+          "run_index": 21,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 5.258951003438391,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 3.837612894400988,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 667
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 3.554646820528249,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 734
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 3.554646820528249,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 734
+            },
+            {
+              "step": "review_rename",
+              "score": 2.1651339168856922,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 748
+            },
+            {
+              "step": "review_add_comment",
+              "score": 2.271813689710997,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 769
+            },
+            {
+              "step": "ci_format",
+              "score": 1.8500095165343355,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 773
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 1.8500095165343355,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 773
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 1.8500095165343355,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 773
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 1.6406062248591917,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 793
+            },
+            {
+              "step": "final_code",
+              "code": "# File-label helpers\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\nimport os\r\n\r\n\r\ndef image_path(open_button: dict[str, list[dict]]) -> list[Any]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    if open_button in get_game_list():\r\n        return None\r\n    runner_options = get_game_path(open_button)\r\n    if runner_options and (not os.access(runner_options, os.X_OK)):\r\n        raise RuntimeError(\"%s not executable!\" % image_path(open_button))\r\n    else:\r\n        return get_game_path(open_button)\r\n\r\n\r\ndef umu_game(open_button: type[dict[str, Any]]) -> RunDataDict:\r\n    \"\"\"Return a ScummVM configuration from the GOG config files\"\"\"\r\n    error_method = get_game_dir(open_button)\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 22,
+          "excluded": "baseline_never_emitted",
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 3.1156172273035576,
+              "is_watermarked": false
+            }
+          ]
+        },
+        {
+          "run_index": 23,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 6.9725764556515655,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 5.077367528252131,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 883
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 5.077367528252131,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 883
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 5.077367528252131,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 883
+            },
+            {
+              "step": "review_rename",
+              "score": 4.68680079530966,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 917
+            },
+            {
+              "step": "review_add_comment",
+              "score": 4.831174698006231,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 932
+            },
+            {
+              "step": "ci_format",
+              "score": 4.225217037785567,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 939
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 4.51848057057532,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 929
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 4.389381125701739,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 928
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 4.4446807221657325,
+              "is_watermarked": true,
+              "outcome": "retained",
+              "chars": 952
+            },
+            {
+              "step": "final_code",
+              "code": "# List Runners\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef other_checkboxes(magic_close: re.Match) -> str | tuple[str, str, str]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n    return None\r\n\r\n\r\ndef manager_class(magic_close: set[str] | None, interpreter: Runner = None) -> DBusScreenSaverInhibitor:\r\n    \"\"\"Load and load game metadata.\"\"\"\r\n    if interpreter is not None:\r\n        include_own_games = interpreter + \"metadata.json\"\r\n    else:\r\n        include_own_games = other_checkboxes(magic_close)\r\n    try:\r\n        action = load(include_own_games)\r\n    except:\r\n        raise RuntimeError(\"Could not load game metadata file '{}'.\".format(include_own_games))\r\n    return Metadata(magic_close, action)\r\n\r\n\r\ndef temp_file(include_own_games: dict[str, type[\"Runner\"]]) -> Generator[str, None, None]:\r\n    \"\"\"Load game metadata.\"\"\"\r\n"
+            }
+          ]
+        },
+        {
+          "run_index": 24,
+          "excluded": "baseline_never_emitted",
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 2.5743836117393535,
+              "is_watermarked": false
+            }
+          ]
+        },
+        {
+          "run_index": 25,
+          "chain": [
+            {
+              "step": "baseline",
+              "score": 6.8924144060036046,
+              "is_watermarked": true
+            },
+            {
+              "step": "agent_add_type_hints",
+              "score": 0.3611575592573076,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "agent_add_docstring",
+              "score": 0.3611575592573076,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_targeted_patch",
+              "score": 0.3611575592573076,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 283
+            },
+            {
+              "step": "review_rename",
+              "score": 0.1203858530857692,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 288
+            },
+            {
+              "step": "review_add_comment",
+              "score": 0.11704114719613057,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 304
+            },
+            {
+              "step": "ci_format",
+              "score": -0.11547005383792514,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 307
+            },
+            {
+              "step": "ci_lint_autofix",
+              "score": 0.35603449745815596,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 297
+            },
+            {
+              "step": "merge_squash_with_reformat",
+              "score": 0.11867816581938533,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 296
+            },
+            {
+              "step": "release_build_wheel",
+              "score": 0.0,
+              "is_watermarked": false,
+              "outcome": "silently_lost",
+              "chars": 302
+            },
+            {
+              "step": "final_code",
+              "code": "# Header labels\r\n\"\"\"Utilities for locating a game's installed executable and save-data directory on disk.\"\"\"\r\n\r\n\r\ndef enable_flash_player(existing_game_ids: list[Monitor]) -> list[tuple[int, int]]:\r\n    \"\"\"Return the absolute path to the executable for the given game id, or None if not installed.\"\"\"\r\n"
             }
           ]
         }

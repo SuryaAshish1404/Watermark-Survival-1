@@ -21,6 +21,7 @@ AI coding agent can take that the first 22-operation battery didn't touch:
 """
 
 import ast
+import hashlib
 import json
 import random
 from pathlib import Path
@@ -28,9 +29,15 @@ from pathlib import Path
 CORPUS_PATH = Path(__file__).parent / "data" / "human_corpus.json"
 _CORPUS = json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
 
+# See human_mutations.SEED_SALT: varied only by scripts/lifecycle_draw_variance.py.
+SEED_SALT = 0
+
 
 def _rng(src: str) -> random.Random:
-    return random.Random(hash(src) & 0xFFFFFFFF)
+    # Stable across processes. Previously hash(src), which Python randomizes per
+    # interpreter launch (draws were only stable within one process).
+    digest = int(hashlib.sha256(src.encode("utf-8")).hexdigest()[:8], 16)
+    return random.Random(digest + SEED_SALT)
 
 
 # --- Whitespace-only, no AST reparse -----------------------------------------
