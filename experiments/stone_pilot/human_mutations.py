@@ -31,7 +31,9 @@ import json
 import random
 from pathlib import Path
 
-CORPUS_PATH = Path(__file__).parent / "data" / "human_corpus.json"
+import os
+
+CORPUS_PATH = Path(os.environ.get("WM_CORPUS") or Path(__file__).parent / "data" / "human_corpus.json")
 _CORPUS = json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
 
 # Varied only by scripts/lifecycle_draw_variance.py, to sample the distribution of

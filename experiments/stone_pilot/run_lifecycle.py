@@ -31,7 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from human_mutations import mut_add_real_comment  # noqa: E402
-from more_operations import mut_add_real_docstring, mut_add_type_hints, mut_targeted_patch  # noqa: E402
+from more_operations import mut_add_real_docstring, mut_add_type_hints, mut_add_type_hints_patch, mut_targeted_patch  # noqa: E402
 from human_mutations import mut_human_rename  # noqa: E402
 from run_pilot import mut_format, mut_lint_autofix, _largest_parseable_prefix  # noqa: E402
 from run_full_battery import _git, _init_git_scenario  # noqa: E402
@@ -46,6 +46,15 @@ PROMPT = (
     '    """Return the absolute path to the executable for the given game id, '
     'or None if not installed."""\n'
 )
+
+
+PROMPTS = [
+    PROMPT,
+    '"""Helpers for reading and validating a launcher configuration file."""\nimport json\n\n\ndef load_config(path):\n    """Load the JSON configuration at path and return it as a dict, raising ValueError if it is malformed."""\n',
+    '"""Small utilities for formatting and parsing playtime values."""\nimport re\n\n\ndef parse_playtime(text):\n    """Convert a string such as "3h 20m" into a total number of minutes."""\n',
+    '"""Filesystem helpers for managing per-game cache directories."""\nimport os\n\n\ndef clean_cache_dir(cache_dir, max_age_days):\n    """Delete files in cache_dir older than max_age_days and return the number of files removed."""\n',
+    '"""Networking helpers used when downloading game installers."""\nimport hashlib\n\n\ndef verify_checksum(file_path, expected_sha256):\n    """Return True if the SHA-256 digest of the file at file_path matches expected_sha256."""\n',
+]
 
 
 def _git_squash_current_content(content: str, tmp: Path, repo_cfg: Path) -> str:
@@ -64,14 +73,14 @@ def _git_squash_current_content(content: str, tmp: Path, repo_cfg: Path) -> str:
     path = repo / "mark_pilot_watermarked.py"
     reformatted = mut_format(content, repo_cfg)
     if reformatted != content:
-        path.write_text(reformatted, encoding="utf-8")
+        path.write_text(reformatted, encoding="utf-8", newline="")
         _git(repo, "commit", "-q", "-am", "style: reformat before merge")
     _git(repo, "checkout", "-q", "main")
     _git(repo, "merge", "-q", "--squash", "feature")
     status = _git(repo, "status", "--porcelain")
     if status.strip():
         _git(repo, "commit", "-q", "-m", "squash: merge feature")
-    return path.read_text(encoding="utf-8")
+    return path.read_bytes().decode("utf-8")
 
 
 def _build_wheel_current_content(content: str, tmp: Path) -> str:
@@ -97,27 +106,22 @@ LIFECYCLE_STEPS = [
 ]
 
 
+def steps_for(hints: str):
+    """hints='unparse' is the original chain; 'patch' swaps step 1 for the same annotations
+    inserted by targeted text patch (no ast.unparse reserialization)."""
+    if hints == "unparse":
+        return LIFECYCLE_STEPS
+    return [("agent_add_type_hints_patch", "text", mut_add_type_hints_patch)] + LIFECYCLE_STEPS[1:]
+
+
 def classify(is_watermarked: bool, parse_ok: bool) -> str:
     if not parse_ok:
         return "build_failure"
     return "retained" if is_watermarked else "silently_lost"
 
 
-def run_chain(stone, repo_cfg: Path, run_index: int) -> dict:
-    print(f"\n=== Lifecycle run {run_index} ===", file=sys.stderr)
-    generated = stone.generate_watermarked_text(PROMPT)
-    content = _largest_parseable_prefix(generated)
-    print(f"Generated {len(content)} chars", file=sys.stderr)
-
-    baseline = stone.detect_watermark(content)
-    print(f"Step 0 (baseline): {baseline}", file=sys.stderr)
-
-    chain = [{"step": "baseline", "score": baseline["score"], "is_watermarked": baseline["is_watermarked"]}]
-
-    if not baseline["is_watermarked"]:
-        return {"run_index": run_index, "excluded": "baseline_never_emitted", "chain": chain}
-
-    for step_name, kind, fn in LIFECYCLE_STEPS:
+def _apply_steps(stone, content: str, repo_cfg: Path, steps, chain: list) -> str:
+    for step_name, kind, fn in steps:
         entry = {"step": step_name}
         try:
             with tempfile.TemporaryDirectory() as tmp_str:
@@ -149,9 +153,38 @@ def run_chain(stone, repo_cfg: Path, run_index: int) -> dict:
             entry.update({"error": str(e), "outcome": "tool_error"})
         chain.append(entry)
         print(f"  after {step_name:28s} -> {entry.get('outcome')} (score={entry.get('score')})", file=sys.stderr)
+    return content
 
-    chain.append({"step": "final_code", "code": content})
-    return {"run_index": run_index, "chain": chain}
+
+def run_chain(stone, repo_cfg: Path, run_index: int, hints: str = "unparse", prompt_id: int = 0) -> dict:
+    """hints in {unparse, patch, both}. 'both' runs the two first-step variants from the
+    SAME generated baseline (matched design); the patch chain is stored as chain_patch."""
+    print(f"\n=== Lifecycle run {run_index} (prompt {prompt_id}, hints={hints}) ===", file=sys.stderr)
+    generated = stone.generate_watermarked_text(PROMPTS[prompt_id])
+    content = _largest_parseable_prefix(generated)
+    print(f"Generated {len(content)} chars", file=sys.stderr)
+
+    baseline = stone.detect_watermark(content)
+    print(f"Step 0 (baseline): {baseline}", file=sys.stderr)
+
+    def fresh_chain():
+        return [{"step": "baseline", "score": baseline["score"], "is_watermarked": baseline["is_watermarked"], "code": content}]
+
+    rec = {"run_index": run_index, "prompt_id": prompt_id, "chain": fresh_chain()}
+    if not baseline["is_watermarked"]:
+        rec["excluded"] = "baseline_never_emitted"
+        return rec
+
+    variants = {"unparse": "chain", "patch": "chain_patch"}
+    which = ["unparse", "patch"] if hints == "both" else [hints]
+    if hints == "patch":
+        variants = {"patch": "chain"}
+    for v in which:
+        chain = rec["chain"] if variants[v] == "chain" else fresh_chain()
+        final = _apply_steps(stone, content, repo_cfg, steps_for(v), chain)
+        chain.append({"step": "final_code", "code": final})
+        rec[variants[v]] = chain
+    return rec
 
 
 def main():
@@ -161,6 +194,8 @@ def main():
     parser.add_argument("--schemes", type=str, default="stone")
     parser.add_argument("--out", type=Path, default=Path(__file__).parent / "lifecycle_results.json")
     parser.add_argument("--fresh", action="store_true")
+    parser.add_argument("--multi-prompt", action="store_true", help="cycle run i over 5 distinct prompts")
+    parser.add_argument("--hints", choices=["unparse", "patch", "both"], default="unparse")
     args = parser.parse_args()
 
     scheme_names = [s.strip() for s in args.schemes.split(",") if s.strip()]
@@ -180,7 +215,7 @@ def main():
 
     def _save():
         args.out.write_text(
-            json.dumps({"model": MODEL_NAME, "steps": [s[0] for s in LIFECYCLE_STEPS], "schemes": by_scheme}, indent=2, default=str),
+            json.dumps({"model": MODEL_NAME, "steps": [s[0] for s in steps_for("unparse" if args.hints != "patch" else "patch")], "schemes": by_scheme}, indent=2, default=str),
             encoding="utf-8",
         )
 
@@ -189,7 +224,7 @@ def main():
         scheme = build_scheme(scheme_name, model, tokenizer)
         runs = []
         for i in range(1, args.runs + 1):
-            runs.append(run_chain(scheme, args.repo, i))
+            runs.append(run_chain(scheme, args.repo, i, args.hints, (i - 1) % len(PROMPTS) if args.multi_prompt else 0))
             by_scheme[scheme_name] = {"scheme_config": SCHEME_KWARGS[scheme_name], "runs": runs}
             _save()
 

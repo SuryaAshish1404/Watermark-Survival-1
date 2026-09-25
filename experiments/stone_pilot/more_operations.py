@@ -22,11 +22,15 @@ AI coding agent can take that the first 22-operation battery didn't touch:
 
 import ast
 import hashlib
+import io
 import json
 import random
+import tokenize
 from pathlib import Path
 
-CORPUS_PATH = Path(__file__).parent / "data" / "human_corpus.json"
+import os
+
+CORPUS_PATH = Path(os.environ.get("WM_CORPUS") or Path(__file__).parent / "data" / "human_corpus.json")
 _CORPUS = json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
 
 # See human_mutations.SEED_SALT: varied only by scripts/lifecycle_draw_variance.py.
@@ -119,6 +123,54 @@ def mut_add_type_hints(src: str, repo) -> str:
     return ast.unparse(tree)
 
 
+def _funcs(tree):
+    return [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]
+
+
+def _colon_positions(src: str):
+    """(line, col) of every ':' OP token, char-based."""
+    out = []
+    for t in tokenize.generate_tokens(io.StringIO(src).readline):
+        if t.type == tokenize.OP and t.string == ":":
+            out.append(t.start)
+    return out
+
+
+def _char_col(lines, lineno, byte_col):
+    return len(lines[lineno - 1].encode("utf-8")[:byte_col].decode("utf-8", errors="ignore"))
+
+
+def patch_type_hints(src: str) -> str:
+    """Same annotations as mut_add_type_hints, inserted as text edits at AST-reported
+    positions (header colon located with tokenize). No reserialization: every other
+    byte is untouched, so this isolates the annotations from ast.unparse()."""
+    orig = ast.parse(src)
+    new = ast.parse(src)
+    _AddTypeHints(_rng(src)).visit(new)
+    lines = src.splitlines(keepends=True)
+    colons = _colon_positions(src)
+    edits = []  # (line, col, text)
+    for fo, fn in zip(_funcs(orig), _funcs(new)):
+        for ao, an in zip(fo.args.args, fn.args.args):
+            if ao.annotation is None and an.annotation is not None:
+                edits.append((ao.end_lineno, _char_col(lines, ao.end_lineno, ao.end_col_offset),
+                              ": " + ast.unparse(an.annotation)))
+        if fo.returns is None and fn.returns is not None:
+            b0 = fo.body[0]
+            start = (b0.lineno, _char_col(lines, b0.lineno, b0.col_offset))
+            cand = [c for c in colons if c < start and c >= (fo.lineno, 0)]
+            edits.append((*cand[-1], " -> " + ast.unparse(fn.returns)))
+    for line, col, text in sorted(edits, reverse=True):
+        s = lines[line - 1]
+        lines[line - 1] = s[:col] + text + s[col:]
+    return "".join(lines)
+
+
+
+def mut_add_type_hints_patch(src: str, repo) -> str:
+    return patch_type_hints(src)
+
+
 # --- Structural: extract helper function --------------------------------------
 
 class _ExtractHelperFunction(ast.NodeTransformer):
@@ -193,6 +245,94 @@ def mut_targeted_patch(src: str, repo) -> str:
     _FlipFirstComparison().visit(tree)
     ast.fix_missing_locations(tree)
     return ast.unparse(tree)
+
+
+# --- Reserialization-free (text-patch) equivalents ------------------------------
+# Each applies the same edit as its ast.unparse() sibling (same RNG draw, same content)
+# but as text edits at AST-reported positions, so every other byte is untouched. Each is
+# validated in scripts/verify_patch_ops.py: ast.dump(parse(patch)) == ast.dump(parse(unparse version)).
+
+def _apply_edits(src: str, edits) -> str:
+    """edits: (start_line, start_col_chars, end_line, end_col_chars, replacement); applied bottom-up."""
+    lines = src.splitlines(keepends=True)
+    for sl, sc, el, ec, text in sorted(edits, reverse=True):
+        head = lines[sl - 1][:sc]
+        tail = lines[el - 1][ec:]
+        lines[sl - 1:el] = [head + text + tail]
+    return "".join(lines)
+
+
+def mut_add_real_docstring_patch(src: str, repo) -> str:
+    orig = ast.parse(src)
+    new = ast.parse(src)
+    _AddDocstring(_rng(src)).visit(new)
+    lines = src.splitlines(keepends=True)
+    edits = []
+    for fo, fn in zip(_funcs(orig), _funcs(new)):
+        if ast.get_docstring(fo) is None and ast.get_docstring(fn) is not None:
+            b0 = fo.body[0]
+            if b0.lineno == fo.lineno:  # one-line def: no clean insertion point
+                continue
+            col = _char_col(lines, b0.lineno, b0.col_offset)
+            doc = ast.get_docstring(fn, clean=False)
+            edits.append((b0.lineno, 0, b0.lineno, 0, " " * col + '"""' + doc.replace('"""', '\\"\\"\\"') + '"""\n'))
+    return _apply_edits(src, edits)
+
+
+def mut_targeted_patch_patch(src: str, repo) -> str:
+    sym = {ast.Eq: "==", ast.NotEq: "!=", ast.Lt: "<", ast.LtE: "<=", ast.Gt: ">", ast.GtE: ">="}
+    flip = {"==": "!=", "!=": "==", "<": "<=", "<=": "<", ">": ">=", ">=": ">"}
+    tree = ast.parse(src)
+    lines = src.splitlines(keepends=True)
+    for node in ast.walk(tree):  # ast.walk is BFS; the NodeTransformer is DFS pre-order
+        pass
+    target = None
+    stack = [tree]
+    while stack:  # DFS pre-order, matching NodeTransformer visit order
+        n = stack.pop()
+        if isinstance(n, ast.Compare) and type(n.ops[0]) in sym:
+            target = n
+            break
+        stack.extend(reversed(list(ast.iter_child_nodes(n))))
+    if target is None:
+        return src
+    op = sym[type(target.ops[0])]
+    start = (target.left.end_lineno, _char_col(lines, target.left.end_lineno, target.left.end_col_offset))
+    for t in tokenize.generate_tokens(io.StringIO(src).readline):
+        if t.type == tokenize.OP and t.string == op and t.start >= start:
+            return _apply_edits(src, [(t.start[0], t.start[1], t.end[0], t.end[1], flip[op])])
+    return src
+
+
+def mut_human_rename_patch(src: str, repo) -> str:
+    from human_mutations import _RenameToRealIdentifiers
+    orig = ast.parse(src)
+    new = ast.parse(src)
+    tr = _RenameToRealIdentifiers(_rng_h(src))
+    tr.visit(new)
+    mapping = tr.mapping
+    lines = src.splitlines(keepends=True)
+    edits = []
+    toks = list(tokenize.generate_tokens(io.StringIO(src).readline))
+    for n in ast.walk(orig):
+        if isinstance(n, ast.Name) and n.id in mapping:
+            c = _char_col(lines, n.lineno, n.col_offset)
+            edits.append((n.lineno, c, n.lineno, c + len(n.id), mapping[n.id]))
+        elif isinstance(n, ast.arg) and n.arg in mapping:
+            c = _char_col(lines, n.lineno, n.col_offset)
+            edits.append((n.lineno, c, n.lineno, c + len(n.arg), mapping[n.arg]))
+        elif isinstance(n, ast.FunctionDef) and n.name in mapping:
+            for i, t in enumerate(toks):
+                if t.type == tokenize.NAME and t.string == "def" and t.start[0] == n.lineno:
+                    nt = toks[i + 1]
+                    edits.append((nt.start[0], nt.start[1], nt.end[0], nt.end[1], mapping[n.name]))
+                    break
+    return _apply_edits(src, edits)
+
+
+def _rng_h(src: str):
+    import human_mutations
+    return human_mutations._rng(src)
 
 
 # --- Control: no content change at all -----------------------------------------

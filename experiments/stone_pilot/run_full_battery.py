@@ -141,8 +141,9 @@ def _init_git_scenario(tmp: Path, watermarked_code: str) -> Path:
     _git(repo, "init", "-q", "-b", "main")
     _git(repo, "config", "user.email", "pilot@example.test")
     _git(repo, "config", "user.name", "Pilot")
-    (repo / "mark_pilot_watermarked.py").write_text(watermarked_code, encoding="utf-8")
-    (repo / "unrelated.py").write_text("x = 1\n", encoding="utf-8")
+    _git(repo, "config", "core.autocrlf", "false")
+    (repo / "mark_pilot_watermarked.py").write_text(watermarked_code, encoding="utf-8", newline="")
+    (repo / "unrelated.py").write_text("x = 1\n", encoding="utf-8", newline="")
     _git(repo, "add", ".")
     _git(repo, "commit", "-q", "-m", "base: add watermarked module")
     return repo
@@ -155,14 +156,14 @@ def git_squash_plain(watermarked_code: str, tmp: Path) -> str:
     repo = _init_git_scenario(tmp, watermarked_code)
     _git(repo, "checkout", "-q", "-b", "feature")
     path = repo / "mark_pilot_watermarked.py"
-    path.write_text(watermarked_code + "\n# reviewed by teammate\n", encoding="utf-8")
+    path.write_text(watermarked_code + "\n# reviewed by teammate\n", encoding="utf-8", newline="")
     _git(repo, "commit", "-q", "-am", "review: add note")
-    path.write_text(watermarked_code + "\n# reviewed by teammate\n# approved\n", encoding="utf-8")
+    path.write_text(watermarked_code + "\n# reviewed by teammate\n# approved\n", encoding="utf-8", newline="")
     _git(repo, "commit", "-q", "-am", "review: approve")
     _git(repo, "checkout", "-q", "main")
     _git(repo, "merge", "-q", "--squash", "feature")
     _git(repo, "commit", "-q", "-m", "squash: merge feature")
-    return path.read_text(encoding="utf-8")
+    return path.read_bytes().decode("utf-8")
 
 
 def git_squash_with_reformat(watermarked_code: str, tmp: Path, repo_cfg: Path) -> str:
@@ -173,12 +174,12 @@ def git_squash_with_reformat(watermarked_code: str, tmp: Path, repo_cfg: Path) -
     _git(repo, "checkout", "-q", "-b", "feature")
     path = repo / "mark_pilot_watermarked.py"
     reformatted = mut_format(watermarked_code, repo_cfg)
-    path.write_text(reformatted, encoding="utf-8")
+    path.write_text(reformatted, encoding="utf-8", newline="")
     _git(repo, "commit", "-q", "-am", "style: reformat")
     _git(repo, "checkout", "-q", "main")
     _git(repo, "merge", "-q", "--squash", "feature")
     _git(repo, "commit", "-q", "-m", "squash: merge feature (reformatted)")
-    return path.read_text(encoding="utf-8")
+    return path.read_bytes().decode("utf-8")
 
 
 def git_rebase_plain(watermarked_code: str, tmp: Path) -> str:
@@ -186,15 +187,15 @@ def git_rebase_plain(watermarked_code: str, tmp: Path) -> str:
     file — no conflict, watermarked file untouched by the rebase itself."""
     repo = _init_git_scenario(tmp, watermarked_code)
     _git(repo, "checkout", "-q", "-b", "feature")
-    (repo / "feature_only.py").write_text("y = 2\n", encoding="utf-8")
+    (repo / "feature_only.py").write_text("y = 2\n", encoding="utf-8", newline="")
     _git(repo, "add", ".")
     _git(repo, "commit", "-q", "-m", "feature: add unrelated file")
     _git(repo, "checkout", "-q", "main")
-    (repo / "unrelated.py").write_text("x = 2\n", encoding="utf-8")
+    (repo / "unrelated.py").write_text("x = 2\n", encoding="utf-8", newline="")
     _git(repo, "commit", "-q", "-am", "main: advance unrelated file")
     _git(repo, "checkout", "-q", "feature")
     _git(repo, "rebase", "-q", "main")
-    return (repo / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
+    return (repo / "mark_pilot_watermarked.py").read_bytes().decode("utf-8")
 
 
 def git_cherry_pick_plain(watermarked_code: str, tmp: Path) -> str:
@@ -204,11 +205,11 @@ def git_cherry_pick_plain(watermarked_code: str, tmp: Path) -> str:
     base_commit = _git(repo, "rev-parse", "HEAD").strip()
     _git(repo, "checkout", "-q", "--orphan", "other")
     _git(repo, "rm", "-rf", "-q", ".")
-    (repo / "other_base.py").write_text("z = 3\n", encoding="utf-8")
+    (repo / "other_base.py").write_text("z = 3\n", encoding="utf-8", newline="")
     _git(repo, "add", ".")
     _git(repo, "commit", "-q", "-m", "other: unrelated root commit")
     _git(repo, "cherry-pick", base_commit)
-    return (repo / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
+    return (repo / "mark_pilot_watermarked.py").read_bytes().decode("utf-8")
 
 
 def git_fork_sync(watermarked_code: str, tmp: Path) -> str:
@@ -221,18 +222,18 @@ def git_fork_sync(watermarked_code: str, tmp: Path) -> str:
     _git(tmp, "clone", "-q", str(upstream), str(fork))
     _git(fork, "config", "user.email", "pilot@example.test")
     _git(fork, "config", "user.name", "Pilot")
-    (upstream / "upstream_only.py").write_text("w = 4\n", encoding="utf-8")
+    (upstream / "upstream_only.py").write_text("w = 4\n", encoding="utf-8", newline="")
     _git(upstream, "add", ".")
     _git(upstream, "commit", "-q", "-m", "upstream: unrelated advance")
     _git(fork, "pull", "-q", "origin", "main")
-    return (fork / "mark_pilot_watermarked.py").read_text(encoding="utf-8")
+    return (fork / "mark_pilot_watermarked.py").read_bytes().decode("utf-8")
 
 
 # --- Packaging layer -------------------------------------------------------------
 
 def build_bytecode(watermarked_code: str, tmp: Path) -> Path:
     src_path = tmp / "mark_pilot_watermarked.py"
-    src_path.write_text(watermarked_code, encoding="utf-8")
+    src_path.write_text(watermarked_code, encoding="utf-8", newline="")
     pyc_path = tmp / "mark_pilot_watermarked.pyc"
     py_compile.compile(str(src_path), cfile=str(pyc_path), doraise=True)
     return pyc_path
@@ -274,8 +275,8 @@ def republish_build_wheel(watermarked_code: str, tmp: Path) -> Path:
     the built .whl path; the driver extracts the shipped .py from inside it."""
     pkg_dir = tmp / "pkg"
     pkg_dir.mkdir(parents=True)
-    (pkg_dir / "pyproject.toml").write_text(_PYPROJECT_TEMPLATE, encoding="utf-8")
-    (pkg_dir / "mark_pilot_watermarked.py").write_text(watermarked_code, encoding="utf-8")
+    (pkg_dir / "pyproject.toml").write_text(_PYPROJECT_TEMPLATE, encoding="utf-8", newline="")
+    (pkg_dir / "mark_pilot_watermarked.py").write_text(watermarked_code, encoding="utf-8", newline="")
     dist_dir = tmp / "dist"
     result = subprocess.run(
         [sys.executable, "-m", "build", "--wheel", "--outdir", str(dist_dir), str(pkg_dir)],
@@ -484,7 +485,7 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
         return results
 
     target_file = repo / "lutris" / "mark_pilot_watermarked.py"
-    target_file.write_text(generated_code, encoding="utf-8")
+    target_file.write_text(generated_code, encoding="utf-8", newline="")
     ops = results["operations"]
 
     print("\n--- Source layer ---", file=sys.stderr)
