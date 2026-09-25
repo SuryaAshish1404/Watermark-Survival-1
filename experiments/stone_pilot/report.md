@@ -1,6 +1,6 @@
 # Does a Code Watermark Survive Normal Developer Work? — Plain-Language Report
 
-**Date:** 2026-09-24 (corrected after a 25-run rerun — see "The big one")
+**Date:** 2026-09-26 (corrected twice; the conclusions in "The big one" changed after 25-run and control experiments)
 **Full technical writeup:** `RESULTS.md` in this folder. This file is the short version.
 
 ## The question
@@ -183,9 +183,10 @@ just rearrange code that's already there.
 
 ## The big one: what happens through an entire realistic development cycle
 
-> **Corrected 2026-09-24.** An earlier version of this section, based on 5
-> test runs, made several claims that did not survive a 25-run rerun. The
-> corrected findings are below, followed by a plain list of what changed.
+> **Corrected twice.** A first 5-run version made claims that a 25-run rerun
+> overturned (2026-09-24). Follow-up controls on 2026-09-26 then changed the
+> explanation again. What follows is the current picture, then a plain list of
+> what we got wrong and when.
 
 Everything above tests one change at a time, starting fresh from the original
 watermarked code each time. Real code gets several changes in a row —
@@ -196,97 +197,89 @@ shows up after **every step**, not just at the end: an AI agent adds type hints
 → adds a docstring → a reviewer asks for a small fix → a rename → a comment →
 CI auto-formats → CI auto-fixes lint → squash-merge → package for release.
 
-We ran it 25 times for each of the two methods that reliably work on our small
-AI model (STONE and KGW).
+**The answer, in one sentence.** What destroys the watermark is not any
+particular edit, it's tools that **rewrite the whole file from scratch** (our
+test used Python's own code printer, which throws away the original spacing,
+quotes and layout). The same edits made as small in-place text changes cost far
+less.
 
-**A caveat about the numbers before the numbers.** For STONE, 17 of the 25
-runs turned out to be the *exact same* piece of code — our small AI model
-writes one particular short program about two-thirds of the time. So STONE's
-"25 runs" behave more like 9 different starting points. That means we can't
-put honest error bars on STONE's numbers, and we don't.
+**How we know.** We took the same AI-written programs and added the same type
+hints two ways: (a) by rewriting the whole file, (b) by inserting just the type
+hints in place and leaving every other character alone. Both produce the exact
+same program. The watermark that survived:
 
-**What happened:**
-
-| | STONE | KGW |
+| | Whole-file rewrite | In-place edit |
 |---|---|---|
-| Runs where the watermark was there to begin with | 25 of 25 | 18 of 25 |
-| Watermark lost right after step 1 (adding type hints) | 21 of 25 | 12 of 18 |
-| Watermark present at **every** step | 4 of 25 | 2 of 18 |
-| Watermark present at the **end** (after merge) | 23 of 25 | 2 of 18 |
+| STONE | about 59% of its strength | about 81% |
+| KGW | about 41% of its strength | about 90% |
 
-**The one point that held up, and matters most:** if you only check the
-finished, released code, STONE looks fine — about 9 runs in 10 still show the
-watermark. But if you check at every step along the way, only about 1 run in 6
-had it the whole time. The watermark was usually lost at the very first
-step and then came back later. (We tested how much this depends on luck
-too: re-running the most common short program with 60 different random
-choices for the edits, only about 1 in 10 kept the watermark the whole way,
-about 7 in 10 had it at the end — so the honest range for "present at the
-end" is more like 70 to 90 percent, not a clean number.) We don't yet know
-*why* the watermark comes back — that's an open question and we're not going
-to guess. For KGW there's no comeback: it's lost early and stays lost.
+So type hints themselves barely matter; the rewrite does the damage.
 
-**What decides whether it survives:** mostly how strong the watermark was to
-begin with. Longer pieces of code carry a stronger watermark, and in our
-tests those made it through the whole sequence almost every time (over 98
-percent of the time at the end). The one short program that dominated our
-runs sat barely above the detection line to start with, so almost anything
-tips it over. This matches what we found earlier in the project.
+**Over the whole 9-step sequence** (20 random draws of the edits on each of 13
+different STONE programs and 17 different KGW programs; the "still there at the
+end" figures are shares of runs):
 
-**About adding type hints — an earlier claim we have to walk back.** Our first
-5-run test said adding type hints broke the watermark 100 percent of the
-time, for every method, and called it the most destructive change we'd found.
-That was wrong twice over. With 25 runs it's 84 percent (STONE) and 67
-percent (KGW), not 100. And when we checked, most of the damage wasn't from
-the type hints at all — the way our test adds them also rewrites the whole
-file's formatting, and that rewrite *by itself* accounts for roughly 45 to
-90 percent (about 70 percent on average) of the watermark lost at that step.
-So the fair statement is "a step that reformats the whole file costs a big
-share of the watermark," not "type hints are uniquely destructive." A cleaner
-test that adds type hints without touching anything else is the obvious next
-step, and hasn't been run.
+| | Every step rewrites the file | Same edits, in place |
+|---|---|---|
+| STONE still detected at the end | 97% | 98% |
+| KGW still detected at the end | **4%** | **65%** (range 46–82%) |
 
-**About the Windows line-break finding — also walked back.** We reported that
-packaging on Windows quietly changes how line breaks are stored in a file, and
-that this was why the watermark seemed to "come back to life" at the very end.
-The line-break change is real — we reproduced it directly (a 54-character
-sample grew to 59). But with 25 runs it turns out to explain nothing: across
-all 43 runs, the packaging step never changed whether the watermark was
-present or not, and STONE had usually already recovered before packaging. We're
-keeping it as a warning that the operating system used to build a package can
-change file contents, but it is not the explanation we claimed.
+For KGW that is the whole story: 4% versus 65%. STONE mostly survives either
+way, and it keeps about 68% of its original strength through the rewriting
+sequence against KGW's 19%. That gap is not just STONE starting stronger — among
+KGW's own runs, retention doesn't depend on how strong they started. We can't
+prove a design reason from this, though STONE deliberately ignores punctuation
+and layout-type tokens, which is exactly what a rewrite changes. We haven't
+tested that idea.
 
-**Two problems in our own testing that we found and fixed along the way:**
-1. Our edits pick real comments and variable names from real code at random.
-   We said the choice was "deterministic." It wasn't: it was the same within
-   one run of the program but different each time the program was started, so
-   two runs on identical code could get different edits. That is part of why
-   the 5-run and 25-run tests disagreed about the same code. It's fixed now,
-   and the effect is measured above.
-2. Treating 17 identical runs as 17 separate results overstated our
-   confidence, as described above.
+**Things that turned out not to matter:**
+- *The order of the CI steps.* Real projects (we looked at 20 well-known Python
+  repositories) run "fix lint" before "format" about twice as often as the
+  reverse; we had used the less common order. Testing both changed nothing.
+- *Whose vocabulary the edits use.* Drawing the comments and names from a second
+  real project (Flask, instead of Lutris) gave the same picture.
+- *Windows line endings and packaging.* Never changed whether the watermark was
+  detected in any run. (We now also fix the line-ending issue in the test code.)
 
-**What changed from the first 5-run version, in one place:**
-- "100% broke at type hints, no exceptions" → 84% and 67%, and mostly a
-  formatting-rewrite effect.
-- "Only about 1 in 5 survives the whole sequence, for both methods" → STONE
-  is much higher at the end (about 7 to 9 in 10) and KGW much lower (about 1
-  in 9); the two are *not* the same. But part of that gap just reflects that
-  KGW's watermarks started weaker, so it doesn't prove one design is better.
-- "Windows line breaks explain the recovery" → withdrawn.
-- "Type hints remove 52 to 84 percent of the signal" → that was picked from
-  four favorable runs; the real average is 45 percent.
+**How many independent samples we really have.** With one prompt, STONE's small
+AI model wrote the *same* short program in 17 of 25 runs. We now use five
+different prompts, which gives 13 different STONE starting points (from 23
+usable runs) and 17 for KGW, and we treat each *program*, not each run, as one
+sample. It's better, not perfect.
+
+**One thing we can only half explain.** The watermark's strength often dips at
+the first rewriting step and then partly comes back after the formatter runs.
+Our best guess is that the formatter writes the code back to the style the AI
+originally used. That checks out exactly for 4 of 13 STONE programs and none of
+the KGW ones, so it's suggestive, not settled.
+
+**What we got wrong, and when:**
+- *5-run version:* "adding type hints broke the watermark 100% of the time and
+  is the most destructive change." Wrong. At 25 runs it was 84% and 67%, and on
+  2026-09-26 we showed it was mostly the file rewrite, not the type hints.
+- *5-run version:* "only about 1 in 5 survives the whole sequence for both
+  methods." Wrong for both: it depends heavily on the method and on whether the
+  tools rewrite the file. Our first runs happened to draw mostly one weak,
+  very short program.
+- *5-run version:* "Windows line breaks explain why the watermark came back."
+  Withdrawn: they explain nothing here.
+- *5-run version:* "type hints remove 52–84% of the signal." That came from
+  four favorable runs picked after seeing the data.
+- *Setup bug:* our edits were described as "deterministic" but weren't (the
+  random choice changed each time the program started). Fixed on 2026-09-24.
+- *25-run version:* it still used one prompt, so part of the "STONE lost it at
+  step 1 but got it back" pattern came from that one short program.
 
 ### Where does each of the nine methods break?
 
-We also ran the same sequence for the other seven methods (5 attempts each).
+We also ran the original sequence (which rewrites the file at several steps, so "step 1" below mostly means "first rewrite") for the other seven methods (5 attempts each).
 Five of the nine methods never produced a working watermark on our small AI
 model at all, so there was nothing to test:
 
 | Method | Usable runs | Where it first broke |
 |---|---|---|
-| STONE | 25 of 25 | mostly step 1 (21 runs) |
-| KGW | 18 of 25 | step 1 (12), rename (3), formatting (1) |
+| STONE | 25 of 25 (one prompt) | mostly step 1 (21 runs) |
+| KGW | 18 of 25 (one prompt) | step 1 (12), rename (3), formatting (1) |
 | EWD | 1 of 5 | step 1 (one run — too few to say anything) |
 | DIP | 1 of 5 | step 1 (one run — too few to say anything) |
 | SWEET, Unigram, Unbiased, SynthID, PF | 0 of 5 each | never produced a watermark to test |

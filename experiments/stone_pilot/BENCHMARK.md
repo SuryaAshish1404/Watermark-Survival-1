@@ -300,6 +300,10 @@ that would cost the ability to say what was actually measured.
 
 ### 2.6 Cumulative full-lifecycle survival — the brief's actual Phase 5 ask
 
+> **Findings 8, 10 and 11 below are further superseded by §2.8 (2026-09-26),** which
+> ran the reserialization control this section lists as "not yet run". Read §2.8
+> first; this section is kept as the history of how the conclusions moved.
+>
 > **Revised 2026-09-24.** This section originally reported an n=5 pilot. A
 > 25-run rerun and two follow-up controls overturned several of its claims;
 > the corrections are listed at the end of the section rather than silently
@@ -375,7 +379,8 @@ The annotations add a smaller increment on top. "Adding type hints is the most
 destructive single operation" is **not supported**; the supported claim is that
 *any* step ending in a full `ast.unparse()` costs a large share of the signal.
 The decisive follow-up — type hints inserted by targeted text patching, with no
-reserialization — is not yet run.
+reserialization — was run on 2026-09-26; see §2.8 (it confirms the reserialization
+attribution).
 
 **Finding 9 — survival is decided mainly by baseline headroom, and for
 borderline texts by an uncontrolled random draw.** The five saved texts
@@ -481,6 +486,126 @@ show the step-1 pattern is common (67–84%), not universal, and confounded with
 `ast.unparse` (Finding 8). The earlier "100%, zero exceptions across 11 runs"
 statement is withdrawn.
 
+### 2.8 Round 2 (2026-09-26): the controls that decide Findings 8-11
+
+§2.6 ended with three open items: the type-hint step was confounded with
+`ast.unparse()`, STONE's samples were pseudo-replicated, and the chain order was
+hand-designed. This section closes them as far as this host allows. **It
+supersedes Findings 8, 10 and 11 of §2.6 where they conflict.** The one-line
+summary: **whole-file reserialization is what destroys the signal; the content edits
+(type hints, docstrings, renames, comments, formatting) cost far less, and STONE and
+KGW differ mainly in how they tolerate reserialization.**
+
+**New machinery.**
+- *Reserialization-free operations* (`more_operations.py`): type hints, docstring,
+  flip-one-comparison and rename re-implemented as text edits at AST-reported
+  positions (header colons found with `tokenize`). Each takes the same random draw
+  as its `ast.unparse` sibling and is checked by `scripts/verify_patch_ops.py`:
+  `ast.dump` of the two outputs is identical in 75/75 cases per operation.
+- *Five distinct prompts* (`run_lifecycle.py --multi-prompt`) instead of one. STONE:
+  23/25 usable, **13 distinct baselines** (was 9 distinct from 25); KGW: 17/25
+  usable, 17 distinct. Pseudo-replication is reduced, not removed, and baselines,
+  never runs, are the unit of analysis below.
+- *Matched design* (`--hints both`): both first-step variants run from the same
+  generated baseline.
+- *Model-free factorial* (`scripts/offline_matrix.py`): saved baselines replayed
+  through the chain, 20 random draws each, detection needs only the tokenizer.
+  Draws are averaged within a baseline first and baselines are then bootstrapped.
+- *Mined CI order* (`scripts/mining/workflow_order.py` over 20 real Python
+  repositories' workflows, 281 job step sequences): `lint_autofix` precedes `format`
+  29 times, the reverse 15 times. The hand-designed chain used the minority order.
+  Both orders are run.
+- *Platform fix:* `newline=""` on every code write site, `core.autocrlf=false` in the
+  scratch git repos, and byte-exact reads. Verified: wheel and squash steps now
+  return byte-identical text.
+
+**Finding 8 (replaces §2.6 Finding 8) — type hints themselves cost little;
+`ast.unparse` costs most of the first-step loss.** Same annotations, same draws, on
+identical baselines, tokenizer-only detection, 30 draws per baseline
+(`scripts/unparse_control.py`). Signal kept = z after step / baseline z (share of
+baselines still detected in brackets):
+
+| | ast_roundtrip only | type hints via `ast.unparse` | type hints via text patch |
+|---|---|---|---|
+| STONE, 13 baselines | 77% (12/13) | 59% (86%) | **81%** (93%) |
+| KGW, 17 baselines | 50% (7/17) | 41% (40%) | **90%** (95%) |
+
+In every draw the two type-hint variants produce the same program. For KGW the
+annotation itself costs about 10% of the signal; reserialization costs about half.
+The n=25 result that "step 1 costs about half the signal" is true, but the cause is
+the reserialization the step was implemented with. In the live multi-prompt run the
+first break moves accordingly: swapping only step 1 for the patch version changes
+KGW's mean step-1 loss from 60% to 11% and moves its first break from
+`agent_add_type_hints` (10/17) to `agent_add_docstring` (10/17), the next step that
+reserializes.
+
+**Finding 13 — the reserialization effect carries through the whole chain.**
+Offline factorial, 13 STONE and 17 KGW distinct baselines, 20 draws each
+(`offline_matrix_stone.json`, `offline_matrix_kgw.json`). Intervals are 95%
+bootstrap over baselines.
+
+| | Chain | Never below threshold | Above threshold at end | End z / baseline z |
+|---|---|---|---|---|
+| STONE | all steps reserialize | 84% [67-97] | 97% [94-100] | 68% [58-78] |
+| STONE | same edits as text patches | 92% [78-99] | 98% [95-100] | 82% [74-91] |
+| STONE | one `ast.unparse`, nothing else | 85% [62-100] | 92% [77-100] | 83% [71-95] |
+| KGW | all steps reserialize | **4%** [1-8] | **4%** [1-9] | 19% [12-27] |
+| KGW | same edits as text patches | **65%** [46-82] | **65%** [46-82] | 67% [57-77] |
+| KGW | one `ast.unparse`, nothing else | 35% [12-59] | 41% [18-65] | 46% [30-62] |
+
+Two consequences. (a) For KGW the difference between "an agent that edits text" and
+"a tool that reserializes" is 65% vs 4% survival, with intervals that do not
+overlap. (b) The reserialization-free chain still costs KGW a third of its signal,
+so the content edits are not free; the rename step and the CI formatter account for
+most of that (per-step means in the JSON). CI step order made no difference (the two
+orders differ by at most 0.1 z), so the hand-designed order was not distorting the
+result.
+
+**Finding 14 — STONE tolerates reserialization better than KGW, and this is not
+just headroom.** Baseline headroom differs (STONE mean baseline z 15.6, KGW 7.8),
+so absolute survival is confounded. The normalised measure, share of baseline z
+retained at the end of the fully reserializing chain, is 68% [58-78] for STONE
+against 19% [12-27] for KGW, non-overlapping. Within KGW that share is uncorrelated
+with baseline z (r = -0.06), so KGW's low retention is not a low-headroom artifact;
+for STONE it is negatively correlated (r = -0.70) because a longer text has more
+headroom above the floor. A tighter matched-baseline test is not possible with
+these data: only two STONE baselines fall in the z 4-10 range that most KGW
+baselines occupy (both retained). The direction is consistent with STONE's design
+(it skips syntax tokens, which reserialization rewrites), but that is a hypothesis
+this experiment does not test.
+
+**Finding 10 (revised) — the "end vs every step" gap shrinks once baselines are
+diverse.** With five prompts, STONE never broke in 14/23 runs and was retained at
+the end in 23/23, so the earlier 16% vs 92% gap was largely the 244-character
+degenerate mode. The direction survives, its size does not.
+
+**Recovery, partly explained.** Scores rise after `ci_format` in several chains
+(for example STONE 3.68 to 4.64 in one run). A candidate mechanism: `ruff format`
+rewrites reserialized text back toward the style the model emitted. Test
+(`scripts/format_recovery_check.py`): `format(unparse(x))` is byte-identical to
+`format(x)` for 4/13 STONE and 0/17 KGW baselines. Consistent with STONE recovering
+more than KGW, but it does not establish the mechanism; reported as a partial
+explanation only.
+
+**Finding 11 (revised).** Even with the platform fix, no retained/lost outcome
+flipped at the squash or wheel step; those steps remain no-ops for these schemes.
+
+**Robustness to the edit-content source.** The whole factorial was repeated with
+edit content (comments, identifiers, annotations, docstring openers) mined from
+Flask instead of Lutris (`data/human_corpus_flask.json`, `WM_CORPUS`). KGW: 3% vs
+61% never-broke (reserializing vs patch chain), 3% vs 63% at end; STONE: 80% vs 90%
+never-broke, 93% vs 96% at end. The conclusions do not depend on Lutris's vocabulary.
+
+**Not done, and why.** (a) A larger generation model: the host has 1-1.7 GB free
+RAM and no GPU, and `tiny_starcoder_py` already needed one-scheme-per-process
+runs; SWEET, Unigram, Unbiased, SynthID and PF still never embed, so their
+robustness remains untested. (b) A Linux host: none available; the newline fix
+removes the known platform dependence but a native rerun is still worth doing. (c)
+A second *generation* host repository: prompts vary in task but not in codebase;
+only the edit corpus was swapped. (d) A chain order mined end-to-end from CI: the
+mined data fix only the lint/format order, because most CI steps in real workflows
+(build, test, publish) do not modify source.
+
 ## 3. Threats to validity
 
 1. **Single host repository, single generated function per run.** External
@@ -509,22 +634,31 @@ statement is withdrawn.
    this pass (§2.5).
 7. **Four Family 2 schemes (Unbiased, DIP, SynthID, PF) are smoke-tested but
    not yet benchmarked at scale** — infrastructure is ready, results are not.
-8. **The lifecycle chain (§2.6) is one prompt, one order, two fully-tested
-   schemes, one host OS.** STONE's 25 runs are 9 distinct generations (17
-   byte-identical), so its effective sample is far smaller than 25 and no
-   confidence interval is reported for it; KGW's 18 usable runs are all
-   distinct. The order is hand-designed, not mined from real CI configs.
+8. **The lifecycle chain is hand-designed, on one host OS, on one model.**
+   §2.8 uses five prompts (STONE 13 distinct baselines from 23 usable runs, KGW
+   17), so pseudo-replication is reduced but not removed and baselines, not
+   runs, are the unit of analysis. Only the lint/format order is mined from real
+   CI (20 repositories); the rest of the order is designed. No confidence
+   interval from the single-prompt §2.6 runs should be cited.
 9. **Uncontrolled mutation randomness in all results before 2026-09-24.**
    The corpus-token draw used Python's per-process-randomized `hash()`, so
    identical input got different mutations in different processes. Fixed;
    existing datasets were not regenerated. §2.6 quantifies the effect for
    STONE (retained-at-end for the dominant short text ranges 10–70% by draw).
-10. **The `ast.unparse()` confound also affects `agent_add_type_hints`
-    (Finding 8)**, not only the human-sourced operations: roughly 45–90% of
-    that step's signal loss is reproduced by reserialization alone. The
-    targeted-patch control that would isolate the annotations is not yet run.
-11. **STONE-vs-KGW lifecycle differences are confounded with baseline
-    headroom** (§2.6): matched-baseline comparison not yet done.
+10. **The `ast.unparse()` confound: RESOLVED for type hints, remains elsewhere.**
+    The type-hint control was run (§2.8): reserialization, not the annotations,
+    drives the first-step loss. The original human-sourced battery (§2.5) still
+    contains operations whose fragility is inseparable from reserialization.
+11. **STONE-vs-KGW comparison is not matched-baseline.** §2.8 uses the share of
+    baseline z retained (a headroom-normalised measure) and shows it is not a
+    headroom artifact within KGW, but only two STONE baselines fall in KGW's
+    z 4-10 range, so a matched test is not possible with this sample.
+12. **One generation model and one generation host repository.** 164M model; five
+    of nine schemes never embed; prompts share one codebase (the edit corpus was
+    swapped to Flask as a robustness check, the generated code was not).
+    Untested: larger models, other languages, other repositories.
+13. **Recovery mechanism only partly explained** (format re-canonicalisation
+    matches 4/13 STONE and 0/17 KGW baselines exactly).
 
 ## 4. Reproducing this benchmark
 
@@ -547,6 +681,15 @@ python experiments/stone_pilot/run_lifecycle.py \
   --repo <path to a lutris/lutris checkout> \
   --runs 5 --schemes stone \
   --out experiments/stone_pilot/lifecycle_results.json
+
+# Round 2 controls (§2.8)
+python experiments/stone_pilot/run_lifecycle.py --repo <lutris> --schemes stone \
+  --runs 25 --hints both --multi-prompt --out experiments/stone_pilot/lifecycle_v2_results.json
+python experiments/stone_pilot/scripts/verify_patch_ops.py
+python experiments/stone_pilot/scripts/unparse_control.py --repo <lutris> --scheme kgw \
+  --texts experiments/stone_pilot/control_texts_kgw.json
+python experiments/stone_pilot/scripts/offline_matrix.py --repo <lutris> --scheme kgw --draws 20
+# Flask edit corpus: set WM_CORPUS=experiments/stone_pilot/data/human_corpus_flask.json
 ```
 
 Add `--fresh` to overwrite rather than merge into an existing results file. Each

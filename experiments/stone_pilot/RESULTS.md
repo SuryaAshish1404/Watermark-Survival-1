@@ -5,7 +5,63 @@ data, written as a citable methods+results document rather than a lab
 narrative. This file keeps the full session-by-session story, including the
 crash/recovery details BENCHMARK.md summarizes in one line.
 
-## n=25 rerun of the lifecycle chain, and what it overturned — 2026-09-24 (latest)
+## Round 2: the reserialization control, five prompts, mined CI order — 2026-09-26 (latest)
+
+User asked to do the items that would make this paper-worthy: the `ast.unparse`
+control, more prompts and a bigger model, mined CI order, a platform fix, a
+rerun under the fixed RNG. Done except the bigger model (host has 1-1.7 GB free
+RAM, no GPU). Full write-up: `BENCHMARK.md` §2.8. The 2026-09-24 entry below is
+**partly superseded** where it conflicts (its Finding 8 attribution and its
+16%-vs-92% gap in particular).
+
+**The headline changed again.** Whole-file reserialization with `ast.unparse()`,
+not the content edits, is what removes the signal.
+
+- **Type-hint control** (same annotations, same draws, identical baselines, 13
+  STONE and 17 KGW distinct baselines, 30 draws): signal kept after the step, via
+  `ast.unparse` vs via text patch. STONE 59% vs 81%; KGW 41% vs 90%. The two
+  variants produce the same program in every draw
+  (`scripts/verify_patch_ops.py`: 75/75 per operation). So "type hints are the
+  destructive step" is wrong; the annotations cost about 10% for KGW.
+- **Whole chain, model-free factorial** (20 draws per baseline; baselines
+  bootstrapped): KGW survives the chain in 4% of cases when every step
+  reserializes and 65% [46-82] when the same edits are applied as text patches.
+  STONE: 84% vs 92% never-broke, 97% vs 98% retained at end.
+- **STONE tolerates reserialization better than KGW**: end z / baseline z
+  68% [58-78] vs 19% [12-27]. Not a headroom artifact within KGW (r = -0.06 with
+  baseline z), though a matched-baseline test is not possible (only two STONE
+  baselines in KGW's z 4-10 range).
+- **Five prompts** raised STONE from 9 to 13 distinct baselines (23 usable of 25;
+  KGW 17 of 25, 17 distinct). STONE never broke in 14/23 and ended retained in
+  23/23, so the earlier 16% vs 92% gap was mostly the 244-character degenerate mode.
+- **CI order**: real workflows (20 Python repos) put `lint_autofix` before
+  `format` 29 times to 15. My chain used the minority order. It made no difference
+  (at most 0.1 z).
+- **Robust to edit-content source**: rerun with a Flask-mined corpus instead of
+  Lutris gives the same picture (KGW 3% vs 61% never-broke).
+- **Recovery partly explained**: `format(unparse(x)) == format(x)` for 4/13 STONE
+  and 0/17 KGW baselines. Suggestive, not established.
+
+**Fixes made along the way:** `newline=""` on every code write site,
+`core.autocrlf=false` and byte-exact reads (wheel and squash now return
+byte-identical text); the RNG fix from 2026-09-24 is now in effect for all new
+results; the lifecycle runner saves the baseline code so controls can be replayed
+without the model.
+
+**What I got wrong in the previous round that this exposed:** I labelled the
+type-hint step as the first-break operation. It was only the first step that
+reserializes, so it is where the loss appeared. Moving that step to a patch moves
+the first break to the next reserializing step (KGW: `agent_add_docstring`,
+10/17). The chain was largely measuring one reserialization.
+
+**Still open:** a larger generation model (five schemes never embed); a Linux
+run; a second generation host repository; the four unbenchmarked MarkLLM schemes
+on the 22-operation battery; a matched-baseline STONE-vs-KGW test with more
+low-headroom STONE samples.
+
+---
+
+## (partly superseded by the 2026-09-26 entry above) n=25 rerun of the lifecycle chain, and what it overturned — 2026-09-24
 
 User asked for 20+ repeats on STONE and KGW "for statistical confidence." Ran
 25 each (one scheme per process). **The n=5 pilot's headline claims did not
