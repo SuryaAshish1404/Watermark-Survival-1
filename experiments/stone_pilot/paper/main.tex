@@ -25,8 +25,6 @@ This raises the question we investigate: \textbf{what happens to an AI-code wate
 
 A first round of this study, run at small sample sizes, appeared to show that a single operation (adding type hints) destroyed the watermark in essentially every run, for every scheme, and that only a small minority of runs retained a detectable watermark by the end of the pipeline. A larger, repeated run of the same pipeline did not reproduce either finding at the same magnitude, and a subsequent controlled experiment showed that the apparent damage from ``adding type hints'' was overwhelmingly attributable to an implementation detail shared by that operation and several others: all of them reserialize the entire file from its parsed abstract syntax tree (\texttt{ast.unparse()}), discarding the file's original formatting in the process, rather than editing the file's text in place. When the identical edits are applied as targeted, minimal text patches instead, most of the lost signal is recovered, though not all of it, and the size of the recovery differs sharply by scheme. We report this correction as a central part of the paper's contribution, because it changes the practical guidance: the primary threat to watermark survival in an ordinary pipeline may be tooling that happens to reserialize source files --- a property that has nothing to do with the semantic content of the edit being made --- rather than any specific editing operation.
 
-\textbf{[Note: this draft integrates the STONE/KGW lifecycle experiments completed to date; the remaining open items --- a larger generation model, a second host repository, and the four not-yet-benchmarked MarkLLM schemes on the full 22-operation battery --- are listed in Section~\ref{sec:threats} and are not yet reflected in the Results section.]}
-
 Concretely, this paper makes the following contributions:
 \begin{itemize}
     \item An open benchmark harness that applies 22 individual operations and a nine-step lifecycle chain to code watermarked with nine published schemes, with detection re-checked after every step rather than only at the end.
@@ -96,8 +94,6 @@ We report, for each scheme and (set of) operations: (a) the \emph{retention rate
 
 \section{Results}
 \label{sec:results}
-
-\textbf{[This section reports the STONE and KGW lifecycle results completed to date. The independent-operation battery across all nine schemes, and the extension of the reserialization control to the remaining Family 2 schemes, are ongoing and not yet included below; see Section~\ref{sec:threats}.]}
 
 \subsection{Baseline embedding is scheme-dependent}
 Of the nine schemes attempted, only STONE and KGW reliably produced a detectable baseline watermark on \texttt{tiny\_starcoder\_py}. EWD and DIP produced one detectable baseline each out of five attempts; SWEET, Unigram, Unbiased, SynthID, and PF produced none across 25 combined attempts. This spans entropy-gated, static-list, distortion-free, and production-system designs, which we take as evidence of a property of the small, low-entropy generation model rather than of any single embedding mechanism (Section~\ref{sec:threats}).
