@@ -659,6 +659,54 @@ survival rate for PF on this model, its threshold calibration should be checked
 independently, since an uncalibrated threshold would show up as a robustness
 finding that is actually a detector-config artifact.
 
+### 2.10 The 22-operation battery on the larger model (preliminary, 2026-09-29)
+
+Following §2.9, the full 22-operation single-mutation battery (§1.5) was run on
+`deepseek-coder-1.3b-instruct`, 15 attempts per scheme, one host prompt (the same
+single prompt `run_full_battery.py` has always used — unlike `run_lifecycle.py`,
+it does not yet cycle prompts, which matters for the results below). Unigram and
+DIP were skipped: both showed 0/15 baseline embedding in §2.9's check and were not
+worth spending GPU time on here.
+
+**Usable baselines were thin and prompt-sensitive.** STONE: 15/15 (mean baseline
+z = 13.3, range 6.0-21.7 — every baseline now comfortably above threshold, unlike
+the old model's bimodal 4.7-or-9+ split). KGW: **0/15** and PF: **0/15** — both
+produced zero usable baselines on this specific prompt, despite KGW showing 4/15
+and PF showing 3/15 in §2.9's check, which cycled across 5 prompts. This is not a
+contradiction; it is direct evidence that for these two schemes on this model,
+embedding success depends heavily on which prompt is used, not just on scheme or
+model. SWEET (2/15), EWD (3/15), SynthID (2/15) stayed thin. **Unbiased reached
+6/15** — the largest sample this scheme has ever had in this study; its baseline
+scores are its own statistic (near 0, lower-is-more-watermarked on its scale, not
+z-score-comparable to the other rows).
+
+**The operation-class pattern from every earlier stage of this study replicates
+here, including on a scheme with a completely different detection mechanism.**
+Across STONE, SWEET, EWD, and Unbiased alike: every version-control operation
+(squash, rebase, cherry-pick, fork-sync), every packaging operation that keeps the
+source (`repackage_zip_with_source`, `republish_wheel`), and `format`/`lint_autofix`
+retained the watermark in every single usable run. Every operation that rewrites
+identifiers or structure (`rename`, `minify`, `dead_code_insert`,
+`extract_helper_function`, `add_type_hints`, all six `human_*` operations,
+`targeted_patch`) lost it in effectively every usable run for the low-headroom
+schemes (SWEET, EWD, SynthID, Unbiased), and in most runs even for STONE's much
+stronger baselines it degrades — only two runs (`stacked_adversarial`,
+`aggressive_minify`) meaningfully dent STONE's 15/15, both deliberately
+content-heavy mutations. Unbiased reproducing this exact split is notable: it is
+a distortion-free scheme with a p-value detector, sharing no green-list mechanism
+with STONE/SWEET/EWD, so the same split appearing there is evidence the pattern is
+about what a mutation *does to the token stream*, not an artifact of one detection
+family.
+
+**Not yet meaningful:** the `add_type_hints` finding from §2.8 (reserialization,
+not the annotations, drives most of the loss) has not been re-run as a control on
+this model — the numbers above only confirm that `add_type_hints` costs signal
+here too, at whatever mix of causes. **Not yet run at all on this model:** the
+lifecycle chain (§2.6-2.8). KGW and PF's zero-usable-baseline result on this
+prompt means neither has *any* mutation data on this model yet; a multi-prompt
+version of `run_full_battery.py` (mirroring `run_lifecycle.py --multi-prompt`)
+would be needed before either can be assessed here.
+
 ## 3. Threats to validity
 
 1. **Single host repository, single generated function per run.** External
@@ -689,8 +737,12 @@ finding that is actually a detector-config artifact.
    fragility may be substantially attributable to that shared detail rather
    than to the human-refactor pattern itself. Disclosed, not corrected, in
    this pass (§2.5).
-7. **Four Family 2 schemes (Unbiased, DIP, SynthID, PF) are smoke-tested but
-   not yet benchmarked at scale** — infrastructure is ready, results are not.
+7. **Four Family 2 schemes (Unbiased, DIP, SynthID, PF) are smoke-tested on
+   `tiny_starcoder_py` but not benchmarked at scale there.** On the larger model
+   (§2.10), Unbiased now has real data (n=6 usable baselines, single-operation
+   battery only), SynthID has thin data (n=2), and DIP and PF still have none
+   (DIP never embeds on either model; PF's baseline embedding is prompt-sensitive
+   and produced 0 usable runs on `run_full_battery.py`'s single prompt).
 8. **The lifecycle chain is hand-designed, on one host OS, on one model.**
    §2.8 uses five prompts (STONE 13 distinct baselines from 23 usable runs, KGW
    17), so pseudo-replication is reduced but not removed and baselines, not
@@ -753,6 +805,12 @@ python experiments/stone_pilot/scripts/offline_matrix.py --repo <lutris> --schem
 export WM_MODEL=deepseek-ai/deepseek-coder-1.3b-instruct WM_DEVICE=cuda
 python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15
 python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15
+
+# Larger model, full 22-op battery (§2.10) — same GPU env vars as above
+python experiments/stone_pilot/run_full_battery.py --repo <lutris> --runs 15 \
+  --schemes stone,kgw,sweet,ewd --out experiments/stone_pilot/gpu_battery_results.json --fresh
+python experiments/stone_pilot/run_full_battery.py --repo <lutris> --runs 15 \
+  --schemes unbiased,synthid,pf --out experiments/stone_pilot/gpu_battery_results.json
 ```
 
 Add `--fresh` to overwrite rather than merge into an existing results file. Each
