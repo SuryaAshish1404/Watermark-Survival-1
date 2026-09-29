@@ -54,7 +54,10 @@ def build_stone():
 
     print(f"Loading {MODEL_NAME} ...", file=sys.stderr)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+    import torch as _torch
+    from schemes import DEVICE
+    _dtype = _torch.float16 if DEVICE.startswith("cuda") else _torch.float32
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=_dtype).to(DEVICE)
     model.eval()
     transformers_config = TransformersConfig(
         model=model,

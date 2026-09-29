@@ -67,7 +67,10 @@ _ROOT = Path(__file__).parent / "vendor"
 STONE_FAMILY_ROOT = _ROOT / "stone_watermarking"
 MARKLLM_FAMILY_ROOT = _ROOT / "markllm"
 
-MODEL_NAME = "bigcode/tiny_starcoder_py"
+import os
+
+MODEL_NAME = os.environ.get("WM_MODEL", "bigcode/tiny_starcoder_py")
+DEVICE = os.environ.get("WM_DEVICE", "cpu")
 
 STONE_FAMILY = {"stone", "kgw", "sweet", "ewd"}
 MARKLLM_FAMILY = {"unigram", "unbiased", "dip", "synthid", "pf"}
@@ -140,11 +143,19 @@ def assert_single_family(scheme_names: list[str]) -> str:
 
 
 def build_transformers_config(TransformersConfig, model, tokenizer):
+    # Some models pad the output embedding to a multiple of 64 for tensor-core
+    # efficiency (e.g. deepseek-coder-1.3b: len(tokenizer)=32022 but
+    # config.vocab_size=32256). Green-list schemes build a mask sized off this
+    # vocab_size and apply it directly to the model's logits, so it must match
+    # the model's real output width, not the tokenizer's logical vocab size,
+    # or the mask/logits shapes mismatch (silent on CPU as an index error,
+    # fatal as a CUDA assertion that corrupts the process's CUDA context).
+    vocab_size = getattr(getattr(model, "config", None), "vocab_size", None) or len(tokenizer)
     return TransformersConfig(
         model=model,
         tokenizer=tokenizer,
-        vocab_size=len(tokenizer),
-        device="cpu",
+        vocab_size=vocab_size,
+        device=DEVICE,
         max_new_tokens=160,
         do_sample=True,
         top_k=50,

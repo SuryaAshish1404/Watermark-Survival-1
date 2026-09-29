@@ -596,15 +596,68 @@ Flask instead of Lutris (`data/human_corpus_flask.json`, `WM_CORPUS`). KGW: 3% v
 61% never-broke (reserializing vs patch chain), 3% vs 63% at end; STONE: 80% vs 90%
 never-broke, 93% vs 96% at end. The conclusions do not depend on Lutris's vocabulary.
 
-**Not done, and why.** (a) A larger generation model: the host has 1-1.7 GB free
-RAM and no GPU, and `tiny_starcoder_py` already needed one-scheme-per-process
-runs; SWEET, Unigram, Unbiased, SynthID and PF still never embed, so their
-robustness remains untested. (b) A Linux host: none available; the newline fix
-removes the known platform dependence but a native rerun is still worth doing. (c)
-A second *generation* host repository: prompts vary in task but not in codebase;
-only the edit corpus was swapped. (d) A chain order mined end-to-end from CI: the
-mined data fix only the lint/format order, because most CI steps in real workflows
-(build, test, publish) do not modify source.
+**Not done, and why.** (a) A larger generation model: not available on this host at
+the time; a preliminary baseline-embedding check on a larger model has since been
+run — see §2.9 — but the mutation battery and lifecycle chain have not yet been
+repeated on it. (b) A Linux host: none available; the newline fix removes the known
+platform dependence but a native rerun is still worth doing. (c) A second
+*generation* host repository: prompts vary in task but not in codebase; only the
+edit corpus was swapped. (d) A chain order mined end-to-end from CI: the mined data
+fix only the lint/format order, because most CI steps in real workflows (build,
+test, publish) do not modify source.
+
+### 2.9 A larger model changes which schemes can even be tested (preliminary, 2026-09-29)
+
+Everything above uses `bigcode/tiny_starcoder_py` (164M parameters, CPU). A GPU
+became available (6 GB VRAM) partway through this study, which changes the binding
+constraint identified in Finding 12 and threat 4/12 below. As a first check, not
+yet a full rerun, the baseline-embedding step (generate, then detect on the
+unmutated output — no mutations applied) was repeated on `deepseek-ai/deepseek-coder-1.3b-instruct`
+(1.3B parameters, fp16, ~2.7 GB VRAM used), 15 attempts per scheme across 5
+prompts, same `delta=4.0`/threshold config as elsewhere in this document. This
+surfaced and fixed one real bug: `Unigram`'s green-list mask was sized off
+`len(tokenizer)` (32,022), but this model's output embedding is padded to 32,256
+for tensor-core efficiency; the mismatch produced an out-of-bounds CUDA write that
+corrupted the process's CUDA context, causing an unrelated-looking failure in
+whatever scheme ran next in the same process. Fixed by sizing the mask off the
+model's actual output width (`model.config.vocab_size`) instead of the tokenizer's
+logical vocabulary (`schemes.py`, `build_transformers_config`).
+
+| Scheme | Detected / 15, new model | Detected / attempted, `tiny_starcoder_py` |
+|---|---|---|
+| STONE | 14/15 | 25/25 |
+| KGW | 4/15 | 18/25 |
+| SWEET | 0/15 (2/10 on a same-prompt repeat) | 0/25 |
+| EWD | 4/15 (4/10 on a same-prompt repeat) | 1/5 |
+| Unigram | 0/15 | 0/25 |
+| Unbiased | 3/15 | 0/25 |
+| DIP | 0/15 | 1/5 |
+| SynthID | 1/15 | 0/25 |
+| PF | 3/15 | 0/25 |
+
+Three schemes that never once produced a detectable baseline across 25 combined
+attempts on the small model — Unbiased, SynthID, PF — now do, at low but nonzero
+rates. SWEET and EWD, which were effectively untestable before (0/25 and 1/5),
+now show a real, repeatable-but-uncommon detection rate (confirmed by an
+independent same-prompt repeat, not a single lucky draw). Unigram alone remains at
+0/15 on the larger model, which weakens the earlier hypothesis that a small,
+low-entropy generation model was the shared cause of every scheme's failure to
+embed — for Unigram specifically the more model-agnostic explanation (a static,
+non-hash-chained green list is inherently harder to detect against short outputs;
+§2.4) looks more likely than a model-size effect. KGW's rate (4/15, mean z 2.2) is
+notably lower than STONE's (14/15, mean z 12.0) on this model, the opposite
+ordering of reliability from what raw counts alone would suggest is typical for a
+"simpler" scheme — consistent with, though not proof of, the reserialization
+sensitivity gap in §2.8.
+
+**Not run yet, so no survival numbers exist for this model:** the 22-operation
+battery and the lifecycle chain. Every number in this section is a baseline
+embedding check only — no mutation has been applied. PF's own test statistic
+(mean 227.75, on its own gamma-distribution scale, not a z-score) is far larger in
+absolute terms than seen anywhere else in this document; before trusting a
+survival rate for PF on this model, its threshold calibration should be checked
+independently, since an uncalibrated threshold would show up as a robustness
+finding that is actually a detector-config artifact.
 
 ## 3. Threats to validity
 
@@ -619,8 +672,12 @@ mined data fix only the lint/format order, because most CI steps in real workflo
    general robustness claim). Family 2's other schemes use their own published
    defaults instead, which makes them internally fair but not directly
    comparable to Family 1 on a shared scale.
-4. **One generation model** (164M parameters) — Finding 5 and §2.4 may be
-   specific to models this small/low-entropy; untested against a larger model.
+4. **One generation model used throughout §2.1-2.8** (164M parameters) — Finding 5
+   and §2.4 may be specific to models this small/low-entropy. A preliminary
+   baseline-embedding check on a 1.3B model (§2.9) shows 3 of 5 previously-untestable
+   schemes now embed at low rates, and one (Unigram) still does not — but the
+   mutation battery and lifecycle chain have not yet been repeated on the larger
+   model, so no survival number in this document reflects it.
 5. **Host memory constraints throughout this project.** Multiple long-lived
    multi-scheme processes segfaulted, traced to host memory exhaustion
    (confirmed via direct memory inspection and reproduced on an isolated,
@@ -653,10 +710,11 @@ mined data fix only the lint/format order, because most CI steps in real workflo
     baseline z retained (a headroom-normalised measure) and shows it is not a
     headroom artifact within KGW, but only two STONE baselines fall in KGW's
     z 4-10 range, so a matched test is not possible with this sample.
-12. **One generation model and one generation host repository.** 164M model; five
-    of nine schemes never embed; prompts share one codebase (the edit corpus was
-    swapped to Flask as a robustness check, the generated code was not).
-    Untested: larger models, other languages, other repositories.
+12. **One generation host repository, and §1-2.8 use one generation model.**
+    Prompts share one codebase (the edit corpus was swapped to Flask as a
+    robustness check, the generated code was not). §2.9 checks a second, larger
+    model for baseline embedding only; other languages and other host
+    repositories remain untested.
 13. **Recovery mechanism only partly explained** (format re-canonicalisation
     matches 4/13 STONE and 0/17 KGW baselines exactly).
 
@@ -690,6 +748,11 @@ python experiments/stone_pilot/scripts/unparse_control.py --repo <lutris> --sche
   --texts experiments/stone_pilot/control_texts_kgw.json
 python experiments/stone_pilot/scripts/offline_matrix.py --repo <lutris> --scheme kgw --draws 20
 # Flask edit corpus: set WM_CORPUS=experiments/stone_pilot/data/human_corpus_flask.json
+
+# Larger model, baseline embedding only (§2.9) — GPU, one family per process
+export WM_MODEL=deepseek-ai/deepseek-coder-1.3b-instruct WM_DEVICE=cuda
+python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15
+python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15
 ```
 
 Add `--fresh` to overwrite rather than merge into an existing results file. Each

@@ -1,0 +1,397 @@
+{
+  "model": "deepseek-ai/deepseek-coder-1.3b-instruct",
+  "results": {
+    "stone": {
+      "runs": [
+        {
+          "i": 0,
+          "chars": 747,
+          "score": 14.760133416115806,
+          "is_watermarked": true
+        },
+        {
+          "i": 1,
+          "chars": 867,
+          "score": 9.338229577685999,
+          "is_watermarked": true
+        },
+        {
+          "i": 2,
+          "chars": 666,
+          "score": 3.2732683535398857,
+          "is_watermarked": false
+        },
+        {
+          "i": 3,
+          "chars": 658,
+          "score": 7.0,
+          "is_watermarked": true
+        },
+        {
+          "i": 4,
+          "chars": 718,
+          "score": 18.217540664941243,
+          "is_watermarked": true
+        },
+        {
+          "i": 5,
+          "chars": 852,
+          "score": 17.797126310672542,
+          "is_watermarked": true
+        },
+        {
+          "i": 6,
+          "chars": 804,
+          "score": 9.686648999069225,
+          "is_watermarked": true
+        },
+        {
+          "i": 7,
+          "chars": 628,
+          "score": 4.529108136578382,
+          "is_watermarked": true
+        },
+        {
+          "i": 8,
+          "chars": 704,
+          "score": 8.660254037844386,
+          "is_watermarked": true
+        },
+        {
+          "i": 9,
+          "chars": 696,
+          "score": 14.664696837416493,
+          "is_watermarked": true
+        },
+        {
+          "i": 10,
+          "chars": 759,
+          "score": 14.182211926745952,
+          "is_watermarked": true
+        },
+        {
+          "i": 11,
+          "chars": 767,
+          "score": 17.75,
+          "is_watermarked": true
+        },
+        {
+          "i": 12,
+          "chars": 663,
+          "score": 9.798744032547468,
+          "is_watermarked": true
+        },
+        {
+          "i": 13,
+          "chars": 719,
+          "score": 11.470786693528087,
+          "is_watermarked": true
+        },
+        {
+          "i": 14,
+          "chars": 601,
+          "score": 19.276188123470586,
+          "is_watermarked": true
+        }
+      ],
+      "detected": 14,
+      "total": 15,
+      "errors": 0,
+      "mean_score": 12.026995807343736
+    },
+    "kgw": {
+      "runs": [
+        {
+          "i": 0,
+          "chars": 704,
+          "score": 2.1476993766848778,
+          "is_watermarked": false
+        },
+        {
+          "i": 1,
+          "chars": 816,
+          "score": 1.5833852988894828,
+          "is_watermarked": false
+        },
+        {
+          "i": 2,
+          "chars": 605,
+          "score": 4.061727505846934,
+          "is_watermarked": true
+        },
+        {
+          "i": 3,
+          "chars": 713,
+          "score": 0.40451991747794525,
+          "is_watermarked": false
+        },
+        {
+          "i": 4,
+          "chars": 756,
+          "score": 4.733333333333333,
+          "is_watermarked": true
+        },
+        {
+          "i": 5,
+          "chars": 749,
+          "score": 1.2080808993852439,
+          "is_watermarked": false
+        },
+        {
+          "i": 6,
+          "chars": 825,
+          "score": 5.163212931161357,
+          "is_watermarked": true
+        },
+        {
+          "i": 7,
+          "chars": 600,
+          "score": 0.48189987357506,
+          "is_watermarked": false
+        },
+        {
+          "i": 8,
+          "chars": 753,
+          "score": 0.5393598899705937,
+          "is_watermarked": false
+        },
+        {
+          "i": 9,
+          "chars": 679,
+          "score": 1.0643041683803829,
+          "is_watermarked": false
+        },
+        {
+          "i": 10,
+          "chars": 792,
+          "score": 3.221549065027317,
+          "is_watermarked": false
+        },
+        {
+          "i": 11,
+          "chars": 781,
+          "score": 1.8587566552180885,
+          "is_watermarked": false
+        },
+        {
+          "i": 12,
+          "chars": 633,
+          "score": -0.48189987357506,
+          "is_watermarked": false
+        },
+        {
+          "i": 13,
+          "chars": 729,
+          "score": 1.348399724926484,
+          "is_watermarked": false
+        },
+        {
+          "i": 14,
+          "chars": 684,
+          "score": 5.055444799806819,
+          "is_watermarked": true
+        }
+      ],
+      "detected": 4,
+      "total": 15,
+      "errors": 0,
+      "mean_score": 2.1593182377405906
+    },
+    "sweet": {
+      "runs": [
+        {
+          "i": 0,
+          "chars": 740,
+          "score": 1.0,
+          "is_watermarked": false
+        },
+        {
+          "i": 1,
+          "chars": 790,
+          "score": 3.5151005964822444,
+          "is_watermarked": false
+        },
+        {
+          "i": 2,
+          "chars": 631,
+          "score": -0.15249857033260467,
+          "is_watermarked": false
+        },
+        {
+          "i": 3,
+          "chars": 714,
+          "score": 0.0,
+          "is_watermarked": false
+        },
+        {
+          "i": 4,
+          "chars": 662,
+          "score": 2.8323527714997336,
+          "is_watermarked": false
+        },
+        {
+          "i": 5,
+          "chars": 730,
+          "score": 1.5403080924308108,
+          "is_watermarked": false
+        },
+        {
+          "i": 6,
+          "chars": 872,
+          "score": 3.9056328877620143,
+          "is_watermarked": false
+        },
+        {
+          "i": 7,
+          "chars": 657,
+          "score": -0.14907119849998599,
+          "is_watermarked": false
+        },
+        {
+          "i": 8,
+          "chars": 683,
+          "score": 1.4433756729740645,
+          "is_watermarked": false
+        },
+        {
+          "i": 9,
+          "chars": 731,
+          "score": 3.0,
+          "is_watermarked": false
+        },
+        {
+          "i": 10,
+          "chars": 778,
+          "score": -0.14907119849998599,
+          "is_watermarked": false
+        },
+        {
+          "i": 11,
+          "chars": 847,
+          "score": 2.0207259421636903,
+          "is_watermarked": false
+        },
+        {
+          "i": 12,
+          "chars": 674,
+          "score": 0.6030226891555273,
+          "is_watermarked": false
+        },
+        {
+          "i": 13,
+          "chars": 756,
+          "score": 0.16012815380508713,
+          "is_watermarked": false
+        },
+        {
+          "i": 14,
+          "chars": 674,
+          "score": 2.1879748724684185,
+          "is_watermarked": false
+        }
+      ],
+      "detected": 0,
+      "total": 15,
+      "errors": 0,
+      "mean_score": 1.4505320474272676
+    },
+    "ewd": {
+      "runs": [
+        {
+          "i": 0,
+          "chars": 758,
+          "score": 2.001171588897705,
+          "is_watermarked": false
+        },
+        {
+          "i": 1,
+          "chars": 704,
+          "score": 3.7875332832336426,
+          "is_watermarked": false
+        },
+        {
+          "i": 2,
+          "chars": 524,
+          "score": 1.0895448923110962,
+          "is_watermarked": false
+        },
+        {
+          "i": 3,
+          "chars": 644,
+          "score": 0.7379576563835144,
+          "is_watermarked": false
+        },
+        {
+          "i": 4,
+          "chars": 658,
+          "score": 5.351742744445801,
+          "is_watermarked": true
+        },
+        {
+          "i": 5,
+          "chars": 730,
+          "score": 4.10640811920166,
+          "is_watermarked": true
+        },
+        {
+          "i": 6,
+          "chars": 788,
+          "score": 4.334029197692871,
+          "is_watermarked": true
+        },
+        {
+          "i": 7,
+          "chars": 588,
+          "score": 2.042861223220825,
+          "is_watermarked": false
+        },
+        {
+          "i": 8,
+          "chars": 672,
+          "score": 0.26280108094215393,
+          "is_watermarked": false
+        },
+        {
+          "i": 9,
+          "chars": 724,
+          "score": 3.625392198562622,
+          "is_watermarked": false
+        },
+        {
+          "i": 10,
+          "chars": 745,
+          "score": 6.055235862731934,
+          "is_watermarked": true
+        },
+        {
+          "i": 11,
+          "chars": 754,
+          "score": 3.632517099380493,
+          "is_watermarked": false
+        },
+        {
+          "i": 12,
+          "chars": 688,
+          "score": 2.2194929122924805,
+          "is_watermarked": false
+        },
+        {
+          "i": 13,
+          "chars": 672,
+          "score": 0.25360190868377686,
+          "is_watermarked": false
+        },
+        {
+          "i": 14,
+          "chars": 681,
+          "score": 2.63250732421875,
+          "is_watermarked": false
+        }
+      ],
+      "detected": 4,
+      "total": 15,
+      "errors": 0,
+      "mean_score": 2.808853139479955
+    }
+  }
+}
