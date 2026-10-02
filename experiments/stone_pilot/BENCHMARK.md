@@ -707,7 +707,60 @@ prompt means neither has *any* mutation data on this model yet; a multi-prompt
 version of `run_full_battery.py` (mirroring `run_lifecycle.py --multi-prompt`)
 would be needed before either can be assessed here.
 
-## 3. Threats to validity
+### 2.11 A third model: different architecture, not just bigger (preliminary, 2026-10-02)
+
+§2.9 showed that switching from a 164M model to a 1.3B model changed which
+schemes could embed a watermark at all, but left open whether that was about
+*scale* specifically or about that particular model. A third model was added to
+separate the two: `Qwen/Qwen2.5-Coder-1.5B-Instruct`, deliberately chosen to be
+in the **same size class** as `deepseek-coder-1.3b-instruct` (1.5B vs 1.3B
+parameters — not meaningfully bigger) but a different architecture, tokenizer,
+and training lineage. Same baseline-embedding check as §2.9: 15 attempts per
+scheme, 5-prompt cycle, no mutations applied.
+
+| Scheme | 164M (`tiny_starcoder_py`) | 1.3B (`deepseek-coder-1.3b-instruct`) | 1.5B (`Qwen2.5-Coder-1.5B-Instruct`) |
+|---|---|---|---|
+| STONE | 25/25 | 14/15 | **15/15** |
+| KGW | 18/25 | 4/15 | **13/15** |
+| SWEET | 0/25 | 0/15 | **4/15** |
+| EWD | 1/5 | 4/15 | **12/15** |
+| Unigram | 0/25 | 0/15 | 0/15 |
+| Unbiased | 0/25 | 3/15 | 1/15 |
+| DIP | 1/5 | 0/15 | **3/15** |
+| SynthID | 0/25 | 1/15 | 3/15 |
+| PF | 0/25 | 3/15 | **9/15** |
+
+**Qwen2.5-Coder outperforms deepseek-coder on every scheme in Family 1**
+(STONE, KGW, SWEET, EWD) despite being a similar parameter count — KGW and EWD
+roughly triple their embedding rate. This separates two previously-confounded
+explanations for §2.9's result: it is not simply "bigger model gives more
+room," since Qwen2.5-Coder isn't meaningfully bigger than deepseek-coder; a
+model's specific training (code-heavy instruction tuning, in Qwen2.5-Coder's
+case) appears to matter independently of raw parameter count.
+
+**Unigram remains at 0/15 across all three models**, now including two
+different models in the "it could embed if only it had more room" size class.
+This further strengthens §2.9's conclusion that Unigram's weak signal is a
+property of its static-green-list design, not of generation-model capability.
+
+**Pairwise correlation between models' per-scheme embedding rates** (Pearson r,
+9 schemes, each estimated from 5-25 runs — read as directional, not precise):
+
+| | 164M vs 1.3B | 164M vs 1.5B | 1.3B vs 1.5B |
+|---|---|---|---|
+| r | 0.84 | 0.79 | 0.76 |
+
+All three pairs correlate strongly (r > 0.75): a scheme's relative ranking is
+fairly stable across all three models, so scheme design is still the dominant
+factor overall. But none of the three pairs correlate at r > 0.9, and the
+1.3B-vs-1.5B pair is the *weakest* of the three despite being the two
+closest-in-size models — consistent with the Family-1 result above that
+*which* model, not just how big it is, moves individual schemes by a
+meaningful amount.
+
+**Not yet run on this third model:** the 22-operation battery, the
+reserialization control, and the lifecycle chain — only the baseline-embedding
+check from §2.9 has been repeated here so far.
 
 1. **Single host repository, single generated function per run.** External
    validity to other repositories/languages/code shapes is untested.
@@ -811,6 +864,13 @@ python experiments/stone_pilot/run_full_battery.py --repo <lutris> --runs 15 \
   --schemes stone,kgw,sweet,ewd --out experiments/stone_pilot/gpu_battery_results.json --fresh
 python experiments/stone_pilot/run_full_battery.py --repo <lutris> --runs 15 \
   --schemes unbiased,synthid,pf --out experiments/stone_pilot/gpu_battery_results.json
+
+# Third model, baseline embedding only (§2.11) — same size class as deepseek-coder, different architecture
+export WM_MODEL=Qwen/Qwen2.5-Coder-1.5B-Instruct WM_DEVICE=cuda
+python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15 \
+  --out experiments/stone_pilot/baseline_embed_qwen_f1.json
+python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15 \
+  --out experiments/stone_pilot/baseline_embed_qwen_f2.json
 ```
 
 Add `--fresh` to overwrite rather than merge into an existing results file. Each

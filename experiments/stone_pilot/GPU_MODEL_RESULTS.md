@@ -1,12 +1,15 @@
-# Watermark Survival on a Larger Generation Model — GPU Results
+# Watermark Survival Across Three Generation Models — GPU Results
 
-**Status:** preliminary, 2026-09-29/30. All numbers below are from
-`deepseek-ai/deepseek-coder-1.3b-instruct` (1.3B parameters, fp16, running on a
-6 GB VRAM GPU), replacing the 164M-parameter `bigcode/tiny_starcoder_py` used
-for every earlier result in this project. This file covers only the new-model
-work; it does not repeat the full small-model benchmark (see `BENCHMARK.md`
-§1-2.8 for that). The content here is also folded into `BENCHMARK.md` as §2.9
-and §2.10.
+**Status:** preliminary, 2026-09-29 through 2026-10-02. Covers three generation
+models, all run on a 6 GB VRAM GPU: the original `bigcode/tiny_starcoder_py`
+(164M parameters, CPU, used for every result before this file existed),
+`deepseek-ai/deepseek-coder-1.3b-instruct` (1.3B, fp16), and
+`Qwen/Qwen2.5-Coder-1.5B-Instruct` (1.5B, fp16 — deliberately chosen to be in
+the *same size class* as the deepseek model, not bigger, to separate "model
+scale" from "which specific model" as an explanation). This file does not
+repeat the full small-model benchmark methodology (see `BENCHMARK.md` §1-2.8
+for that). The content here is also folded into `BENCHMARK.md` as §2.9, §2.10,
+and §2.11.
 
 ## Why this run exists
 
@@ -40,23 +43,50 @@ size happen to match exactly.
 ## Part 1 — Can each scheme embed a detectable watermark at all?
 
 15 generate-then-detect attempts per scheme, no mutations applied, cycled
-across 5 different prompts.
+across 5 different prompts. Run on all three models.
 
-| Scheme | Detected / 15 (new model) | Detected / attempted (old model) |
-|---|---|---|
-| STONE | 14/15 | 25/25 |
-| KGW | 4/15 | 18/25 |
-| SWEET | 0/15 (2/10 on a same-prompt repeat) | 0/25 — never |
-| EWD | 4/15 (4/10 on a same-prompt repeat) | 1/5 |
-| Unigram | 0/15 | 0/25 — never |
-| **Unbiased** | **3/15** | 0/25 — never |
-| DIP | 0/15 | 1/5 |
-| **SynthID** | **1/15** | 0/25 — never |
-| **PF** | **3/15** | 0/25 — never |
+| Scheme | 164M (`tiny_starcoder`) | 1.3B (`deepseek-coder`) | 1.5B (`Qwen2.5-Coder`) |
+|---|---|---|---|
+| STONE | 25/25 | 14/15 | **15/15** |
+| KGW | 18/25 | 4/15 | **13/15** |
+| SWEET | 0/25 — never | 0/15 (2/10 on a same-prompt repeat) | **4/15** |
+| EWD | 1/5 | 4/15 (4/10 on a same-prompt repeat) | **12/15** |
+| Unigram | 0/25 — never | 0/15 | 0/15 — never on any model |
+| Unbiased | 0/25 — never | **3/15** | 1/15 |
+| DIP | 1/5 | 0/15 | **3/15** |
+| SynthID | 0/25 — never | **1/15** | 3/15 |
+| PF | 0/25 — never | 3/15 | **9/15** |
 
 **Three schemes that never once embedded a detectable watermark on the small
-model now do: Unbiased, SynthID, PF.** Real, if low-rate, progress — these are
-testable for the first time in this project.
+model now do on a bigger one: Unbiased, SynthID, PF.** Real, if low-rate,
+progress — these are testable for the first time in this project.
+
+**Qwen2.5-Coder beats deepseek-coder on every Family-1 scheme (STONE, KGW,
+SWEET, EWD), despite being essentially the same size (1.5B vs 1.3B).** This is
+the key result of adding a third model: it separates "a bigger model gives more
+room for the watermark" from "this particular model's training matters." KGW
+and EWD roughly triple their embedding rate between the two similarly-sized
+models — so parameter count alone doesn't explain the earlier jump; the
+specific model (likely its code-focused instruction tuning) does real,
+independent work too.
+
+**Unigram is 0/15 or 0/25 on all three models, including two different models
+at the "bigger" size class.** That rules out "needs a bigger model" as the
+explanation for Unigram specifically — a static, non-hash-chained green list
+looks weak on short generated functions as a property of its own design.
+
+**Correlation between models' per-scheme embedding rates** (Pearson r, 9
+schemes, each estimated from 5-25 runs — directional, not precise):
+
+| | 164M vs 1.3B | 164M vs 1.5B | 1.3B vs 1.5B |
+|---|---|---|---|
+| r | 0.84 | 0.79 | 0.76 |
+
+All three pairs correlate strongly — a scheme's rough ranking holds up across
+models, so scheme design is still the single biggest factor. But no pair
+reaches r > 0.9, and the two closest-in-size models (1.3B vs 1.5B) are the
+*weakest*-correlated pair of the three, reinforcing that which specific model
+you use moves results by a real amount, not just how big it is.
 
 **SWEET and EWD go from "effectively untestable" to "sometimes works."**
 Confirmed as a real (if uncommon) rate, not a single lucky draw, by an
@@ -130,20 +160,31 @@ stream*, not an artifact of one detection family.
 
 **Established:**
 - A larger model changes *which schemes can be tested at all* (3 schemes went
-  from zero to nonzero).
+  from zero to nonzero on deepseek-coder).
+- A third, similarly-sized-but-different model (Qwen2.5-Coder) shows this isn't
+  just about scale: it outperforms deepseek-coder on every Family-1 scheme at
+  essentially the same parameter count.
 - The "VCS/packaging/format/lint survive, content-rewriting destroys" pattern
-  generalizes across model size and across a structurally different scheme
-  (Unbiased).
-- Unigram's failure to embed looks like a property of the scheme, not the model.
+  (from §2.10, deepseek-coder only so far) generalizes across model size and
+  across a structurally different scheme (Unbiased).
+- Unigram's failure to embed looks like a property of the scheme, not the
+  model — it is 0/15 or 0/25 on all three models tried, including two in the
+  "bigger" size class.
+- Per-scheme embedding rates correlate strongly but not perfectly across all
+  three model pairs (r = 0.76-0.84) — scheme design dominates, but which
+  specific model is used still moves individual schemes meaningfully.
 
-**Not yet established on this model:**
-- Any real survival *rate* for KGW or PF (0 usable baselines on this prompt).
+**Not yet established on any model but the small one:**
+- Any real survival *rate* for KGW or PF on deepseek-coder (0 usable baselines
+  on `run_full_battery.py`'s single prompt).
 - Whether the reserialization-vs-text-patch finding (§2.8's central result)
-  holds on this model — not yet re-run as a control here.
-- Anything about the 9-step cumulative lifecycle chain — not yet run on this
-  model at all.
-- Real numbers for Unigram, DIP (never embed here) or a confident number for
-  SynthID/SWEET/PF (sample sizes of 2-3 usable baselines).
+  holds on either larger model — not yet re-run as a control on either.
+- Anything about the 9-step cumulative lifecycle chain on either larger model —
+  not yet run at all.
+- The full 22-operation battery on Qwen2.5-Coder — only the baseline-embedding
+  check (Part 1) has been run on it so far.
+- Real numbers for Unigram, DIP (never/rarely embed) or a confident number for
+  several other schemes (sample sizes of 2-4 usable baselines in places).
 
 ## Reproducing this
 
@@ -159,17 +200,28 @@ python experiments/stone_pilot/run_full_battery.py --repo <lutris checkout> --ru
   --schemes stone,kgw,sweet,ewd --out experiments/stone_pilot/gpu_battery_results.json --fresh
 python experiments/stone_pilot/run_full_battery.py --repo <lutris checkout> --runs 15 \
   --schemes unbiased,synthid,pf --out experiments/stone_pilot/gpu_battery_results.json
+
+# Third model (Part 1 only so far) — same size class as deepseek-coder, different architecture
+export WM_MODEL=Qwen/Qwen2.5-Coder-1.5B-Instruct WM_DEVICE=cuda
+python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15 \
+  --out experiments/stone_pilot/baseline_embed_qwen_f1.json
+python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15 \
+  --out experiments/stone_pilot/baseline_embed_qwen_f2.json
 ```
 
 Raw data: `baseline_embed_stone_kgw_sweet_ewd.json`,
-`baseline_embed_unigram_unbiased_dip_synthid_pf.json`, `gpu_battery_results.json`.
+`baseline_embed_unigram_unbiased_dip_synthid_pf.json`, `gpu_battery_results.json`,
+`baseline_embed_qwen_f1.json`, `baseline_embed_qwen_f2.json`.
 
 ## Suggested next steps
 
 1. Add prompt-cycling to `run_full_battery.py` so KGW and PF can actually be
-   assessed (same fix `run_lifecycle.py` already has).
-2. Re-run the §2.8 reserialization-vs-text-patch control on this model.
-3. Run the 9-step lifecycle chain on this model, at minimum for STONE (the
-   only scheme with a solid sample size here).
+   assessed on deepseek-coder (same fix `run_lifecycle.py` already has).
+2. Re-run the §2.8 reserialization-vs-text-patch control on both larger models.
+3. Run the full 22-operation battery and the 9-step lifecycle chain on
+   Qwen2.5-Coder, at minimum for STONE/KGW (its strongest two schemes here).
 4. Independently verify PF's threshold calibration before trusting any of its
    numbers.
+5. A fourth model outside the ~1.3-1.5B size class (meaningfully bigger or a
+   non-code-specialized model of similar size) would help separate "code-tuned
+   training helps" from "Qwen2.5-Coder specifically is just a stronger model."
