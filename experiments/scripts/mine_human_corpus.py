@@ -7,7 +7,7 @@ here, not generated per-call. Run this once against a real checkout; the
 resulting corpus is committed so human_mutations.py needs no repo access at
 runtime.
 
-Usage: python experiments/stone_pilot/scripts/mine_human_corpus.py <repo_path> [--out PATH]
+Usage: python experiments/scripts/mine_human_corpus.py <repo_path> [--out PATH]
 """
 
 import argparse

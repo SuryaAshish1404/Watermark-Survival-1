@@ -46,15 +46,15 @@ atypical release engineering.
   through 2026-08-31 activity window at the point sampling actually runs), rather
   than a date picked now — freezing a specific date today would go stale before the
   mining script is built. The script records whatever snapshot date it actually used
-  in `data/sampling/frame.md` at freeze time; this is a *rule* for picking the date,
+  in `experiments/data/sampling/frame.md` at freeze time; this is a *rule* for picking the date,
   not the date itself.
 - Flagged as a **default, not a final decision** — cheap to revisit (N and window are
   parameters to the mining script) if the pilot in Phase 2 shows too few active
   repos satisfy the population criteria at this window length.
 
 Once the mining script runs, this file's population/method sections freeze into
-`data/sampling/frame.md` with the actual snapshot date and repo list, and the
-exclusion log starts populating `data/sampling/exclusions.csv`.
+`experiments/data/sampling/frame.md` with the actual snapshot date and repo list, and the
+exclusion log starts populating `experiments/data/sampling/exclusions.csv`.
 
 ## Concrete source found for the fixed corpus (2026-09-18)
 The **AIDev dataset** (Hugging Face: `hao-li/AIDev`; paper arXiv:2602.09185, "AIDev:
@@ -65,6 +65,6 @@ Code). This is the same underlying data family as the census paper positioned
 against in docs/05. Using it would mean: join its repo list against GitHub Release
 presence (not in AIDev itself, needs a separate check per repo) to apply this
 file's population criteria. Not yet pulled into this session (no Hugging Face
-dataset access here) — `data/sampling/candidates.md` has one hand-verified repo
-(lutris/lutris) confirmed against the criteria manually as a starter/pipeline-proof
-set, pending the real AIDev-based frame.
+dataset access here). One repo, lutris/lutris, was hand-verified against the
+criteria (193 agent-trailer commits, 88 tagged releases, not a fork; checked
+2026-09-18) as the pipeline-proof repo, pending the real AIDev-based frame.

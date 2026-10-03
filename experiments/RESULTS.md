@@ -342,7 +342,7 @@ still memory-constrained (0.7-1.2 GB free during this session).
 Extends the single-scheme battery below to three schemes from the same vendored
 repo family (`github.com/inistory/STONE-watermarking`, commit `bb5d809`, same
 API, same base model), to test whether *how a scheme picks which tokens to bias*
-changes which operations break it. Raw data: `multischeme_results.json`.
+changes which operations break it. Raw data: `results/multischeme_results.json`.
 
 **Note on provenance**: this run's structured JSON was reconstructed from the
 background task's stderr log (`btxeszss8.output`) after the live process
@@ -472,7 +472,7 @@ genuinely not applicable to a pure-Python codebase (no standard tooling —
 confirmed, not assumed, consistent with how the mining detectors already scope
 those two to JS/TS ecosystems) — 16 operations total once history-layer variants
 are counted, run **5 times** with fresh generations to report variance rather than
-trust one run. Raw data: `full_battery_results.json`.
+trust one run. Raw data: `results/full_battery_results.json`.
 
 **Coverage check against the catalogue**: squash_merge ✓ (2 variants), rebase ✓,
 cherry_pick ✓, fork_sync ✓, format ✓, lint_autofix ✓, transpile — N/A, bundle —
@@ -506,7 +506,7 @@ were added in this revision after being flagged as missing.
 | packaging | repackage_zip_with_source | 5/5 | Always retained |
 | packaging | republish_wheel | 5/5 | Always retained — a real `build`-frontend wheel ships the source unchanged |
 
-Full per-run scores (min/mean/max) are in `full_battery_results.json`'s `summary`
+Full per-run scores (min/mean/max) are in `results/full_battery_results.json`'s `summary`
 block. Exact break counts vary run-to-run (an earlier battery invocation, kept in
 git history, showed 2/5 and 3/5 for some of these) — see "Why format and
 ast_roundtrip break sometimes" below for why that variance itself is the finding,
@@ -575,8 +575,8 @@ is real evidence of that, not just a claim from the brief.
   analog (as opposed to skipping honestly) would have manufactured a result
   rather than measured one. This matches how `scripts/mining/detectors.py`
   already scopes both to JS/TS ecosystems.
-- **delta=4.0** is still above the paper's typical range, for the reason
-  given in PLAN.md (compensating for the tiny model's noisier logits) —
+- **delta=4.0** is still above the paper's typical range, chosen to
+  compensate for the tiny model's noisier logits —
   this likely inflates every retention number here relative to STONE's
   paper-reported configuration.
 

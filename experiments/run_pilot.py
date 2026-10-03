@@ -1,6 +1,6 @@
-"""STONE mutation-survival pilot. See PLAN.md for the full rationale.
+"""STONE mutation-survival pilot: the original single-scheme smoke test.
 
-Usage: python experiments/stone_pilot/run_pilot.py --repo <path to lutris checkout>
+Usage: python experiments/run_pilot.py --repo <path to lutris checkout>
 
 Generates one STONE-watermarked Python function with a small real code model,
 writes it into the given repo checkout, runs it through a battery of real
@@ -53,11 +53,12 @@ def build_stone():
     from watermark.stone.stone import STONE
 
     print(f"Loading {MODEL_NAME} ...", file=sys.stderr)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     import torch as _torch
-    from schemes import DEVICE
+    from schemes import DEVICE, MODEL_REVISIONS
+    revision = MODEL_REVISIONS[MODEL_NAME]
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, revision=revision)
     _dtype = _torch.float16 if DEVICE.startswith("cuda") else _torch.float32
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=_dtype).to(DEVICE)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, revision=revision, torch_dtype=_dtype).to(DEVICE)
     model.eval()
     transformers_config = TransformersConfig(
         model=model,
@@ -186,7 +187,7 @@ def classify(is_watermarked: bool, parse_ok: bool) -> str:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path, required=True, help="Path to a lutris checkout")
-    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "results.json")
+    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "results" / "results.json")
     args = parser.parse_args()
 
     stone = build_stone()

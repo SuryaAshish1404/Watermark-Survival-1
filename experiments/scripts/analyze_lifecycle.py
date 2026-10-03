@@ -1,4 +1,4 @@
-"""Summary statistics for lifecycle_results.json.
+"""Summary statistics for results/lifecycle_results.json.
 
 Prints, per scheme: usable baselines, where each run first broke, full-chain
 survivors, survival at the pre-packaging step vs the final (Windows-built)
@@ -6,7 +6,7 @@ artifact, per-step mean score, baseline-headroom vs survival, and how much of
 the z-score signal the first step cost. Used to keep every doc citing the same
 numbers instead of hand-copying them.
 
-Usage: python experiments/stone_pilot/scripts/analyze_lifecycle.py [results.json]
+Usage: python experiments/scripts/analyze_lifecycle.py [results/lifecycle_results.json]
 """
 
 import json
@@ -14,7 +14,7 @@ import statistics
 import sys
 from pathlib import Path
 
-DEFAULT = Path(__file__).parent.parent / "lifecycle_results.json"
+DEFAULT = Path(__file__).parent.parent / "results" / "lifecycle_results.json"
 
 
 def analyze(scheme: str, runs: list[dict]) -> dict:

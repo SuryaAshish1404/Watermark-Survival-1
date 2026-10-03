@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from schemes import DEVICE, MODEL_NAME, build_scheme
+from schemes import DEVICE, MODEL_NAME, MODEL_REVISION, build_scheme
 
 PROMPT = (
     '"""Utilities for locating a game\'s installed executable and save-data '
@@ -22,8 +22,8 @@ PROMPT = (
 
 name = sys.argv[1]
 dtype = torch.float16 if DEVICE.startswith("cuda") else torch.float32
-tok = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=dtype).to(DEVICE)
+tok = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
+model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, revision=MODEL_REVISION, torch_dtype=dtype).to(DEVICE)
 model.eval()
 
 try:

@@ -88,8 +88,8 @@ model output, not a truncation artifact.
 ### 1.4 Host repository
 
 `lutris/lutris`, chosen because it was already hand-verified against this
-study's measured-arm sampling criteria (`data/sampling/candidates.md`: 193 real
-agent-trailer commits, 88 tagged releases) — reusing a vetted repo rather than
+study's measured-arm sampling criteria (193 real agent-trailer commits,
+88 tagged releases, not a fork; checked 2026-09-18) — reusing a vetted repo rather than
 introducing an unverified one, and giving the anticipatory-arm result a
 realistic host with real linting/formatting configuration
 (`ruff.toml`; confirmed via CI that the project uses `ruff format`, not
@@ -541,7 +541,7 @@ reserializes.
 
 **Finding 13 — the reserialization effect carries through the whole chain.**
 Offline factorial, 13 STONE and 17 KGW distinct baselines, 20 draws each
-(`offline_matrix_stone.json`, `offline_matrix_kgw.json`). Intervals are 95%
+(`results/offline_matrix_stone.json`, `results/offline_matrix_kgw.json`). Intervals are 95%
 bootstrap over baselines.
 
 | | Chain | Never below threshold | Above threshold at end | End z / baseline z |
@@ -827,58 +827,58 @@ check from §2.9 has been repeated here so far.
 
 ```
 # Family 1 (plain kwargs config)
-python experiments/stone_pilot/run_full_battery.py \
+python experiments/run_full_battery.py \
   --repo <path to a lutris/lutris checkout> \
   --runs 10 --schemes stone,kgw,sweet,ewd \
-  --out experiments/stone_pilot/multischeme_results.json
+  --out experiments/results/multischeme_results.json
 
 # Family 2 (JSON config file) — cannot be mixed with Family 1 in one process,
 # see schemes.py's module docstring; merges into the same --out either way
-python experiments/stone_pilot/run_full_battery.py \
+python experiments/run_full_battery.py \
   --repo <path to a lutris/lutris checkout> \
   --runs 10 --schemes unigram,unbiased,dip,synthid,pf \
-  --out experiments/stone_pilot/multischeme_results.json
+  --out experiments/results/multischeme_results.json
 
 # Full-lifecycle chain (§2.6) — cumulative survival through one realistic order
-python experiments/stone_pilot/run_lifecycle.py \
+python experiments/run_lifecycle.py \
   --repo <path to a lutris/lutris checkout> \
   --runs 5 --schemes stone \
-  --out experiments/stone_pilot/lifecycle_results.json
+  --out experiments/results/lifecycle_results.json
 
 # Round 2 controls (§2.8)
-python experiments/stone_pilot/run_lifecycle.py --repo <lutris> --schemes stone \
-  --runs 25 --hints both --multi-prompt --out experiments/stone_pilot/lifecycle_v2_results.json
-python experiments/stone_pilot/scripts/verify_patch_ops.py
-python experiments/stone_pilot/scripts/unparse_control.py --repo <lutris> --scheme kgw \
-  --texts experiments/stone_pilot/control_texts_kgw.json
-python experiments/stone_pilot/scripts/offline_matrix.py --repo <lutris> --scheme kgw --draws 20
-# Flask edit corpus: set WM_CORPUS=experiments/stone_pilot/data/human_corpus_flask.json
+python experiments/run_lifecycle.py --repo <lutris> --schemes stone \
+  --runs 25 --hints both --multi-prompt --out experiments/results/lifecycle_v2_results.json
+python experiments/scripts/verify_patch_ops.py
+python experiments/scripts/unparse_control.py --repo <lutris> --scheme kgw \
+  --texts experiments/results/control_texts_kgw.json
+python experiments/scripts/offline_matrix.py --repo <lutris> --scheme kgw --draws 20
+# Flask edit corpus: set WM_CORPUS=experiments/data/human_corpus_flask.json
 
 # Larger model, baseline embedding only (§2.9) — GPU, one family per process
 export WM_MODEL=deepseek-ai/deepseek-coder-1.3b-instruct WM_DEVICE=cuda
-python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15
-python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15
+python experiments/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15
+python experiments/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15
 
 # Larger model, full 22-op battery (§2.10) — same GPU env vars as above
-python experiments/stone_pilot/run_full_battery.py --repo <lutris> --runs 15 \
-  --schemes stone,kgw,sweet,ewd --out experiments/stone_pilot/gpu_battery_results.json --fresh
-python experiments/stone_pilot/run_full_battery.py --repo <lutris> --runs 15 \
-  --schemes unbiased,synthid,pf --out experiments/stone_pilot/gpu_battery_results.json
+python experiments/run_full_battery.py --repo <lutris> --runs 15 \
+  --schemes stone,kgw,sweet,ewd --out experiments/results/gpu_battery_results.json --fresh
+python experiments/run_full_battery.py --repo <lutris> --runs 15 \
+  --schemes unbiased,synthid,pf --out experiments/results/gpu_battery_results.json
 
 # Third model, baseline embedding only (§2.11) — same size class as deepseek-coder, different architecture
 export WM_MODEL=Qwen/Qwen2.5-Coder-1.5B-Instruct WM_DEVICE=cuda
-python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15 \
-  --out experiments/stone_pilot/baseline_embed_qwen_f1.json
-python experiments/stone_pilot/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15 \
-  --out experiments/stone_pilot/baseline_embed_qwen_f2.json
+python experiments/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15 \
+  --out experiments/results/baseline_embed_qwen_f1.json
+python experiments/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15 \
+  --out experiments/results/baseline_embed_qwen_f2.json
 ```
 
 Add `--fresh` to overwrite rather than merge into an existing results file. Each
 scheme can also be run as a separate invocation (default merge mode) — the
 approach actually used to produce this benchmark, for memory-constrained hosts.
 To regenerate the human-mutation corpus from a fresh checkout:
-`python experiments/stone_pilot/scripts/mine_human_corpus.py <repo_path>`.
-Raw data: `multischeme_results.json` (16-operation battery),
-`human_ops_results.json` (22-operation battery with human-sourced mutations),
-`lifecycle_results.json` (cumulative full-chain survival, §2.6).
+`python experiments/scripts/mine_human_corpus.py <repo_path>`.
+Raw data: `results/multischeme_results.json` (16-operation battery),
+`results/human_ops_results.json` (22-operation battery with human-sourced mutations),
+`results/lifecycle_results.json` (cumulative full-chain survival, §2.6).
 Vendored scheme code and provenance: `vendor/VENDORED.md`.

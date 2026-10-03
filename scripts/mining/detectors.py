@@ -1,6 +1,6 @@
 """Operation-class detectors, derived from repository/workflow configuration files.
 
-Per the brief and ACTION_PLAN Phase 2: the catalogue must be *mined*, not invented.
+Per the study design: the catalogue must be *mined*, not invented.
 Every entry here is a claim of the form "if config signal X is present, operation
 class Y is configured in this repo" — and the scanner (scan.py) always records which
 file produced the match, so every catalogue entry traces to a cited configuration

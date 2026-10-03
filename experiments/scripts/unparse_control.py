@@ -26,7 +26,7 @@ sys.path.insert(0, str(HERE.parent))
 import more_operations  # noqa: E402
 from more_operations import mut_add_type_hints, patch_type_hints  # noqa: E402
 from run_pilot import mut_ast_roundtrip  # noqa: E402
-from schemes import MODEL_NAME, build_scheme  # noqa: E402
+from schemes import MODEL_NAME, MODEL_REVISION, build_scheme  # noqa: E402
 from transformers import AutoTokenizer  # noqa: E402
 
 
@@ -35,17 +35,17 @@ def main():
     ap.add_argument("--repo", type=Path, required=True)
     ap.add_argument("--draws", type=int, default=40)
     ap.add_argument("--scheme", default="stone")
-    ap.add_argument("--texts", type=Path, default=HERE.parent / "control_texts.json")
-    ap.add_argument("--out", type=Path, default=HERE.parent / "unparse_control_results.json")
+    ap.add_argument("--texts", type=Path, default=HERE.parent / "results" / "control_texts.json")
+    ap.add_argument("--out", type=Path, default=HERE.parent / "results" / "unparse_control_results.json")
     args = ap.parse_args()
 
     if args.texts.exists():
         texts = json.loads(args.texts.read_text(encoding="utf-8"))
     else:
         texts = [r["generated_code"] for r in json.loads(
-            (HERE.parent / "full_battery_results.json").read_text(encoding="utf-8"))["runs"]]
+            (HERE.parent / "results" / "full_battery_results.json").read_text(encoding="utf-8"))["runs"]]
 
-    tok = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tok = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
     det = build_scheme(args.scheme, None, tok)
 
     results = []

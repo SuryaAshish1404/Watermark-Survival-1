@@ -15,7 +15,7 @@ Factors
              20 real Python repos' workflows: 29 vs 15)
 git squash and wheel build were no-ops in every earlier run and need no model, so they are omitted.
 
-Usage: python scripts/offline_matrix.py --repo <lutris> --scheme stone --results lifecycle_v2_results.json [--draws 20]
+Usage: python scripts/offline_matrix.py --repo <lutris> --scheme stone --results results/lifecycle_v2_results.json [--draws 20]
 """
 
 import argparse
@@ -37,7 +37,7 @@ from more_operations import (  # noqa: E402
     mut_add_real_docstring, mut_add_real_docstring_patch, mut_add_type_hints, mut_add_type_hints_patch,
     mut_human_rename_patch, mut_targeted_patch, mut_targeted_patch_patch)
 from run_pilot import mut_ast_roundtrip, mut_format, mut_lint_autofix  # noqa: E402
-from schemes import MODEL_NAME, build_scheme  # noqa: E402
+from schemes import MODEL_NAME, MODEL_REVISION, build_scheme  # noqa: E402
 from transformers import AutoTokenizer  # noqa: E402
 
 CHAINS = {
@@ -81,14 +81,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", type=Path, required=True)
     ap.add_argument("--scheme", default="stone")
-    ap.add_argument("--results", type=Path, default=HERE.parent / "lifecycle_v2_results.json")
+    ap.add_argument("--results", type=Path, default=HERE.parent / "results" / "lifecycle_v2_results.json")
     ap.add_argument("--draws", type=int, default=20)
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
-    out = args.out or HERE.parent / f"offline_matrix_{args.scheme}.json"
+    out = args.out or HERE.parent / "results" / f"offline_matrix_{args.scheme}.json"
 
     texts, n_runs = collect_baselines(args.results, args.scheme)
-    tok = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tok = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
     det = build_scheme(args.scheme, None, tok)
     print(f"{args.scheme}: {len(texts)} distinct usable baselines from {n_runs} runs")
 

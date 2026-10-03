@@ -7,7 +7,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 from run_pilot import mut_ast_roundtrip, mut_format
 repo = Path(sys.argv[1])
-d = json.loads((HERE.parent / "lifecycle_v2_results.json").read_text(encoding="utf-8"))["schemes"]
+d = json.loads((HERE.parent / "results" / "lifecycle_v2_results.json").read_text(encoding="utf-8"))["schemes"]
 for scheme in ("stone", "kgw"):
     seen, same, tot, fmt_noop = set(), 0, 0, 0
     for r in d[scheme]["runs"]:

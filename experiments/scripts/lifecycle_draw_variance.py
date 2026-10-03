@@ -16,7 +16,7 @@ skipped here).
 Also runs the ast.unparse control on the same texts: first-step score after
 (A) ast_roundtrip alone vs (B) add_type_hints, which itself ends in ast.unparse.
 
-Usage: python experiments/stone_pilot/scripts/lifecycle_draw_variance.py --repo <lutris> [--draws 60]
+Usage: python experiments/scripts/lifecycle_draw_variance.py --repo <lutris> [--draws 60]
 """
 
 import argparse
@@ -33,7 +33,7 @@ import more_operations  # noqa: E402
 from human_mutations import mut_add_real_comment, mut_human_rename  # noqa: E402
 from more_operations import mut_add_real_docstring, mut_add_type_hints, mut_targeted_patch  # noqa: E402
 from run_pilot import mut_ast_roundtrip, mut_format, mut_lint_autofix  # noqa: E402
-from schemes import MODEL_NAME, build_scheme  # noqa: E402
+from schemes import MODEL_NAME, MODEL_REVISION, build_scheme  # noqa: E402
 from transformers import AutoTokenizer  # noqa: E402
 
 STEPS = [
@@ -56,13 +56,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", type=Path, required=True)
     ap.add_argument("--draws", type=int, default=60)
-    ap.add_argument("--out", type=Path, default=HERE.parent / "draw_variance_results.json")
+    ap.add_argument("--out", type=Path, default=HERE.parent / "results" / "draw_variance_results.json")
     args = ap.parse_args()
 
-    src_file = HERE.parent / "full_battery_results.json"
+    src_file = HERE.parent / "results" / "full_battery_results.json"
     texts = [r["generated_code"] for r in json.loads(src_file.read_text(encoding="utf-8"))["runs"]]
 
-    tok = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tok = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
     stone = build_scheme("stone", None, tok)  # detection needs the tokenizer only
 
     results = []

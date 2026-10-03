@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from schemes import DEVICE, MODEL_NAME, assert_single_family, build_scheme
+from schemes import DEVICE, MODEL_NAME, MODEL_REVISION, assert_single_family, build_scheme
 
 PROMPTS = [
     ('"""Utilities for locating a game\'s installed executable and save-data '
@@ -46,8 +46,8 @@ def main():
 
     dtype = torch.float16 if DEVICE.startswith("cuda") else torch.float32
     print(f"Loading {MODEL_NAME} on {DEVICE} ...", file=sys.stderr)
-    tok = AutoTokenizer.from_pretrained(MODEL_NAME)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=dtype).to(DEVICE)
+    tok = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, revision=MODEL_REVISION, torch_dtype=dtype).to(DEVICE)
     model.eval()
 
     results = {}
@@ -71,7 +71,7 @@ def main():
         print(f"{name:10s} detected {n_ok}/{len(runs)}  errors {n_err}  "
               f"mean_score={results[name]['mean_score']}", file=sys.stderr)
 
-    out = args.out or (Path(__file__).resolve().parent.parent /
+    out = args.out or (Path(__file__).resolve().parent.parent / "results" /
                         f"baseline_embed_{'_'.join(names)}.json")
     out.write_text(json.dumps({"model": MODEL_NAME, "results": results}, indent=2), encoding="utf-8")
     print(f"wrote {out}", file=sys.stderr)

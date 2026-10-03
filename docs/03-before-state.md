@@ -28,7 +28,7 @@ the one eventually shipped.
 ## Distinguishing absence-of-signal from absence-of-evidence
 If the pre-rewrite chain is not recoverable at all (host has garbage-collected PR
 refs, no CI attestation retention, reflog expired), the release is **excluded** from
-that carrier's denominator and logged in the exclusion log (data/sampling/exclusions.csv)
+that carrier's denominator and logged in the exclusion log (experiments/data/sampling/exclusions.csv)
 with a reason code — it is never scored as "silently lost." This is the standard the
 Repository Mining checklist in the brief requires.
 

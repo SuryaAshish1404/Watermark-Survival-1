@@ -1,7 +1,7 @@
 """Full operation battery for the STONE mutation-survival pilot.
 
 Extends run_pilot.py's 6-mutation smoke test to cover every operation class named
-in ACTION_PLAN.md's original Phase 3 list — history layer (squash, rebase,
+in the study's operation taxonomy — history layer (squash, rebase,
 cherry-pick, done as literal git operations, not just text diffs), source layer
 (format, lint_autofix, minify — plus dead-code insertion and a stacked-adversarial
 combo from the base paper's threat model), and packaging layer (bytecode
@@ -13,7 +13,7 @@ evidence the battery isn't hard enough yet; this one pushes harder specifically 
 find a breaking point, including operations (bytecode compilation) known in
 advance to be structurally destructive to any source-level watermark.
 
-Usage: python experiments/stone_pilot/run_full_battery.py --repo <lutris checkout>
+Usage: python experiments/run_full_battery.py --repo <lutris checkout>
 """
 
 import argparse
@@ -38,7 +38,7 @@ from run_pilot import (  # noqa: E402
     mut_ast_roundtrip,
     _RenameLocals,
 )
-from schemes import MODEL_NAME, SCHEME_KWARGS, build_scheme, assert_single_family  # noqa: E402
+from schemes import MODEL_NAME, MODEL_REVISION, SCHEME_KWARGS, build_scheme, assert_single_family  # noqa: E402
 
 PROMPT = (
     '"""Utilities for locating a game\'s installed executable and save-data '
@@ -587,7 +587,7 @@ def main():
     parser.add_argument(
         "--schemes", type=str, default="stone", help="Comma-separated scheme names: stone,kgw,sweet,ewd"
     )
-    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "full_battery_results.json")
+    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "results" / "full_battery_results.json")
     parser.add_argument(
         "--fresh", action="store_true",
         help="Overwrite --out instead of merging into it. Default merges, so each "
@@ -600,11 +600,11 @@ def main():
     assert_single_family(scheme_names)  # raises early, not mid-battery, if families are mixed
 
     print(f"Loading {MODEL_NAME} (shared across schemes) ...", file=sys.stderr)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
     import torch as _torch
     from schemes import DEVICE
     _dtype = _torch.float16 if DEVICE.startswith("cuda") else _torch.float32
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=_dtype).to(DEVICE)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, revision=MODEL_REVISION, torch_dtype=_dtype).to(DEVICE)
     model.eval()
 
     by_scheme = {}

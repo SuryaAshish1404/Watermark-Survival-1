@@ -18,7 +18,7 @@ scripts/mining/workflow_order.py derives real orders for the measured arm —
 that's a real difference in evidentiary weight, disclosed here and in
 RESULTS.md/BENCHMARK.md rather than presented as equally strong.
 
-Usage: python experiments/stone_pilot/run_lifecycle.py --repo <lutris checkout> --runs N --schemes stone,kgw
+Usage: python experiments/run_lifecycle.py --repo <lutris checkout> --runs N --schemes stone,kgw
 """
 
 import argparse
@@ -35,7 +35,7 @@ from more_operations import mut_add_real_docstring, mut_add_type_hints, mut_add_
 from human_mutations import mut_human_rename  # noqa: E402
 from run_pilot import mut_format, mut_lint_autofix, _largest_parseable_prefix  # noqa: E402
 from run_full_battery import _git, _init_git_scenario  # noqa: E402
-from schemes import MODEL_NAME, SCHEME_KWARGS, build_scheme, assert_single_family  # noqa: E402
+from schemes import MODEL_NAME, MODEL_REVISION, SCHEME_KWARGS, build_scheme, assert_single_family  # noqa: E402
 from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
 
 PROMPT = (
@@ -192,7 +192,7 @@ def main():
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--schemes", type=str, default="stone")
-    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "lifecycle_results.json")
+    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "results" / "lifecycle_results.json")
     parser.add_argument("--fresh", action="store_true")
     parser.add_argument("--multi-prompt", action="store_true", help="cycle run i over 5 distinct prompts")
     parser.add_argument("--hints", choices=["unparse", "patch", "both"], default="unparse")
@@ -202,11 +202,11 @@ def main():
     assert_single_family(scheme_names)
 
     print(f"Loading {MODEL_NAME} ...", file=sys.stderr)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
     import torch as _torch
     from schemes import DEVICE
     _dtype = _torch.float16 if DEVICE.startswith("cuda") else _torch.float32
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=_dtype).to(DEVICE)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, revision=MODEL_REVISION, torch_dtype=_dtype).to(DEVICE)
     model.eval()
 
     by_scheme = {}

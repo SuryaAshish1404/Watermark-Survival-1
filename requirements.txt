@@ -1,0 +1,29 @@
+# Pinned to the environment every committed result was produced in
+# (Python 3.13.5, Windows 11; GPU runs on CUDA 12.4).
+#
+# torch: the CPU wheel from PyPI is enough for the tiny_starcoder_py runs. For
+# the GPU runs (deepseek-coder-1.3b, Qwen2.5-Coder-1.5B) install the matching
+# CUDA build first:
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+
+# --- model + watermark schemes (experiments/, experiments/vendor/) ---
+torch==2.6.0
+transformers==5.16.1
+tokenizers==0.23.2
+huggingface-hub==1.30.0
+safetensors==0.8.0
+numpy==2.1.3
+scipy==1.15.3          # PF, EXP-Gumbel detectors
+sympy==1.13.1          # imported at module level by vendored pf.py
+scikit-learn==1.6.1    # SynthID Bayesian detector
+tqdm==4.67.1           # SynthID detector
+
+# --- mutation tooling (operations applied to watermarked code) ---
+# Exact versions matter: format/lint/minify output feeds the detectors directly,
+# so a different ruff or python-minifier release can change survival numbers.
+ruff==0.16.8
+python-minifier==3.3.0
+build==1.6.1           # wheel-rebuild operation (python -m build)
+
+# --- operation-catalogue mining (scripts/mining/) ---
+pyyaml==6.0.2

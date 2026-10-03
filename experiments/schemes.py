@@ -6,8 +6,8 @@ runtime API (`generate_watermarked_text` / `detect_watermark`), but their
 `utils`, `exceptions`, `visualize` packages — so importing both families in one
 Python process causes a `sys.modules` collision (the second family's `watermark`
 package silently resolves to the first family's cached one). Since every
-invocation of this battery already runs one scheme per process (a memory-safety
-fix from an earlier session — see PROGRESS.md), this module enforces
+invocation of this battery already runs one scheme per process (for memory
+safety), this module enforces
 single-family-per-process at import time instead of trying to support mixing,
 which would be a real correctness bug hiding behind an import that "succeeds."
 
@@ -70,6 +70,17 @@ MARKLLM_FAMILY_ROOT = _ROOT / "markllm"
 import os
 
 MODEL_NAME = os.environ.get("WM_MODEL", "bigcode/tiny_starcoder_py")
+
+# Hugging Face commit of each model the committed results were produced with,
+# so a re-run loads the same weights/tokenizer even after upstream pushes a new
+# revision. WM_MODEL_REVISION overrides; a model not listed here loads `main`.
+MODEL_REVISIONS = {
+    "bigcode/tiny_starcoder_py": "8547527bef0bc927268c1653cce6948c5c242dd1",
+    "deepseek-ai/deepseek-coder-1.3b-instruct": "e063262dac8366fc1f28a4da0ff3c50ea66259ca",
+    "Qwen/Qwen2.5-Coder-1.5B-Instruct": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+}
+MODEL_REVISION = os.environ.get("WM_MODEL_REVISION") or MODEL_REVISIONS.get(MODEL_NAME)
+
 DEVICE = os.environ.get("WM_DEVICE", "cpu")
 
 STONE_FAMILY = {"stone", "kgw", "sweet", "ewd"}
