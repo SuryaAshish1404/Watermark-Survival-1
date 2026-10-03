@@ -16,10 +16,9 @@ License: Apache License 2.0 (per each file's header, retained unmodified)
 Only the files needed to instantiate `STONE` and call
 `generate_watermarked_text` / `detect_watermark` directly are vendored —
 not the full repo (which includes a bigcode-evaluation-harness submodule,
-training scripts, and CodeIP, none of which this pilot uses). Files are
+training scripts, and CodeIP, none of which this benchmark uses). Files are
 byte-for-byte copies, not reimplementations, so the scheme under test is
-STONE as released, per docs/06-scheme-selection.md's reproducibility
-requirement — no reimplementation risk.
+STONE as released — no reimplementation risk.
 
 Files:
 - `watermark/stone/stone.py`, `watermark/stone/__init__.py`
@@ -36,7 +35,7 @@ structure standalone instead of vendoring their run.py driver.
 
 Also includes `watermark/kgw/kgw.py`, `watermark/sweet/sweet.py`,
 `watermark/ewd/ewd.py` (each with their `__init__.py`) — same repo, same
-commit, same license, added in later sessions as additional schemes.
+commit, same license, used as additional schemes.
 
 ---
 
@@ -72,8 +71,7 @@ change site for the same explanation.
 `config/EXPGumbel.json`. Kept in the tree rather than deleted, as
 documentation of a real finding: `EXPGumbelUtils.__init__` allocates a
 `(vocab_size * prefix_length) x vocab_size` lookup table, which for
-`tiny_starcoder_py`'s ~49k-token vocabulary requires ~19 GB — confirmed via a
-direct `RuntimeError` on this host, not a configuration mistake. See
-`schemes.py`'s module docstring and `BENCHMARK.md` §1.1 for the full
-reasoning. Excluded from `SCHEME_KWARGS`/`MARKLLM_CLASS_NAMES` in `schemes.py`
+`tiny_starcoder_py`'s ~49k-token vocabulary requires ~19 GB — it fails with a
+`RuntimeError`, not a configuration mistake. See
+`schemes.py`'s module docstring for the full reasoning. Excluded from `SCHEME_KWARGS`/`MARKLLM_CLASS_NAMES` in `schemes.py`
 so it can't be accidentally selected.

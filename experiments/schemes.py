@@ -45,8 +45,7 @@ JSON-config-file based (`BaseConfig(algorithm_config_path, transformers_config,
   different sampling procedure again, hash-table-seeded rather than
   logit-biased.
 
-**Not included, investigated and rejected on concrete grounds** (see
-`BENCHMARK.md` §1.1 for the full writeup):
+**Not included, investigated and rejected on concrete grounds:**
 - **SrcMarker**: no released checkpoint (needs training from scratch); no
   Python grammar support (Java/C++/JS only).
 - **CodeIP**: a fundamentally different multi-bit message-encoding detection

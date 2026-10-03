@@ -28,12 +28,10 @@ the one eventually shipped.
 ## Distinguishing absence-of-signal from absence-of-evidence
 If the pre-rewrite chain is not recoverable at all (host has garbage-collected PR
 refs, no CI attestation retention, reflog expired), the release is **excluded** from
-that carrier's denominator and logged in the exclusion log (experiments/data/sampling/exclusions.csv)
-with a reason code — it is never scored as "silently lost." This is the standard the
-Repository Mining checklist in the brief requires.
+that carrier's denominator and logged in the exclusion log with a reason code — it
+is never scored as "silently lost."
 
 ## Validation
-Before running at scale: build a hand-constructed fixture set (small local repos with
-known, engineered before/after states for every carrier x outcome combination,
-including the "gained" case) and confirm the procedure classifies every fixture
-correctly. This is the acceptance test named in the brief's technical task table.
+`tests/gitfixture.py` builds small local repositories with known, engineered
+before/after states; `tests/test_trailer.py`, `tests/test_signature.py` and
+`tests/test_outcomes.py` check that every fixture is classified correctly.

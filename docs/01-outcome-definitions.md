@@ -45,8 +45,8 @@ classified as substantially human per docs/02-substantially-human-rule.md, but t
 resulting commit/release nonetheless carries a claim attributing it to a model).
 
 ## Explicitly out of scope for these three labels
-- **Modified but detectable** (used only in the anticipatory/watermark arm, per the
-  brief's Phase 4 sketch): the watermark's own detector returns a positive match below
+- **Modified but detectable** (used only in the anticipatory/watermark arm): the
+  watermark's own detector returns a positive match below
   full confidence but above its stated threshold. This is a fourth, scheme-specific
   label layered on top of "retained" for statistical detectors only — deterministic
   carriers (signatures, attestations, trailers) never get this label; they are boolean

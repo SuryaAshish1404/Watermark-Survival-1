@@ -1,8 +1,7 @@
 """Minimal git repo builder for recovery-check fixtures.
 
-Per docs/03-before-state.md's validation requirement: a hand-constructed fixture
-set with known before/after states, used to confirm the recovery checks classify
-every case correctly before running at scale.
+Builds fixtures with known before/after states (docs/03-before-state.md), used to
+confirm the recovery checks classify every case correctly.
 """
 
 import subprocess
