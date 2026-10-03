@@ -152,6 +152,7 @@ The benchmark lives under `experiments/`.
 | `analyze_lifecycle.py` | Computes summary statistics for lifecycle results |
 | `mine_human_corpus.py` | Extracts identifiers, comments, and docstrings from repositories for use as human-edit corpora |
 | `mine_ci_order.py` | Mines the lint/format order from the GitHub Actions workflows of 20 Python repositories at pinned commits |
+| `paper_numbers.py` | Recomputes every number reported in the paper from the committed result files |
 
 ---
 
@@ -298,6 +299,8 @@ python -m unittest discover -s tests -t .
 python experiments/scripts/verify_patch_ops.py
 
 python experiments/scripts/analyze_lifecycle.py
+
+python experiments/scripts/paper_numbers.py
 ```
 
 Expected behavior:
@@ -305,6 +308,7 @@ Expected behavior:
 - All unit tests pass.
 - `verify_patch_ops.py` reports `75/75 identical programs` for each of its four operations.
 - `analyze_lifecycle.py` reports per-scheme statistics for the 9-step lifecycle.
+- `paper_numbers.py` prints every number reported in the paper, section by section, including the bootstrap confidence intervals.
 
 These analysis scripts operate on the committed result files, so they do not regenerate the experiments.
 
