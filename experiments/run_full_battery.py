@@ -470,8 +470,8 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
     }
 
     if not baseline["is_watermarked"]:
-        # Per docs/01-outcome-definitions.md: a claim not confirmed present before
-        # the operation is "never emitted," not "lost." Scoring every mutation as
+        # A watermark not confirmed present before the operation is "never
+        # emitted," not "lost." Scoring every mutation as
         # a break here would misattribute a failed embedding to mutation damage.
         results["excluded"] = "baseline_never_emitted"
         print(

@@ -1,269 +1,550 @@
 # Do the Marks Survive the Pipeline?
 
-Replication package for an empirical study of whether provenance marks on
-AI-generated code survive the steps that code goes through between generation
-and release: human edits, formatting, linting, minification, git history
-rewrites, and packaging.
+**Replication package for an empirical study of whether provenance marks embedded in AI-generated code survive the transformations that code undergoes between generation and release.**
 
-The package has two parts:
+AI-generated code rarely reaches production unchanged. It may be edited by developers, reformatted, linted, minified, rewritten through Git history, or repackaged before release.
 
-- **Provenance tooling** (`scripts/`, `tests/`, `docs/`): checks for commit
-  trailers, signatures and build attestations, and mining of the operations a
-  repository's CI actually applies.
-- **Watermark-survival benchmark** (`experiments/`): nine published
-  code-watermarking schemes, three generation models, a battery of 22
-  real-world operations, and a 9-step end-to-end release chain. Every raw result
-  is committed in `experiments/results/`.
+This repository evaluates how well code provenance marks survive those real-world transformations.
+
+The study covers:
+
+- **9 published code-watermarking schemes**
+- **2 code-generation models**
+- **22 real-world code transformations**
+- A **9-step cumulative release pipeline**
+- Human-style edits derived from real open-source repositories
+- Reproducible raw results committed to `experiments/results/`
+
+The repository also includes tooling for mining the transformation operations applied by a repository's CI pipeline.
 
 ---
 
-## 1. What is where
+## Table of Contents
 
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [CI Mining](#ci-mining)
+- [Watermark-Survival Benchmark](#watermark-survival-benchmark)
+- [Setup](#setup)
+- [Replicating the Results](#replicating-the-results)
+  - [Verify the Installation](#1-verify-the-installation)
+  - [Single-Operation Battery](#2-single-operation-battery)
+  - [Release-Chain Experiments](#3-release-chain-experiments)
+  - [Larger Model](#4-larger-model)
+  - [Mining Inputs and Repository Operations](#5-mining-inputs-and-repository-operations)
+- [Reproducibility](#reproducibility)
+- [Watermark Schemes](#watermark-schemes)
+
+---
+
+## Overview
+
+The repository contains two closely related components.
+
+### 1. CI Mining
+
+Located in:
+
+```text
+scripts/
+tests/
 ```
+
+The tooling answers questions such as:
+
+- Which code transformations does a repository's CI pipeline perform?
+- In what order are those transformations applied?
+
+### 2. Watermark-Survival Benchmark
+
+Located in:
+
+```text
+experiments/
+```
+
+The benchmark evaluates whether provenance marks embedded in AI-generated code remain detectable after common transformations.
+
+It includes:
+
+- 9 watermarking schemes
+- Two generation models
+- Individual transformation experiments
+- Human-style code mutations
+- A cumulative 9-step release pipeline
+- Control experiments
+- Multiple human-edit corpora
+- Raw results for independent analysis
+
+---
+
+# Repository Structure
+
+```text
 .
-├── README.md                  this file
-├── requirements.txt           pinned Python dependencies
-├── docs/                      specifications the provenance tooling implements
-├── scripts/                   provenance tooling (importable package)
-│   ├── recovery/              is a provenance mark present / valid?
-│   └── mining/                which operations does a repo's CI apply?
-├── tests/                     unit tests (run these first)
-└── experiments/               watermark-survival benchmark
-    ├── schemes.py             scheme registry, model choice, pinned model revisions
-    ├── run_pilot.py           single-scheme smoke test + shared mutation helpers
-    ├── run_full_battery.py    single-operation battery (each operation applied alone)
-    ├── run_lifecycle.py       9-step cumulative release chain
-    ├── human_mutations.py     human-style edits sourced from a real corpus
-    ├── more_operations.py     second wave of operations (type hints, docstrings, patches)
-    ├── scripts/               controls and analyses (§1.3)
-    ├── data/                  human edit corpora (inputs, §1.4)
-    ├── results/               raw results (outputs, §1.5)
-    └── vendor/                upstream watermark code, unmodified (§1.6)
+├── README.md
+├── requirements.txt
+│
+├── scripts/
+│   └── mining/
+│       ├── detectors.py
+│       ├── scan.py
+│       ├── workflow_order.py
+│       ├── catalogue.py
+│       └── cli.py
+│
+├── tests/
+│
+└── experiments/
+    ├── schemes.py
+    ├── run_pilot.py
+    ├── run_full_battery.py
+    ├── run_lifecycle.py
+    ├── human_mutations.py
+    ├── more_operations.py
+    │
+    ├── scripts/
+    ├── data/
+    ├── results/
+    └── vendor/
 ```
 
-### 1.1 Specifications (`docs/`)
+---
 
-| File | What it defines | Implemented in |
-|---|---|---|
-| `01-outcome-definitions.md` | outcomes: retained / silently lost / spuriously gained, per carrier | `scripts/recovery/outcomes.py` |
-| `02-substantially-human-rule.md` | when a module counts as substantially human (spurious-gain check) | `outcomes.classify_spurious_only` |
-| `03-before-state.md` | how "emitted, then destroyed" is established for each carrier | `scripts/recovery/`, `tests/gitfixture.py` |
-
-### 1.2 Provenance tooling (`scripts/`)
+# CI Mining
 
 | Module | Purpose |
 |---|---|
-| `recovery/trailer.py` | agent / co-authorship commit trailer presence |
-| `recovery/signature.py` | commit signature presence and verification |
-| `recovery/attestation.py` | build attestation / SBOM presence |
-| `recovery/outcomes.py` | classifies each carrier's outcome per `docs/01` |
-| `mining/detectors.py` | config-file signals → operation class (format, lint, minify, repackage, …) |
-| `mining/scan.py` | scans one repository for those signals |
-| `mining/workflow_order.py` | operation order from GitHub Actions step sequences |
-| `mining/catalogue.py` | aggregates scans into a ranked operation catalogue |
-| `mining/cli.py` | command-line entry point (§3.5) |
+| `mining/detectors.py` | Maps configuration-file signals to operation classes such as formatting, linting, minification, and repackaging |
+| `mining/scan.py` | Scans a repository for transformation signals |
+| `mining/workflow_order.py` | Extracts operation ordering from GitHub Actions workflows |
+| `mining/catalogue.py` | Aggregates repository scans into an operation catalogue |
+| `mining/cli.py` | Command-line interface for repository mining |
 
-### 1.3 Benchmark scripts (`experiments/scripts/`)
+---
 
-| Script | Purpose | Loads model |
-|---|---|---|
-| `baseline_embed_check.py` | does each scheme embed a detectable mark at all, per model | yes |
-| `quick_scheme_check.py` | same, one scheme per process (isolates CUDA crashes) | yes |
-| `unparse_control.py` | separates the effect of type annotations from whole-file `ast.unparse` reserialization | tokenizer only |
-| `offline_matrix.py` | factorial over saved baselines: first-step variant × CI order × random draw | tokenizer only |
-| `lifecycle_draw_variance.py` | how much of the chain outcome comes from the random corpus draw | tokenizer only |
-| `format_recovery_check.py` | whether `ruff format` undoes reserialization damage | no |
-| `verify_patch_ops.py` | each text-patch operation yields the same program as its AST twin | no |
-| `analyze_lifecycle.py` | summary statistics for a lifecycle results file | no |
-| `mine_human_corpus.py` | mines identifiers/comments/docstrings from a repo into an edit corpus | no |
+# Watermark-Survival Benchmark
 
-### 1.4 Inputs (`experiments/data/`)
+The benchmark lives under `experiments/`.
 
-| File | Contents |
+## Core Experiment Scripts
+
+| Script | Purpose |
 |---|---|
-| `human_corpus.json` | identifiers, comments, exception names, docstring openers and type annotations written by lutris/lutris contributors; default source for human-style edits |
-| `human_corpus_flask.json` | the same, mined from pallets/flask; corpus robustness check (select with `WM_CORPUS`) |
+| `schemes.py` | Scheme registry, model selection, and pinned model revisions |
+| `run_pilot.py` | Single-scheme smoke test and shared mutation helpers |
+| `run_full_battery.py` | Applies individual transformations independently |
+| `run_lifecycle.py` | Runs the cumulative 9-step release chain |
+| `human_mutations.py` | Human-style edits sourced from real repositories |
+| `more_operations.py` | Additional operations including type hints, docstrings, and patches |
 
-### 1.5 Outputs (`experiments/results/`)
+## Analysis and Control Scripts
 
-Script paths in this table are relative to `experiments/`.
+| Script | Purpose |
+|---|---|
+| `baseline_embed_check.py` | Checks whether each scheme produces a detectable mark for each model |
+| `quick_scheme_check.py` | Runs one scheme per process to isolate CUDA failures |
+| `unparse_control.py` | Separates the effect of type annotations from whole-file `ast.unparse` reserialization |
+| `offline_matrix.py` | Factorial experiment over first-step variant, CI order, and random draw |
+| `lifecycle_draw_variance.py` | Measures outcome variance caused by random corpus selection |
+| `format_recovery_check.py` | Tests whether `ruff format` reverses reserialization damage |
+| `verify_patch_ops.py` | Verifies that text-patch operations produce the same program as their AST equivalents |
+| `analyze_lifecycle.py` | Computes summary statistics for lifecycle results |
+| `mine_human_corpus.py` | Extracts identifiers, comments, and docstrings from repositories for use as human-edit corpora |
+
+---
+
+## Human-Edit Corpora
+
+The benchmark includes human-written material used to make the transformations more representative of actual developer edits.
+
+| File | Description |
+|---|---|
+| `experiments/data/human_corpus.json` | Identifiers, comments, exception names, docstring openers, and type annotations mined from `lutris/lutris` contributors |
+| `experiments/data/human_corpus_flask.json` | Equivalent corpus mined from `pallets/flask`, used as a corpus-robustness check |
+
+The corpus can be selected with:
+
+```bash
+export WM_CORPUS=experiments/data/human_corpus.json
+```
+
+---
+
+# Results
+
+Raw experimental results are committed under:
+
+```text
+experiments/results/
+```
 
 | File | Produced by | Contents |
 |---|---|---|
-| `results.json` | `run_pilot.py` | first STONE smoke test, 6 operations |
-| `full_battery_results.json` | `run_full_battery.py` | STONE-only battery, 5 runs |
-| `multischeme_results.json` | `run_full_battery.py` | 16-operation battery: STONE, KGW, SWEET, EWD |
-| `human_ops_results.json` | `run_full_battery.py` | 22-operation battery incl. human-sourced edits: STONE, KGW, Unigram |
-| `lifecycle_results.json` | `run_lifecycle.py` | 9-step release chain, all 9 schemes |
-| `lifecycle_v2_results.json` | `run_lifecycle.py --hints both --multi-prompt` | chain rerun, 25 runs over 5 prompts, reserialized and in-place edit variants: STONE, KGW |
-| `control_texts_{stone,kgw}.json` | saved from the runs above | detected baselines used as fixed control inputs |
-| `unparse_control_*.json` | `scripts/unparse_control.py` | annotation vs. reserialization control |
-| `offline_matrix_{stone,kgw}.json` | `scripts/offline_matrix.py` | factorial matrix, lutris corpus |
-| `offline_matrix_flask_{stone,kgw}.json` | same, with the Flask corpus | factorial matrix, Flask corpus |
-| `draw_variance_results.json` | `scripts/lifecycle_draw_variance.py` | outcome variance across random draws |
-| `baseline_embed_stone_kgw_sweet_ewd.json`, `baseline_embed_unigram_unbiased_dip_synthid_pf.json` | `scripts/baseline_embed_check.py` | embedding check, deepseek-coder-1.3b |
-| `gpu_battery_results.json` | `run_full_battery.py` | 22-operation battery, deepseek-coder-1.3b |
-| `baseline_embed_qwen_f{1,2}.json` | `scripts/baseline_embed_check.py` | embedding check, Qwen2.5-Coder-1.5B |
+| `results.json` | `run_pilot.py` | Initial STONE smoke test |
+| `full_battery_results.json` | `run_full_battery.py` | STONE-only battery |
+| `multischeme_results.json` | `run_full_battery.py` | Multi-scheme operation battery |
+| `human_ops_results.json` | `run_full_battery.py` | 22-operation battery including human-sourced edits |
+| `lifecycle_results.json` | `run_lifecycle.py` | 9-step release chain across all 9 schemes |
+| `lifecycle_v2_results.json` | `run_lifecycle.py` | Repeated lifecycle experiment across multiple prompts and mutation variants |
+| `control_texts_{stone,kgw}.json` | Lifecycle experiments | Fixed detected baselines used as controls |
+| `unparse_control_*.json` | `unparse_control.py` | Annotation vs. reserialization controls |
+| `offline_matrix_{stone,kgw}.json` | `offline_matrix.py` | Factorial experiments using the Lutris corpus |
+| `offline_matrix_flask_{stone,kgw}.json` | `offline_matrix.py` | Equivalent experiments using the Flask corpus |
+| `draw_variance_results.json` | `lifecycle_draw_variance.py` | Variance across random corpus draws |
+| `baseline_embed_*.json` | `baseline_embed_check.py` | Model-specific embedding checks |
+| `gpu_battery_results.json` | `run_full_battery.py` | GPU-based 22-operation battery |
+---
 
-### 1.6 Vendored schemes (`experiments/vendor/`)
+# Watermark Schemes
 
-| Folder | Schemes | Upstream |
+Two upstream watermark implementations are vendored into the repository.
+
+| Directory | Schemes | Source |
 |---|---|---|
-| `stone_watermarking/` | STONE, KGW, SWEET, EWD | github.com/inistory/STONE-watermarking @ `bb5d809` |
-| `markllm/` | Unigram, Unbiased, DIP, SynthID, PF | github.com/THU-BPM/MarkLLM, fetched 2026-09-21 |
+| `experiments/vendor/stone_watermarking/` | STONE, KGW, SWEET, EWD | `inistory/STONE-watermarking` |
+| `experiments/vendor/markllm/` | Unigram, Unbiased, DIP, SynthID, PF | `THU-BPM/MarkLLM` |
 
-Files are byte-for-byte copies; `VENDORED.md` lists every file, its source and
-its license (Apache 2.0). The two families define packages with the same names,
-so they never run in the same Python process (enforced in `schemes.py`).
+The vendored files are retained byte-for-byte. `VENDORED.md` records the source revision and license for each file.
+
+The two upstream projects expose packages with overlapping names, so they are intentionally never loaded in the same Python process. This isolation is enforced by `experiments/schemes.py`.
 
 ---
 
-## 2. Setup
+# Setup
 
-**Requirements**
+## Requirements
 
-- Python 3.13 (results produced with 3.13.5)
-- `git` on `PATH`
-- CPU: enough for the tests, the offline checks and the default model
-  (`bigcode/tiny_starcoder_py`)
-- GPU: an NVIDIA GPU with CUDA 12.4 for the deepseek-coder-1.3b and
-  Qwen2.5-Coder-1.5B runs
-- Disk: ~0.6 GB for the default model, ~3 GB for each larger model
-  (downloaded from Hugging Face on first use)
+- Python **3.13**  
+  Results were produced with Python **3.13.5**.
+- `git` available on `PATH`
+- Sufficient CPU resources for unit tests and the default model
+- NVIDIA GPU with **CUDA 12.4** for the larger-model experiments
+- Approximately **0.6 GB** for the default model
+- Approximately **3 GB** for the larger model
 
-**Install**
+Models are downloaded from Hugging Face on first use.
 
-```
+## Installation
+
+Create a virtual environment and install the pinned dependencies:
+
+```bash
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+
+# Linux/macOS
+source .venv/bin/activate
+
+# Windows
+# .venv\Scripts\activate
+
 pip install -r requirements.txt
-# GPU runs only:
-pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
 ```
 
-**Host repository.** Generated code is written into a real project and
-formatted/linted with that project's own `ruff.toml`:
+For GPU experiments:
 
+```bash
+pip install torch==2.6.0 \
+  --index-url https://download.pytorch.org/whl/cu124
 ```
+
+---
+
+## Host Repository
+
+The benchmark generates code inside a real repository and applies that repository's own formatting and linting configuration.
+
+The default host repository is:
+
+```bash
 git clone https://github.com/lutris/lutris
 ```
 
-Every command below that takes `--repo <lutris>` expects the path to this
-checkout.
+Commands that accept:
 
-**Environment variables**
+```text
+--repo <lutris>
+```
+
+expect the path to this checkout.
+
+---
+
+## Environment Variables
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `WM_MODEL` | `bigcode/tiny_starcoder_py` | generation model |
-| `WM_MODEL_REVISION` | pinned per model in `schemes.py` | Hugging Face commit override |
-| `WM_DEVICE` | `cpu` | set to `cuda` for GPU runs |
-| `WM_CORPUS` | `experiments/data/human_corpus.json` | human edit corpus |
+| `WM_MODEL` | `bigcode/tiny_starcoder_py` | Generation model |
+| `WM_MODEL_REVISION` | Pinned in `schemes.py` | Optional Hugging Face revision override |
+| `WM_DEVICE` | `cpu` | Set to `cuda` for GPU experiments |
+| `WM_CORPUS` | `experiments/data/human_corpus.json` | Human-edit corpus |
 
 ---
 
-## 3. Replicating the results
+# Replicating the Results
 
-All commands run from the repository root.
+All commands below should be run from the repository root.
 
-### 3.1 Verify the installation (≈2 min, no model)
+## 1. Verify the Installation
 
-```
+These checks require no model download.
+
+```bash
 python -m unittest discover -s tests -t .
+
 python experiments/scripts/verify_patch_ops.py
+
 python experiments/scripts/analyze_lifecycle.py
 ```
 
-Expected: all tests pass (the GPG signature test is skipped if `gpg` is not
-installed); `verify_patch_ops.py` prints `75/75 identical programs` for each of
-its four operations; `analyze_lifecycle.py` prints the per-scheme chain
-statistics for the 9-step chain. Both scripts read the committed results, so
-they re-derive reported numbers without regenerating anything.
+Expected behavior:
 
-### 3.2 Single-operation battery (CPU)
+- All unit tests pass.
+- `verify_patch_ops.py` reports `75/75 identical programs` for each of its four operations.
+- `analyze_lifecycle.py` reports per-scheme statistics for the 9-step lifecycle.
 
-Each scheme family runs in its own process; both merge into the same output.
+These analysis scripts operate on the committed result files, so they do not regenerate the experiments.
 
+---
+
+## 2. Single-Operation Battery
+
+Each transformation is applied independently so its effect can be measured in isolation.
+
+Run the STONE-family schemes:
+
+```bash
+python experiments/run_full_battery.py \
+  --repo <lutris> \
+  --runs 10 \
+  --schemes stone,kgw,sweet,ewd \
+  --out experiments/results/multischeme_results.json
 ```
-python experiments/run_full_battery.py --repo <lutris> --runs 10 \
-  --schemes stone,kgw,sweet,ewd --out experiments/results/multischeme_results.json
-python experiments/run_full_battery.py --repo <lutris> --runs 10 \
-  --schemes unigram,unbiased,dip,synthid,pf --out experiments/results/multischeme_results.json
+
+Run the MarkLLM schemes:
+
+```bash
+python experiments/run_full_battery.py \
+  --repo <lutris> \
+  --runs 10 \
+  --schemes unigram,unbiased,dip,synthid,pf \
+  --out experiments/results/multischeme_results.json
 ```
 
-Add `--fresh` to overwrite instead of merging. On memory-constrained machines,
-run one scheme per invocation; results merge the same way.
+Add `--fresh` to replace the existing output instead of merging into it.
 
-### 3.3 Release-chain survival and controls (CPU)
+For machines with limited memory, run one scheme per invocation. Results can still be merged into the same output file.
 
-```
-# 9-step cumulative chain
-python experiments/run_lifecycle.py --repo <lutris> --runs 5 --schemes stone \
+---
+
+## 3. Release-Chain Experiments
+
+### 9-Step Cumulative Release Chain
+
+```bash
+python experiments/run_lifecycle.py \
+  --repo <lutris> \
+  --runs 5 \
+  --schemes stone \
   --out experiments/results/lifecycle_results.json
+```
 
-# Repeated chain: 25 runs over 5 prompts, reserialized and in-place edit variants
-python experiments/run_lifecycle.py --repo <lutris> --schemes stone \
-  --runs 25 --hints both --multi-prompt --out experiments/results/lifecycle_v2_results.json
+### Repeated Lifecycle Experiment
 
-# Controls
+The following runs 25 experiments across 5 prompts and includes both reserialization and in-place edit variants:
+
+```bash
+python experiments/run_lifecycle.py \
+  --repo <lutris> \
+  --schemes stone \
+  --runs 25 \
+  --hints both \
+  --multi-prompt \
+  --out experiments/results/lifecycle_v2_results.json
+```
+
+### Controls
+
+Verify patch equivalence:
+
+```bash
 python experiments/scripts/verify_patch_ops.py
-python experiments/scripts/unparse_control.py --repo <lutris> --scheme kgw \
+```
+
+Run the `ast.unparse` control:
+
+```bash
+python experiments/scripts/unparse_control.py \
+  --repo <lutris> \
+  --scheme kgw \
   --texts experiments/results/control_texts_kgw.json
-python experiments/scripts/offline_matrix.py --repo <lutris> --scheme kgw --draws 20
-python experiments/scripts/lifecycle_draw_variance.py --repo <lutris>
+```
+
+Run the offline factorial matrix:
+
+```bash
+python experiments/scripts/offline_matrix.py \
+  --repo <lutris> \
+  --scheme kgw \
+  --draws 20
+```
+
+Measure lifecycle draw variance:
+
+```bash
+python experiments/scripts/lifecycle_draw_variance.py \
+  --repo <lutris>
+```
+
+Check formatting recovery:
+
+```bash
 python experiments/scripts/format_recovery_check.py <lutris>
+```
 
-# Flask corpus robustness check
+### Flask Corpus Robustness Check
+
+```bash
 WM_CORPUS=experiments/data/human_corpus_flask.json \
-  python experiments/scripts/offline_matrix.py --repo <lutris> --scheme kgw --draws 20 \
+  python experiments/scripts/offline_matrix.py \
+  --repo <lutris> \
+  --scheme kgw \
+  --draws 20 \
   --out experiments/results/offline_matrix_flask_kgw.json
-```
-
-### 3.4 Larger models (GPU)
-
-```
-# deepseek-coder-1.3b: embedding check and 22-operation battery
-export WM_MODEL=deepseek-ai/deepseek-coder-1.3b-instruct WM_DEVICE=cuda
-python experiments/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15
-python experiments/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15
-python experiments/run_full_battery.py --repo <lutris> --runs 15 \
-  --schemes stone,kgw,sweet,ewd --out experiments/results/gpu_battery_results.json --fresh
-python experiments/run_full_battery.py --repo <lutris> --runs 15 \
-  --schemes unbiased,synthid,pf --out experiments/results/gpu_battery_results.json
-
-# Qwen2.5-Coder-1.5B: embedding check
-export WM_MODEL=Qwen/Qwen2.5-Coder-1.5B-Instruct WM_DEVICE=cuda
-python experiments/scripts/baseline_embed_check.py --schemes stone,kgw,sweet,ewd --n 15 \
-  --out experiments/results/baseline_embed_qwen_f1.json
-python experiments/scripts/baseline_embed_check.py --schemes unigram,unbiased,dip,synthid,pf --n 15 \
-  --out experiments/results/baseline_embed_qwen_f2.json
-```
-
-### 3.5 Inputs and provenance tooling
-
-```
-# Rebuild an edit corpus from a repository checkout
-python experiments/scripts/mine_human_corpus.py <repo> --out <corpus.json>
-
-# Mine the operation catalogue from one or more repository checkouts
-python -m scripts.mining.cli <repo> [<repo> ...] --out <catalogue.json>
 ```
 
 ---
 
-## 4. Reproducibility
+## 4. Larger Model
 
-- **Python packages:** exact versions in `requirements.txt`, including `ruff`
-  and `python-minifier`, whose output feeds the detectors directly.
-- **Models:** weights and tokenizers load from fixed Hugging Face commits
-  (`MODEL_REVISIONS` in `experiments/schemes.py`).
-- **Watermark schemes:** upstream code vendored byte-for-byte
-  (`experiments/vendor/VENDORED.md`).
-- **Mutations:** seeded per input text, so the same code always receives the
-  same edits.
-- **Edit corpora:** `experiments/data/human_corpus*.json` are the inputs used
-  for every reported result.
-- **Generation:** watermarked code is sampled (`do_sample=True`), so a rerun
-  reproduces the reported rates statistically. Every generated text is kept in
-  the result files, so mutation and detection can be re-checked exactly against
-  them.
+### DeepSeek Coder 1.3B
+
+Set the model and CUDA device:
+
+```bash
+export WM_MODEL=deepseek-ai/deepseek-coder-1.3b-instruct
+export WM_DEVICE=cuda
+```
+
+Run the embedding checks:
+
+```bash
+python experiments/scripts/baseline_embed_check.py \
+  --schemes stone,kgw,sweet,ewd \
+  --n 15
+
+python experiments/scripts/baseline_embed_check.py \
+  --schemes unigram,unbiased,dip,synthid,pf \
+  --n 15
+```
+
+Run the 22-operation battery:
+
+```bash
+python experiments/run_full_battery.py \
+  --repo <lutris> \
+  --runs 15 \
+  --schemes stone,kgw,sweet,ewd \
+  --out experiments/results/gpu_battery_results.json \
+  --fresh
+
+python experiments/run_full_battery.py \
+  --repo <lutris> \
+  --runs 15 \
+  --schemes unbiased,synthid,pf \
+  --out experiments/results/gpu_battery_results.json
+```
+
+---
+
+## 5. Mining Inputs and Repository Operations
+
+### Build a Human-Edit Corpus
+
+Given a repository checkout:
+
+```bash
+python experiments/scripts/mine_human_corpus.py \
+  <repo> \
+  --out <corpus.json>
+```
+
+The resulting corpus can then be selected with `WM_CORPUS`.
+
+### Mine a Repository's CI Operation Catalogue
+
+```bash
+python -m scripts.mining.cli \
+  <repo> [<repo> ...] \
+  --out <catalogue.json>
+```
+
+This identifies transformation signals in repository configuration and extracts operation ordering from GitHub Actions workflows.
+
+---
+
+# Reproducibility
+
+The repository is designed so that the reported experiments can be independently inspected and regenerated.
+
+### Python dependencies
+
+Exact package versions are pinned in:
+
+```text
+requirements.txt
+```
+
+This includes dependencies such as `ruff` and `python-minifier`, whose behavior directly affects the transformation and detection pipeline.
+
+### Models
+
+Model weights and tokenizers are loaded from fixed Hugging Face revisions specified in:
+
+```text
+experiments/schemes.py
+```
+
+### Watermark implementations
+
+The upstream watermark implementations are vendored byte-for-byte under:
+
+```text
+experiments/vendor/
+```
+
+See `experiments/vendor/VENDORED.md` for source revisions and licensing information.
+
+### Deterministic mutations
+
+Mutations are seeded per input text. The same input therefore receives the same mutation sequence.
+
+### Human-edit corpora
+
+The exact corpora used for the reported experiments are committed under:
+
+```text
+experiments/data/human_corpus*.json
+```
+
+### Generation
+
+Watermarked code is generated with sampling enabled (`do_sample=True`). Consequently, regenerated experiments reproduce the reported rates statistically rather than necessarily producing identical samples.
+
+Every generated text used in the reported experiments is retained in the result files, allowing the mutation and detection stages to be independently re-evaluated.
+
+---
+
+# Research Artifacts
+
+The repository intentionally commits both **inputs and raw outputs** rather than only aggregated statistics.
+
+This makes it possible to:
+
+1. Inspect the exact generated samples.
+2. Re-run mutation and detection stages.
+3. Reproduce analysis from committed result files.
+4. Test alternative analyses without regenerating model outputs.
+5. Compare results across watermarking schemes, models, transformation types, and human-edit corpora.
+
+The combination of pinned dependencies, fixed model revisions, vendored watermark implementations, seeded mutations, committed corpora, and committed raw results is intended to make the study independently auditable and reproducible.

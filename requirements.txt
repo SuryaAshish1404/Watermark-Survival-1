@@ -2,7 +2,7 @@
 # (Python 3.13.5, Windows 11; GPU runs on CUDA 12.4).
 #
 # torch: the CPU wheel from PyPI is enough for the tiny_starcoder_py runs. For
-# the GPU runs (deepseek-coder-1.3b, Qwen2.5-Coder-1.5B) install the matching
+# the GPU runs (deepseek-coder-1.3b) install the matching
 # CUDA build first:
 #   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
 
