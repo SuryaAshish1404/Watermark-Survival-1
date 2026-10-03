@@ -258,11 +258,17 @@ pip install torch==2.6.0 \
 
 The benchmark generates code inside a real repository and applies that repository's own formatting and linting configuration.
 
-The default host repository is:
+The default host repository is `lutris/lutris`. Its formatting and linting configuration (`ruff.toml`) changes over time, so check out the commit used for the result you are reproducing:
 
 ```bash
 git clone https://github.com/lutris/lutris
+git -C lutris checkout <commit>
 ```
+
+| Commit | Used for |
+|---|---|
+| `8d882da59c68c8ff7f8eff43b2772c493ddcc088` | `results.json`, `full_battery_results.json`, `multischeme_results.json`, `human_ops_results.json`, `lifecycle_results.json`, `draw_variance_results.json` |
+| `01687c6e73e284f634ff33e9edf2f38b6e76bda3` | `lifecycle_v2_results.json`, `offline_matrix_*.json`, `gpu_battery_results.json` |
 
 Commands that accept:
 
