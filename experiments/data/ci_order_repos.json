@@ -1,0 +1,25 @@
+{
+  "description": "Python repositories whose GitHub Actions workflows were mined for the lint/format order. Each commit is the last commit on the default branch before the original mining run (2026-09-25T19:01:50Z).",
+  "repos": [
+    {"repo": "psf/requests", "commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60"},
+    {"repo": "pallets/flask", "commit": "d73fa1cdcbd8b1465c151db8924ba58b1dd14e35"},
+    {"repo": "pytest-dev/pytest", "commit": "8721173580390a9d297e5af06cac3f0b6841f425"},
+    {"repo": "pandas-dev/pandas", "commit": "be9eebf87e4129d25044c9284d0405c993e26d2e"},
+    {"repo": "numpy/numpy", "commit": "a98529dfd92d73fd4d40ebaaf285cf2463bb92b1"},
+    {"repo": "scikit-learn/scikit-learn", "commit": "857849927da6e988d7d026b17aef214d43e5f26e"},
+    {"repo": "python-poetry/poetry", "commit": "94b6e35b9091991887aa54feeb3771a86d3bd692"},
+    {"repo": "pypa/pip", "commit": "a7002c9771a6c3f0317a4e6b9fbdcd22e643f7b6"},
+    {"repo": "encode/httpx", "commit": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254"},
+    {"repo": "tiangolo/fastapi", "commit": "192b12197eb04c2b4a691cce7d87261b21716714"},
+    {"repo": "psf/black", "commit": "8d5a2d9f49378d7abe2eb632df1601818de8c24e"},
+    {"repo": "astral-sh/ruff", "commit": "d4cc0a95013cbbf59abd2247e860252ecba5e5be"},
+    {"repo": "pydantic/pydantic", "commit": "a9a0e1d1f7805a1b7cc5b5d42e862594a570cf74"},
+    {"repo": "sqlalchemy/sqlalchemy", "commit": "65ea6bee82149495a57ea821e0934a9a5d0ded51"},
+    {"repo": "celery/celery", "commit": "eb3dfa3844288ee35c94a08267cc5e075d42b278"},
+    {"repo": "aio-libs/aiohttp", "commit": "1133ceb762e67f27d6b64f0c541e01c53a60760b"},
+    {"repo": "matplotlib/matplotlib", "commit": "c5507fe4f5ba40dbf90e9fd748de0d647c66ef0a"},
+    {"repo": "pallets/click", "commit": "06b2a678741131fd577ce170e23e5ca0aeba0309"},
+    {"repo": "Textualize/rich", "commit": "9d8f9a372cc5916fd4781fec207ced7ddac2f08f"},
+    {"repo": "scrapy/scrapy", "commit": "e4eda778f99dd13e3e91f67b12ec2bf30c44f7cb"}
+  ]
+}

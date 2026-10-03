@@ -1,0 +1,42 @@
+{
+  "repos": 20,
+  "job_sequences": 281,
+  "lint_autofix_before_format": 29,
+  "format_before_lint_autofix": 15,
+  "majority_order": "lint_then_format",
+  "job_sequences_per_repo": {
+    "psf/requests": 7,
+    "pallets/flask": 2,
+    "pytest-dev/pytest": 8,
+    "pandas-dev/pandas": 16,
+    "numpy/numpy": 44,
+    "scikit-learn/scikit-learn": 21,
+    "python-poetry/poetry": 4,
+    "pypa/pip": 5,
+    "encode/httpx": 2,
+    "tiangolo/fastapi": 7,
+    "psf/black": 16,
+    "astral-sh/ruff": 66,
+    "pydantic/pydantic": 30,
+    "sqlalchemy/sqlalchemy": 3,
+    "celery/celery": 9,
+    "aio-libs/aiohttp": 15,
+    "matplotlib/matplotlib": 15,
+    "pallets/click": 2,
+    "Textualize/rich": 2,
+    "scrapy/scrapy": 7
+  },
+  "operation_counts": {
+    "rebuild": 313,
+    "lint_autofix": 84,
+    "repackage": 56,
+    "republish": 51,
+    "format": 48,
+    "rebase": 4,
+    "transpile": 4,
+    "squash_merge": 3,
+    "cherry_pick": 2,
+    "minify": 1,
+    "bundle": 1
+  }
+}

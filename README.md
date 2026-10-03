@@ -151,6 +151,7 @@ The benchmark lives under `experiments/`.
 | `verify_patch_ops.py` | Verifies that text-patch operations produce the same program as their AST equivalents |
 | `analyze_lifecycle.py` | Computes summary statistics for lifecycle results |
 | `mine_human_corpus.py` | Extracts identifiers, comments, and docstrings from repositories for use as human-edit corpora |
+| `mine_ci_order.py` | Mines the lint/format order from the GitHub Actions workflows of 20 Python repositories at pinned commits |
 
 ---
 
@@ -162,6 +163,7 @@ The benchmark includes human-written material used to make the transformations m
 |---|---|
 | `experiments/data/human_corpus.json` | Identifiers, comments, exception names, docstring openers, and type annotations mined from `lutris/lutris` contributors |
 | `experiments/data/human_corpus_flask.json` | Equivalent corpus mined from `pallets/flask`, used as a corpus-robustness check |
+| `experiments/data/ci_order_repos.json` | The 20 Python repositories, with pinned commits, whose CI workflows were mined for the lint/format order |
 
 The corpus can be selected with:
 
@@ -192,6 +194,7 @@ experiments/results/
 | `offline_matrix_{stone,kgw}.json` | `offline_matrix.py` | Factorial experiments using the Lutris corpus |
 | `offline_matrix_flask_{stone,kgw}.json` | `offline_matrix.py` | Equivalent experiments using the Flask corpus |
 | `draw_variance_results.json` | `lifecycle_draw_variance.py` | Variance across random corpus draws |
+| `ci_order_results.json` | `mine_ci_order.py` | Observed lint/format order: 281 job sequences from 20 repositories |
 | `baseline_embed_*.json` | `baseline_embed_check.py` | Model-specific embedding checks |
 | `gpu_battery_results.json` | `run_full_battery.py` | GPU-based 22-operation battery |
 ---
@@ -480,6 +483,14 @@ python -m scripts.mining.cli \
 ```
 
 This identifies transformation signals in repository configuration and extracts operation ordering from GitHub Actions workflows.
+
+### Reproduce the Observed Lint/Format Order
+
+```bash
+python experiments/scripts/mine_ci_order.py
+```
+
+This fetches only `.github/workflows` from the 20 repositories in `experiments/data/ci_order_repos.json`, each at its pinned commit, and reproduces the reported counts: 281 job sequences, with lint autofix preceding formatting 29 times and the reverse 15 times. Network access to GitHub is required.
 
 ---
 
