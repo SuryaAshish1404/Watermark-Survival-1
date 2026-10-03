@@ -117,7 +117,7 @@ class TestCatalogue(unittest.TestCase):
                 if entry.repo_count > 0:
                     self.assertTrue(entry.evidence_files)
 
-            # JSON-serializable, per the "regenerates without manual editing" requirement
+            # JSON-serializable
             json.dumps(catalogue.to_dict())
 
 

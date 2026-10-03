@@ -16,8 +16,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Deliberately NOT done at module level (unlike the original version of this
-# file): this module is imported by run_full_battery.py purely for its mutation
+# Deliberately NOT done at module level: this module is imported by run_full_battery.py purely for its mutation
 # helper functions, which need none of STONE's vendor tree. An unconditional
 # sys.path insert + `watermark`/`utils` import here would bind those package
 # names in sys.modules to the stone_watermarking tree regardless of which

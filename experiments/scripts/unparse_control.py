@@ -1,5 +1,5 @@
-"""Decisive control for Finding 8: is the first-step signal loss caused by the type
-annotations, or by the whole-file ast.unparse() reserialization?
+"""Control: is the first-step signal loss caused by the type annotations, or by the
+whole-file ast.unparse() reserialization?
 
 Three first-step variants on IDENTICAL baseline texts and identical annotation draws:
   A  ast_roundtrip           parse + unparse, no content change

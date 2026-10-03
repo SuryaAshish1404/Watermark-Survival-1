@@ -1,13 +1,9 @@
 """Operation-class detectors, derived from repository/workflow configuration files.
 
-Per the study design: the catalogue must be *mined*, not invented.
-Every entry here is a claim of the form "if config signal X is present, operation
+The catalogue is *mined*, not invented. Every entry here is a claim of the form "if config signal X is present, operation
 class Y is configured in this repo" — and the scanner (scan.py) always records which
 file produced the match, so every catalogue entry traces to a cited configuration
-file (the acceptance criterion in the brief's technical task table).
-
-Adding an operation class means adding a detector here with real glob/content
-evidence, not editing the catalogue output directly.
+file.
 
 Two kinds of evidence, deliberately kept separate:
 - `exist_globs`: files whose mere existence is dedicated enough to count as

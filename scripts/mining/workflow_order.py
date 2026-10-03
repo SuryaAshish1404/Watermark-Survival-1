@@ -1,7 +1,7 @@
 """Extract observed operation order from GitHub Actions workflow step sequences.
 
-Feeds the brief's Phase 5 requirement to compose operations "in the orders real
-projects apply them" rather than an order we invent. A step is classified as an
+Used to compose operations in the orders real projects apply them, rather than
+an invented order. A step is classified as an
 instance of an operation class if its `name` or `run` field contains one of that
 class's step_keywords (detectors.py); classification is best-effort and only as
 strong as the keyword list, so false negatives (an unrecognized step) are silently

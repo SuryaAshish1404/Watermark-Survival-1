@@ -10,8 +10,7 @@ from pathlib import Path
 
 from scripts.recovery.outcomes import PresenceResult
 
-# Ported from the census paper's trailer vocabulary. Extend only by citing a source,
-# not by pattern-matching whatever a specific dataset happens to contain.
+# Ported from the census paper's trailer vocabulary (arXiv:2606.24429).
 TRAILER_KEY_PATTERN = re.compile(
     r"^(Co-Authored-By|Assisted-By|Generated-By)\s*:\s*(.+)$",
     re.IGNORECASE | re.MULTILINE,

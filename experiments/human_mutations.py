@@ -2,16 +2,13 @@
 but emulate what a human reviewer/refactorer might actually do to a function —
 built so the *mutation content itself* isn't AI-authored.
 
-The concern this answers: every mutation elsewhere in this project (rename to
-`_v1`, minify, AST round-trip) is either a real third-party tool or a small
-mechanical AST transform with no invented vocabulary. But a "human-style rename"
-or "add a docstring" mutation, done naively, means an LLM (this session) writing
-plausible-sounding identifier names or comments — which is exactly the kind of
-mutation source an FSE reviewer should be suspicious of, symmetric to the
-question already raised earlier in this project about whether mutation results
-could be an artifact of the mutator being AI too.
+The other mutations (rename to `_v1`, minify, AST round-trip) are either real
+third-party tools or small mechanical AST transforms with no invented
+vocabulary. A "human-style rename" or "add a docstring" mutation done naively
+would need generated identifier names or comments, making the mutation itself
+AI-authored.
 
-The fix: every piece of *text content* these mutations inject (identifier names,
+Instead, every piece of *text content* these mutations inject (identifier names,
 comments, exception type names) is copied verbatim from `data/human_corpus.json`
 — real tokens mined from lutris/lutris's actual source, written by its human
 contributors, not generated on the fly. Sampling which real token to use is
@@ -20,9 +17,8 @@ conversion, statement reordering, variable extraction) inject no new vocabulary
 at all — they only rearrange tokens already present in the input, so there's no
 content-authorship question for them either.
 
-Run `scripts/mine_human_corpus.py` (documented below) to regenerate the corpus
-from a fresh checkout; the corpus itself is committed so this module doesn't
-need network/repo access to run.
+The corpus is produced by `scripts/mine_human_corpus.py` and committed, so this
+module needs no network or repository access to run.
 """
 
 import ast
@@ -44,10 +40,8 @@ SEED_SALT = 0
 
 def _rng(src: str) -> random.Random:
     # Seeded by a stable digest of the input text: the same input gives the same
-    # draw in every process. (Until 2026-09-24 this used the builtin hash(), which
-    # Python randomizes per interpreter launch — so draws were only stable *within*
-    # one process, and results generated before that date are not bit-reproducible
-    # across runs. See BENCHMARK.md section 3.)
+    # draw in every process (unlike the builtin hash(), which Python randomizes per
+    # interpreter launch).
     digest = int(hashlib.sha256(src.encode("utf-8")).hexdigest()[:8], 16)
     return random.Random(digest + SEED_SALT)
 

@@ -3,14 +3,11 @@
 Presence test: an in-toto/SLSA provenance predicate resolves, is well-formed, and
 its subject digest matches the artifact digest under test.
 
-NOT YET VALIDATED. Unlike trailer.py and signature.py (which only need a local git
-checkout), this check needs a real attestation source: GitHub's Artifact Attestations
-API, a Sigstore/Rekor transparency-log lookup, or a registry-embedded provenance
-predicate, depending on how the sampled repo publishes. Which source is authoritative
-is a sampling-frame-adjacent decision that hasn't been made yet (repos in the sample
-may use different attestation stores). This module defines the interface so
-trailer/signature checks aren't blocked on it; the resolver body is a stub until a
-real sampled repo with attestations exists to build against.
+Unlike trailer.py and signature.py, which only need a local git checkout, this
+check resolves against an attestation store: GitHub's Artifact Attestations API, a
+Sigstore/Rekor transparency-log lookup, or a registry-embedded provenance predicate,
+depending on how a repository publishes. This module defines the query and result
+interface; resolution requires access to a live attestation store.
 """
 
 from dataclasses import dataclass
@@ -27,8 +24,7 @@ class AttestationQuery:
 
 def check_presence(query: AttestationQuery) -> PresenceResult:
     raise NotImplementedError(
-        "attestation resolution requires a live attestation store; "
-        "implement once the sampling frame (docs/04) is frozen and at least one "
-        "sampled repo with in-toto/SLSA attestations is available to build against. "
-        "See module docstring."
+        "attestation resolution requires a live attestation store "
+        "(github-attestations, sigstore-rekor, or registry-embedded); "
+        "see module docstring."
     )

@@ -1,19 +1,16 @@
-"""A second wave of operations, added to cover realistic actions a human or an
-AI coding agent can take that the first 22-operation battery didn't touch:
+"""Further operations a human or an AI coding agent applies to code:
 
-- Whitespace/line-ending changes that never go through `ast.unparse()` — the
-  first battery's structural mutations all reserialize the whole tree, which
-  RESULTS.md/BENCHMARK.md already flag as a confound. These two isolate pure
-  formatting effects from that confound.
-- Content-adding operations that weren't covered: a real docstring, real type
+- Whitespace/line-ending changes that never go through `ast.unparse()`. The
+  structural mutations in human_mutations.py reserialize the whole tree; these
+  isolate pure formatting effects from that reserialization.
+- Content-adding operations: a real docstring, real type
   hints (both sourced from `data/human_corpus.json`, same non-AI-authorship
   discipline as `human_mutations.py`).
-- A genuine second-order structural refactor (extract helper function) beyond
-  the existing extract-variable/guard-clause/reorder set.
+- A second-order structural refactor (extract helper function), distinct from
+  extract-variable/guard-clause/reorder.
 - The smallest possible edit: a single-line targeted patch, the shape of most
   real code-review suggestions.
-- A no-op control (file rename only, content untouched) — confirms rather than
-  assumes that renaming a file doesn't affect a carrier that lives in content.
+- A no-op control (file rename only, content untouched).
 - `agent_rewrite` is NOT in this module's mutation list — it needs the live
   generation model (asking the model to paraphrase its own output), so it's
   wired directly into run_full_battery.py's run_once() as a distinct step,
@@ -38,8 +35,8 @@ SEED_SALT = 0
 
 
 def _rng(src: str) -> random.Random:
-    # Stable across processes. Previously hash(src), which Python randomizes per
-    # interpreter launch (draws were only stable within one process).
+    # Stable across processes, unlike hash(src), which Python randomizes per
+    # interpreter launch.
     digest = int(hashlib.sha256(src.encode("utf-8")).hexdigest()[:8], 16)
     return random.Random(digest + SEED_SALT)
 
@@ -338,10 +335,8 @@ def _rng_h(src: str):
 # --- Control: no content change at all -----------------------------------------
 
 def mut_file_rename_only(src: str, repo) -> str:
-    """A no-op on content — the control case for "the file got renamed/moved,
-    nothing inside it changed." Included explicitly rather than assumed,
-    matching this project's standard of confirming trivial cases rather than
-    skipping them."""
+    """A no-op on content: the control case for a file that was renamed or moved
+    with nothing inside it changed."""
     return src
 
 

@@ -1,9 +1,8 @@
 """Aggregate per-repo scans into the operation catalogue with a prevalence ranking.
 
-Per the brief: "The operation catalogue with its derivation from repository and
-workflow configurations... and the derivation procedure, including how many
-repositories were sampled and how operations were ranked by prevalence, is
-reported as part of the result." This module is that derivation procedure.
+Records how many repositories were scanned and ranks each operation class by
+the share of repositories configuring it, with the files that provide the
+evidence.
 """
 
 import json

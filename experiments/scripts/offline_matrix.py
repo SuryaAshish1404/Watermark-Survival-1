@@ -3,17 +3,17 @@
 Every step except generation is text-in/text-out, and STONE/KGW detection needs only the
 tokenizer, so once baselines are saved the rest of the lifecycle chain can be replayed
 cheaply and repeatedly. The unit of analysis is the DISTINCT BASELINE, not the run: draws
-within a baseline are averaged first (pseudo-replication fix), then baselines are
-bootstrapped.
+within a baseline are averaged first (avoiding pseudo-replication), then baselines
+are bootstrapped.
 
 Factors
-  chain    : unparse_chain   agent/review steps reserialize with ast.unparse (as run so far)
+  chain    : unparse_chain   agent/review steps reserialize with ast.unparse
              patch_chain     the same edits and draws, applied as text patches (programs verified
                              identical in scripts/verify_patch_ops.py)
              roundtrip_only  one ast.unparse and nothing else, a floor reference
   ci order : format_then_lint (hand-designed chain) | lint_then_format (majority order mined from
              20 real Python repos' workflows: 29 vs 15)
-git squash and wheel build were no-ops in every earlier run and need no model, so they are omitted.
+git squash and wheel build never changed an outcome in the lifecycle runs, so they are omitted.
 
 Usage: python scripts/offline_matrix.py --repo <lutris> --scheme stone --results results/lifecycle_v2_results.json [--draws 20]
 """

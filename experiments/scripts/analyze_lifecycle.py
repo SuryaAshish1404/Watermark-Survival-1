@@ -3,8 +3,7 @@
 Prints, per scheme: usable baselines, where each run first broke, full-chain
 survivors, survival at the pre-packaging step vs the final (Windows-built)
 artifact, per-step mean score, baseline-headroom vs survival, and how much of
-the z-score signal the first step cost. Used to keep every doc citing the same
-numbers instead of hand-copying them.
+the z-score signal the first step cost.
 
 Usage: python experiments/scripts/analyze_lifecycle.py [results/lifecycle_results.json]
 """

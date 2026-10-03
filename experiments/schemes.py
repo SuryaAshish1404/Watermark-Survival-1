@@ -54,10 +54,8 @@ JSON-config-file based (`BaseConfig(algorithm_config_path, transformers_config,
 - **EXPGumbel**: its reference implementation builds a
   `(vocab_size * prefix_length) x vocab_size` lookup table at initialization —
   for `tiny_starcoder_py`'s ~49k-token vocabulary this is a ~19 GB allocation,
-  confirmed by a direct `RuntimeError` on this host. A real scalability
-  property of this implementation for large-vocabulary code models, not a
-  vendoring bug — would need a different model or a smarter (non-table-based)
-  implementation of the same algorithm to include fairly.
+  which fails with a `RuntimeError`. A scalability property of this
+  implementation for large-vocabulary code models, not a vendoring bug.
 """
 
 import sys

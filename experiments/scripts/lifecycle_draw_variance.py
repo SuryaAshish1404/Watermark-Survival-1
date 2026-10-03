@@ -2,16 +2,14 @@
 corpus tokens (comment, annotations, docstring, identifiers), rather than by the
 watermark scheme?
 
-Motivation: the n=25 lifecycle run contained only 9 distinct STONE trajectories —
-17/25 runs were the same byte-identical generation — and the mutation RNG used
-Python's per-process-randomized hash(), so the outcome of that dominant text
-depended on one uncontrolled draw per process. This script makes that dependence
-measurable: same text, many draws.
+Each chain step that injects corpus content draws it at random, so one
+generated text can have different outcomes under different draws. This script
+measures that dependence: same text, many draws.
 
 Needs only the tokenizer (STONE detection never touches the model), so it is
-cheap and memory-safe. Text-only chain steps (the git squash and wheel build did
-not change a single retained/lost outcome across 43 lifecycle runs, so they are
-skipped here).
+cheap and memory-safe. Only the text chain steps run; the git squash and wheel
+build steps did not change a single retained/lost outcome across 43 lifecycle
+runs, so they are skipped.
 
 Also runs the ast.unparse control on the same texts: first-step score after
 (A) ast_roundtrip alone vs (B) add_type_hints, which itself ends in ast.unparse.

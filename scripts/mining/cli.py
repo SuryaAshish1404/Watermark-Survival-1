@@ -1,8 +1,7 @@
 """CLI: python -m scripts.mining.cli <repo_path> [<repo_path> ...] [--out PATH]
 
-Regenerates the operation catalogue from a list of local repo checkouts. This is
-the "regenerates from the repository list without manual editing" requirement in
-the brief's technical task table — the JSON output is derived, never hand-edited.
+Regenerates the operation catalogue from a list of local repo checkouts. The
+JSON output is derived entirely from the scanned repositories, never hand-edited.
 """
 
 import argparse

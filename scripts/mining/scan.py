@@ -1,8 +1,7 @@
 """Scan a single repository for operation-class configuration signals.
 
 Every match is recorded with the file that produced it, so a catalogue entry can
-always be traced back to a cited configuration file (brief's Technical Tasks
-acceptance criterion for the config miner).
+always be traced back to a cited configuration file.
 """
 
 import re

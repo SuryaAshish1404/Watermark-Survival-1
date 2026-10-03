@@ -1,11 +1,10 @@
 """Full-SDLC-cycle chain: cumulative survival, not independent single operations.
 
-Every other script in this project mutates the *original* watermarked baseline
-once, independently, per operation — 30 separate branches off one root. That
-answers "does operation X break it in isolation" but not the brief's actual
-Phase 5 ask: "Test realistic chains such as: AI-generated code -> commit -> PR
--> squash -> formatting -> build -> package -> release. Measure cumulative
-survival rather than only individual operations."
+run_full_battery.py mutates the *original* watermarked baseline once,
+independently, per operation — 30 separate branches off one root. That answers
+"does operation X break it in isolation", not what happens along a realistic
+chain such as AI-generated code -> commit -> PR -> squash -> formatting ->
+build -> package -> release.
 
 This script applies one realistic step order, *in sequence*, and re-checks
 detection after every single step — so degradation (or survival) compounds
@@ -14,9 +13,8 @@ independent what-if branches do.
 
 The order below is a plausible real-world sequence (write -> polish -> review
 -> merge -> CI -> release), not mined from observed CI configs the way
-scripts/mining/workflow_order.py derives real orders for the measured arm —
-that's a real difference in evidentiary weight, disclosed here and in
-RESULTS.md/BENCHMARK.md rather than presented as equally strong.
+scripts/mining/workflow_order.py derives orders for the measured arm.
+scripts/offline_matrix.py replays the chain with the mined CI order.
 
 Usage: python experiments/run_lifecycle.py --repo <lutris checkout> --runs N --schemes stone,kgw
 """

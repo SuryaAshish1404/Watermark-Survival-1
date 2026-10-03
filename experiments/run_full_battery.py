@@ -7,11 +7,9 @@ cherry-pick, done as literal git operations, not just text diffs), source layer
 combo from the base paper's threat model), and packaging layer (bytecode
 compilation, source-preserving vs. bytecode-only repackaging).
 
-Goal, per the user: don't just show survival — find where the watermark actually
-breaks. A battery where nothing ever breaks is not evidence of robustness, it's
-evidence the battery isn't hard enough yet; this one pushes harder specifically to
-find a breaking point, including operations (bytecode compilation) known in
-advance to be structurally destructive to any source-level watermark.
+The battery is designed to find where the watermark breaks, so it includes
+operations (bytecode compilation) known to be structurally destructive to any
+source-level watermark.
 
 Usage: python experiments/run_full_battery.py --repo <lutris checkout>
 """
@@ -419,10 +417,9 @@ def run_agent_rewrite(stone, generated_code, repo, results):
     from scratch via generate_unwatermarked_text() — no green-list bias
     applied to the new tokens. This is the most "agent-like" operation in the
     battery: a coding agent given watermarked code and asked to reimplement
-    it, keeping the interface. Expected to be a categorical loss (fresh
+    it, keeping the interface. Expected to be a categorical loss: fresh
     sampling has no reason to reproduce the specific green-list draws in the
-    original), but confirmed rather than assumed, per this project's
-    standard."""
+    original."""
     entry = {"mutation": "agent_rewrite", "layer": "agent"}
     try:
         sig = _signature_only(generated_code)
@@ -544,8 +541,8 @@ def run_once(stone, repo: Path, run_index: int) -> dict:
 
 def aggregate(all_runs: list[dict]) -> dict:
     """Per-operation retention rate and score spread across repeated runs — the
-    'recovery variance across repeated runs' metric the brief itself specifies
-    for statistical detectors, rather than trusting any single run's number."""
+    'recovery variance across repeated runs' metric for statistical detectors,
+    rather than trusting any single run's number."""
     by_op: dict[str, list[dict]] = {}
     for run in all_runs:
         for op in run["operations"]:
@@ -623,9 +620,8 @@ def main():
         scheme = build_scheme(scheme_name, model, tokenizer)
         all_runs = []
         # Written after every run, not just after a scheme (or the whole battery)
-        # completes: a crash partway through a scheme (this happened in practice —
-        # SWEET segfaulted on run 8/10) used to lose every already-finished run's
-        # structured data, leaving only the unstructured stderr log behind.
+        # completes, so a crash partway through a scheme keeps every
+        # already-finished run's structured data.
         for i in range(1, args.runs + 1):
             all_runs.append(run_once(scheme, args.repo, i))
             by_scheme[scheme_name] = {
