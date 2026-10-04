@@ -1,4 +1,4 @@
-# Do the Marks Survive the Pipeline?
+# An Empirical Study of Code Watermark Persistence Under Software Engineering Transformations
 
 Replication package for an empirical study of code-watermark persistence under software-engineering transformations. The package contains the benchmark harness, the vendored watermark implementations, the input corpora, every raw result file reported in the paper, and the analysis scripts that recompute the reported numbers.
 
@@ -59,7 +59,7 @@ Family 1 detectors return a $z$-score. Family 2 detectors return scheme-specific
 
 **Detection outcomes** (`run_full_battery.classify`): `retained`, `silently_lost` (source available, detector negative), `destroyed_no_source` (bytecode-only artifact, no source to detect), `build_failure` (output no longer parses), `tool_error`.
 
-**Execution settings.** Experiments on the 164M model ran on CPU in fp32; DeepSeek experiments ran on GPU (CUDA 12.4) in fp16 (`schemes.DEVICE`, set via `WM_DEVICE`). Baseline usability depends on the execution setting, so results are compared only within one setting.
+**Execution settings.** Experiments on the 164M model ran on CPU in fp32; DeepSeek experiments ran on GPU (CUDA 12.4) in fp16 (`schemes.DEVICE`, set via `WM_DEVICE`). Results are compared only within one execution setting.
 
 ---
 
@@ -122,14 +122,14 @@ All files are in `experiments/results/`; script paths are relative to `experimen
 | `lifecycle_results.json` | `run_lifecycle.py` | 164M / CPU | STONE, KGW 25 runs; other 7 schemes 5 runs; 9 steps | `8d882da` |
 | `draw_variance_results.json` | `scripts/lifecycle_draw_variance.py` | 164M tokenizer / CPU | 5 texts × 60 draws | `8d882da` |
 | `lifecycle_v2_results.json` | `run_lifecycle.py --hints both --multi-prompt` | 164M / CPU | STONE, KGW 25 runs, 5 prompts | `01687c6` |
-| `control_texts_{stone,kgw}.json` | from `lifecycle_v2_results.json` | – | distinct detected baselines (13 STONE, 17 KGW) | – |
-| `unparse_control_{stone,kgw}.json` | `scripts/unparse_control.py` | 164M tokenizer / CPU | 13 / 17 baselines × 30 draws | – |
+| `control_texts_{stone,kgw}.json` | from `lifecycle_v2_results.json` | – | distinct detected baselines per scheme | – |
+| `unparse_control_{stone,kgw}.json` | `scripts/unparse_control.py` | 164M tokenizer / CPU | `control_texts_*` baselines × 30 draws | – |
 | `unparse_control_results.json` | `scripts/unparse_control.py` | 164M tokenizer / CPU | STONE, 5 texts × 40 draws | – |
 | `offline_matrix_{stone,kgw}.json` | `scripts/offline_matrix.py` | 164M tokenizer / CPU | 3 chains × 2 orders × 20 draws; lutris corpus | `01687c6` |
 | `offline_matrix_flask_{stone,kgw}.json` | `scripts/offline_matrix.py` | 164M tokenizer / CPU | as above; Flask corpus | `01687c6` |
 | `baseline_embed_stone_kgw_sweet_ewd.json`, `baseline_embed_unigram_unbiased_dip_synthid_pf.json` | `scripts/baseline_embed_check.py` | 1.3B / GPU fp16 | 15 generations per scheme, 5 prompts | – |
 | `gpu_battery_results.json` | `run_full_battery.py` | 1.3B / GPU fp16 | 7 schemes, 15 runs, 30 operations | `01687c6` |
-| `ci_order_results.json` | `scripts/mine_ci_order.py` | – | 20 repositories, 281 job sequences | – |
+| `ci_order_results.json` | `scripts/mine_ci_order.py` | – | 20 pinned repositories | – |
 
 `multischeme_results.json` and `human_ops_results.json` were produced when the battery contained 16 and 22 operations; those operation sets are subsets of the current 30.
 
@@ -184,7 +184,7 @@ python experiments/scripts/verify_patch_ops.py
 python experiments/scripts/analyze_lifecycle.py
 ```
 
-`paper_numbers.py` prints every reported number per paper section, including per-condition and paired-difference bootstrap confidence intervals. `verify_patch_ops.py` prints `75/75 identical programs` for each of its four operations and exits non-zero on any mismatch.
+`paper_numbers.py` prints every reported number per paper section, including per-condition and paired-difference bootstrap confidence intervals. `verify_patch_ops.py` checks program equivalence for each of its four operations and exits non-zero on any mismatch.
 
 ### Single-operation battery (164M, CPU)
 
@@ -270,7 +270,7 @@ The lint/format order used in the lifecycle is reproduced with:
 python experiments/scripts/mine_ci_order.py
 ```
 
-It fetches only `.github/workflows` (sparse, blob-filtered, depth 1) from the 20 repositories in `experiments/data/ci_order_repos.json` at their pinned commits, extracts 281 job sequences, and counts ordered pairs of distinct operations within each job: `lint_autofix` precedes `format` 29 times and follows it 15 times.
+It fetches only `.github/workflows` (sparse, blob-filtered, depth 1) from the 20 repositories in `experiments/data/ci_order_repos.json` at their pinned commits, extracts one operation sequence per job, and counts ordered pairs of distinct operations within each job.
 
 ---
 
