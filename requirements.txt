@@ -20,7 +20,7 @@ tqdm==4.67.1           # SynthID detector
 
 # --- mutation tooling (operations applied to watermarked code) ---
 # Exact versions matter: format/lint/minify output feeds the detectors directly,
-# so a different ruff or python-minifier release can change survival numbers.
+# so a different ruff or python-minifier release can change detector scores.
 ruff==0.16.8
 python-minifier==3.3.0
 build==1.6.1           # wheel-rebuild operation (python -m build)

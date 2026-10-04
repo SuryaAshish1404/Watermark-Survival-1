@@ -1,77 +1,43 @@
-# Vendored watermarking code
+# Vendored Watermark Code
 
-Two separate vendor trees, from two related but distinct upstream repos. They
-are never imported in the same Python process (see `schemes.py`'s module
-docstring) because both define top-level `watermark`/`utils`/`exceptions`/
-`visualize` packages that would collide in `sys.modules`.
+Upstream watermark implementations used by *An Empirical Study of Code Watermark Persistence Under Software Engineering Transformations*. The two trees define packages with identical top-level names (`watermark`, `utils`, `exceptions`, `visualize`) and are never imported in the same process; `schemes.assert_single_family` enforces this.
+
+| Directory | Schemes | Source | Revision | License |
+|---|---|---|---|---|
+| `stone_watermarking/` | STONE, KGW, SWEET, EWD | https://github.com/inistory/STONE-watermarking | `bb5d809c0c494a219411e861f2313cca2b9fd7b4` (2026-03-27) | Apache-2.0 (file headers retained) |
+| `markllm/` | Unigram, Unbiased, DIP, SynthID, PF | https://github.com/THU-BPM/MarkLLM | default branch, fetched 2026-09-21 via the GitHub Contents API | Apache-2.0 (file headers retained) |
 
 ---
 
-## `stone_watermarking/` — STONE, KGW, SWEET, EWD
+## `stone_watermarking/`
 
-Source: https://github.com/inistory/STONE-watermarking
-Commit: `bb5d809c0c494a219411e861f2313cca2b9fd7b4` (2026-03-27)
-License: Apache License 2.0 (per each file's header, retained unmodified)
+Byte-for-byte copies of the files required to construct each scheme and call `generate_watermarked_text` / `detect_watermark`:
 
-Only the files needed to instantiate `STONE` and call
-`generate_watermarked_text` / `detect_watermark` directly are vendored —
-not the full repo (which includes a bigcode-evaluation-harness submodule,
-training scripts, and CodeIP, none of which this benchmark uses). Files are
-byte-for-byte copies, not reimplementations, so the scheme under test is
-STONE as released — no reimplementation risk.
-
-Files:
-- `watermark/stone/stone.py`, `watermark/stone/__init__.py`
 - `watermark/base.py`
+- `watermark/{stone,kgw,sweet,ewd}/` (scheme module and `__init__.py`)
 - `utils/transformers_config.py`, `utils/utils.py`
 - `exceptions/exceptions.py`
 - `visualize/data_for_visualization.py`
 
-`__init__.py` files for `watermark/`, `utils/`, `exceptions/`, `visualize/`
-were added (empty) by us to make these proper packages for import — STONE's
-own repo relies on implicit namespace packages plus a `run.py` that adds
-`stone_implementation/` to `sys.path`; we reproduce the same import
-structure standalone instead of vendoring their run.py driver.
+Not vendored: the evaluation-harness submodule, training scripts, CodeIP, and the upstream `run.py` driver.
 
-Also includes `watermark/kgw/kgw.py`, `watermark/sweet/sweet.py`,
-`watermark/ewd/ewd.py` (each with their `__init__.py`) — same repo, same
-commit, same license, used as additional schemes.
+**Additions.** Empty `__init__.py` files in `watermark/`, `utils/`, `exceptions/`, `visualize/`. Upstream relies on implicit namespace packages and a `run.py` that prepends its source directory to `sys.path`; the added files give the same import structure without the driver.
 
 ---
 
-## `markllm/` — Unigram, UnbiasedWatermark, DIP, SynthID, PF
+## `markllm/`
 
-Source: https://github.com/THU-BPM/MarkLLM (the upstream library the STONE
-repo above forked its structure from — same author lineage, same API shape,
-many more schemes). Commit: HEAD at fetch time, 2026-09-21 (MarkLLM does not
-pin a specific commit hash in its releases the way STONE does; fetched via
-the GitHub Contents API, file-by-file, byte-for-byte).
-License: Apache License 2.0 (per each file's header, retained unmodified).
+Byte-for-byte copies of:
 
-Files: `watermark/base.py`, `utils/{transformers_config.py,utils.py}`,
-`exceptions/exceptions.py`, `visualize/data_for_visualization.py`, and five
-scheme directories (`watermark/{unigram,unbiased,dip,synthid,pf}/`), plus
-their default config JSON files (`config/*.json`) — MarkLLM's newer
-`BaseConfig` loads scheme parameters from a JSON file path rather than plain
-kwargs (STONE's fork simplified this away); we pass the vendored default
-config path and override only what's documented in `schemes.py`.
+- `watermark/base.py`
+- `watermark/{unigram,unbiased,dip,synthid,pf}/`
+- `utils/transformers_config.py`, `utils/utils.py`
+- `exceptions/exceptions.py`
+- `visualize/data_for_visualization.py`
+- `config/{Unigram,Unbiased,DIP,SynthID,PF}.json`
 
-**One disclosed, narrow modification** (not a byte-for-byte copy):
-`watermark/synthid/detector.py`'s module-level
-`from evaluation.dataset import C4Dataset` was moved to a lazy import inside
-the one method that uses it (`get_data_for_training`, part of the
-`BayesianDetector` training path this project never calls — we use
-`detector_type: "mean"`, i.e. `MeanDetector`, which never touches that code).
-Vendoring the full `evaluation` package to satisfy an otherwise-unused
-top-level import wasn't worth the added surface. No other line in that file,
-or any other vendored file, is modified. See the inline comment at the
-change site for the same explanation.
+MarkLLM's `BaseConfig` reads scheme parameters from a JSON file. `schemes.py` passes the vendored default config path and applies only the overrides listed in its `SCHEME_KWARGS`.
 
-**Also vendored but not used**: `watermark/exp_gumbel/exp_gumbel.py` and its
-`config/EXPGumbel.json`. Kept in the tree rather than deleted, as
-documentation of a real finding: `EXPGumbelUtils.__init__` allocates a
-`(vocab_size * prefix_length) x vocab_size` lookup table, which for
-`tiny_starcoder_py`'s ~49k-token vocabulary requires ~19 GB — it fails with a
-`RuntimeError`, not a configuration mistake. See
-`schemes.py`'s module docstring for the full reasoning. Excluded from `SCHEME_KWARGS`/`MARKLLM_CLASS_NAMES` in `schemes.py`
-so it can't be accidentally selected.
+**Modification.** In `watermark/synthid/detector.py`, the module-level `from evaluation.dataset import C4Dataset` is moved into `get_data_for_training`, the only method that uses it. That method belongs to the `BayesianDetector` training path; this package uses `detector_type: "mean"` (`MeanDetector`), which does not call it. The change site carries an inline comment. No other vendored line is modified.
+
+**Present but not selectable.** `watermark/exp_gumbel/` and `config/EXPGumbel.json` are vendored but excluded from `SCHEME_KWARGS` and `MARKLLM_CLASS_NAMES` in `schemes.py`. `EXPGumbelUtils.__init__` allocates a `(vocab_size × prefix_length) × vocab_size` table, which exceeds available memory for the generation models' vocabularies; see the `schemes.py` module docstring.
